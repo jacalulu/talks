@@ -1540,7 +1540,6 @@ body.has-notes .bar{bottom:42vh}
     try{localStorage.setItem('notes-size',nsf);}catch(e){}
     applyNotesSize();
   }
-  applyNotesSize();
   // ── immersion: real full screen, and chrome that gets out of the way ──
   function toggleFS(){
     const d=document.documentElement;
@@ -1701,6 +1700,7 @@ body.has-notes .bar{bottom:42vh}
       return '<p>'+mark(p)+'</p>';
     }).join('');
   }
+  applyNotesSize();
   const start=parseInt(location.hash.slice(1),10);
   show(Number.isFinite(start)&&start>0?start-1:0);
   st=0; paintSteps();
