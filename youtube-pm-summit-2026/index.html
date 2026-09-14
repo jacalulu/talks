@@ -191,6 +191,8 @@ ul.items li::before{
 .s-shots h2{font-size:5cqw}
 .shots{display:grid;grid-template-columns:1.347fr 2.332fr;gap:3cqw;margin-top:3.2cqw;align-items:start}
 .shot{margin:0;display:flex;flex-direction:column}
+.shot[data-step]{opacity:0;translate:0 1.2cqw;transition:opacity .55s var(--e-dec),translate .55s var(--e-dec)}
+.shot[data-step].shown{opacity:1;translate:0 0}
 .shot .col-k{margin-bottom:1.2cqw}
 .shot img{width:100%;height:auto;display:block;border-radius:1.2cqw;
           box-shadow:0 1.6cqw 5cqw -1.6cqw rgba(60,45,35,.35)}
