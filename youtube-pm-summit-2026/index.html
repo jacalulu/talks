@@ -187,6 +187,14 @@ ul.items li::before{
 
 /* ── duo ─────────────────────────────────────────────────── */
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:5cqw;margin-top:4.5cqw}
+.s-shots .inner{padding:6cqw 7cqw 6cqw}
+.s-shots h2{font-size:5cqw}
+.shots{display:grid;grid-template-columns:1.347fr 2.332fr;gap:3cqw;margin-top:3.2cqw;align-items:start}
+.shot{margin:0;display:flex;flex-direction:column}
+.shot .col-k{margin-bottom:1.2cqw}
+.shot img{width:100%;height:auto;display:block;border-radius:1.2cqw;
+          box-shadow:0 1.6cqw 5cqw -1.6cqw rgba(60,45,35,.35)}
+
 .col{border-top:.28cqw solid rgba(31,42,68,.16);padding-top:2.2cqw}
 .col-k{
   font-family:var(--mono);font-size:1.3cqw;letter-spacing:.18em;text-transform:uppercase;
@@ -1148,13 +1156,20 @@ body.has-notes .bar{bottom:42vh}
     <p class="sub">Not a point you pick. A dial your users disagree about.</p>
   </div>
 </div></section>
-<section class="s s-cream s-duo"><div class="frame">
+<section class="s s-cream s-duo s-shots"><div class="frame">
   <div class="inner">
     <span class="kick">In the wild</span>
     <h2>Confident default, frictionless override</h2>
-    <div class="cols"><div class="col"><span class="col-k">Most AI agents now</span><p>At a real fork, the options are there to click - and the text box stays open underneath.</p></div>
-<div class="col"><span class="col-k">Pomelli</span><p>We pre-select the templates we think work. Changing them is right there, before you hit next.</p></div></div>
-    
+    <div class="shots">
+      <figure class="shot">
+        <figcaption class="col-k">Most AI agents now</figcaption>
+        <img src="shot-fork.png" alt="An assistant asking a question, with six options to click and a text box still open underneath">
+      </figure>
+      <figure class="shot" data-step="1">
+        <figcaption class="col-k">Pomelli</figcaption>
+        <img src="shot-pomelli.jpg" alt="Pomelli template picker with five templates already ticked and a Generate button">
+      </figure>
+    </div>
   </div>
 </div></section>
 <section class="s s-cream s-lead"><div class="frame">
@@ -1663,7 +1678,7 @@ body.has-notes .bar{bottom:42vh}
   // NB .tl-track is deliberately absent: it is a full-bleed wrapper with
   // inset:0, so taking its box declared the whole title slide solid. The
   // logo marks and nodes inside it are the actual content.
-  const BOXES = '.dgm,.tile,.pf-card,.s-image img,.tl-portrait,.mk,.nd,' +
+  const BOXES = '.dgm,.tile,.pf-card,.s-image img,.shot img,.tl-portrait,.mk,.nd,' +
                 '.bcard .ic,.hi-ic';
   const INK   = 'h2,.q,.sub,.kick,.num,.attrib,.li-h,.li-b,.col p,.col-k,.spec-end,' +
                 '.bc-t,.bc-b,.bc-n,.cap,.tl-name,.tl-role,.tl-n,.tl-k,.pf-big,.pf-k,' +
