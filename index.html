@@ -75,6 +75,29 @@ footer{
 footer a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;
          transition:color .3s var(--e-dec),border-color .3s var(--e-dec)}
 footer a:hover{color:var(--pink);border-bottom-color:var(--pink)}
+.t-tag{font-style:normal;color:var(--pink);margin-left:.9rem}
+.t-lock summary{list-style:none;cursor:pointer;display:grid;gap:.5rem;justify-items:start}
+.t-lock summary::-webkit-details-marker{display:none}
+.lock-h{font-size:clamp(1.6rem,4.4vw,2.15rem);line-height:1.14;letter-spacing:-.015em;
+        font-weight:500;display:flex;align-items:center;gap:.55rem;margin:0 0 .1rem}
+.lock-ic{width:.8em;height:.8em;color:var(--pink);flex:none}
+.lock-b{color:var(--ink-soft);max-width:40em;margin-bottom:.8rem}
+.t-lock summary .t-go{transition:border-color .3s var(--e-dec),color .3s var(--e-dec)}
+.t-lock summary:hover .t-go,.t-lock summary:focus-visible .t-go{border-color:var(--pink);color:var(--pink)}
+.t-lock summary:hover .t-go span{translate:3px 0}
+.t-lock[open] summary .t-go{display:none}
+.unlock{margin-top:1.1rem;max-width:28rem}
+.unlock label{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
+              text-transform:uppercase;color:var(--ink-soft);margin-bottom:.5rem}
+.unlock .row{display:flex;gap:.6rem;flex-wrap:wrap}
+.unlock input{flex:1;min-width:11rem;font:inherit;font-size:1rem;padding:.7rem .95rem;
+              border:1px solid rgba(31,42,68,.22);border-radius:12px;background:#fff;
+              color:var(--ink);outline:none;transition:border-color .2s}
+.unlock input:focus{border-color:var(--pink)}
+.unlock button{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);
+               font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+               background:var(--grad);border:0;border-radius:100px;padding:.7rem 1.3rem;cursor:pointer}
+.unlock .err{font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;color:var(--pink);margin:.7rem 0 0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -88,12 +111,28 @@ footer a:hover{color:var(--pink);border-bottom-color:var(--pink)}
       I&rsquo;ve given - open one and use the arrow keys.</p>
   </header>
   <ul>
-    <li class="t">
-      <time class="t-d" datetime="2026-09">September 2026</time>
-      <h2 class="t-h"><a href='youtube-pm-summit-2026/'>What AI Didn&rsquo;t Make Cheap</a></h2>
-      <p class="t-v">YouTube Ads PM Summit</p>
-      <p class="t-b">Generative AI made writing cheap. It made prototyping cheap. It made code cheap. What it didn&rsquo;t make cheap is good judgment. How the PM job is changing, and how that changes what we build.</p>
-      <a class='t-go' href='youtube-pm-summit-2026/'>Open the deck <span>&#8594;</span></a>
+    <!-- Talks that are public go here as plain entries, newest first.
+         A talk that is not public yet lives in its own folder behind the
+         password, with its details in <talk>/card.html. The block below
+         asks for the password and, once unlocked, swaps in that card. -->
+    <li class="t t-lock" id="upcoming" data-card="youtube-pm-summit-2026/card.html">
+      <span class="t-d">Upcoming</span>
+      <details class="lock">
+        <summary>
+          <span class="lock-h"><svg class="lock-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>One talk, not public yet</span>
+          <span class="lock-b">If you have the password, unlock it to see the details and open the deck.</span>
+          <span class="t-go">Enter password <span>&#8594;</span></span>
+        </summary>
+        <form class="unlock" method="post" action="/unlock">
+          <input type="hidden" name="next" value="/">
+          <label for="pw">Password</label>
+          <div class="row">
+            <input id="pw" name="password" type="password" autocomplete="off" required>
+            <button type="submit">Unlock <span>&#8594;</span></button>
+          </div>
+          <p class="err" id="denied" hidden>That is not it - try again.</p>
+        </form>
+      </details>
     </li>
   </ul>
   <footer>
@@ -101,5 +140,23 @@ footer a:hover{color:var(--pink);border-bottom-color:var(--pink)}
     <a href="https://x.com/jacalulu">@jacalulu</a>
   </footer>
 </div>
+<script>
+// If the visitor already unlocked, the card behind the password loads and
+// replaces the locked block. Without the cookie that request is a 401 and the
+// block stays as it is. No details of the talk are in this file.
+(async()=>{
+  const li=document.getElementById('upcoming'); if(!li) return;
+  if(new URLSearchParams(location.search).get('denied')){
+    li.querySelector('details').open=true;
+    document.getElementById('denied').hidden=false;
+    history.replaceState(null,'',location.pathname+'#upcoming');
+    document.getElementById('pw').focus();
+  }
+  try{
+    const r=await fetch(li.dataset.card,{cache:'no-store'});
+    if(r.ok){ li.innerHTML=await r.text(); li.classList.remove('t-lock'); }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

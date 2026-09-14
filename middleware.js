@@ -1,44 +1,85 @@
-// Temporary password gate for the whole site.
+// Password gate for talks that are not public yet.
 //
-// The password is read from the TALKS_PASSWORD environment variable on
-// Vercel - it is not in this repo. To take the gate down, remove that
-// variable and redeploy, or delete this file.
+// The index at / is always public. Only the folders listed in PROTECTED ask
+// for a password, and the index shows them as a locked "upcoming" block until
+// the visitor unlocks. The password is the TALKS_PASSWORD environment variable
+// on Vercel - it is not in this repo.
+//
+// To publish a talk: delete its line from PROTECTED and from config.matcher
+// below, move the contents of <talk>/card.html into index.html as a normal
+// entry, delete the locked block, and push.
 
 import { next } from '@vercel/functions';
+
+const PROTECTED = ['/youtube-pm-summit-2026'];
 
 const COOKIE = 'talks_access';
 const COOKIE_DAYS = 30;
 
-export const config = { runtime: 'nodejs' };
+export const config = {
+  runtime: 'nodejs',
+  // Keep in step with PROTECTED. Everything else never touches this file.
+  matcher: ['/unlock', '/youtube-pm-summit-2026', '/youtube-pm-summit-2026/:path*'],
+};
 
 export default async function middleware(request) {
   const password = process.env.TALKS_PASSWORD;
-  if (!password) return next();
+  const url = new URL(request.url);
+  const path = url.pathname;
+
+  if (path === '/unlock') return unlock(request, url, password);
+  if (!password || !isProtected(path)) return next();
 
   const expected = await token(password);
   if (readCookie(request, COOKIE) === expected) return next();
 
-  const url = new URL(request.url);
-
   if (request.method === 'POST') {
     const form = await request.formData().catch(() => null);
     const attempt = form ? String(form.get('password') ?? '') : '';
-    if (await equal(attempt, password)) {
-      return new Response(null, {
-        status: 303,
-        headers: {
-          Location: url.pathname + url.search,
-          'Set-Cookie':
-            `${COOKIE}=${expected}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; ` +
-            'HttpOnly; Secure; SameSite=Lax',
-          'Cache-Control': 'no-store',
-        },
-      });
-    }
+    if (await equal(attempt, password)) return granted(expected, path + url.search);
     return page(true);
   }
-
   return page(false);
+}
+
+// The form on the index posts here, then goes back where it came from.
+async function unlock(request, url, password) {
+  if (request.method !== 'POST') return redirect('/');
+  const form = await request.formData().catch(() => null);
+  const attempt = form ? String(form.get('password') ?? '') : '';
+  const back = safePath(form ? form.get('next') : null);
+  if (password && (await equal(attempt, password))) {
+    return granted(await token(password), back);
+  }
+  const u = new URL(back, url.origin);
+  u.searchParams.set('denied', '1');
+  u.hash = 'upcoming';
+  return redirect(u.pathname + u.search + u.hash);
+}
+
+function isProtected(path) {
+  return PROTECTED.some((p) => path === p || path.startsWith(p + '/'));
+}
+
+// Only same-site paths - never an absolute URL someone pasted into the form.
+function safePath(v) {
+  const s = typeof v === 'string' ? v : '';
+  return s.startsWith('/') && !s.startsWith('//') ? s : '/';
+}
+
+function redirect(location, extra = {}) {
+  return new Response(null, {
+    status: 303,
+    headers: { Location: location, 'Cache-Control': 'no-store', ...extra },
+  });
+}
+
+function granted(expected, location) {
+  return redirect(location, {
+    'Set-Cookie':
+      `${COOKIE}=${expected}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; ` +
+      'HttpOnly; Secure; SameSite=Lax',
+  });
 }
 
 function readCookie(request, name) {
@@ -65,6 +106,7 @@ async function equal(a, b) {
   return x === y;
 }
 
+// Shown when someone lands on a protected deck directly, without the cookie.
 function page(wrong) {
   const html = `<!doctype html>
 <html lang="en">
@@ -96,6 +138,9 @@ input:focus{border-color:var(--pink)}
 button{margin-top:1rem;display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.16em;
   text-transform:uppercase;color:#fff;background:var(--grad);border:0;border-radius:100px;padding:.8rem 1.4rem;cursor:pointer}
 .err{font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;color:var(--pink);margin:.75rem 0 0}
+.back{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;margin-top:2rem}
+.back a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent}
+.back a:hover{color:var(--pink);border-bottom-color:var(--pink)}
 </style>
 </head>
 <body>
@@ -109,6 +154,7 @@ button{margin-top:1rem;display:inline-flex;align-items:center;gap:.5rem;font-fam
     <input id="password" name="password" type="password" autofocus required>
     ${wrong ? '<p class="err">That is not it - try again.</p>' : ''}
     <button type="submit">Open <span>&#8594;</span></button>
+    <p class="back"><a href="/">&#8592; All talks</a></p>
   </form>
 </main>
 </body>
