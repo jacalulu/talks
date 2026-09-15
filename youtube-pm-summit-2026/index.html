@@ -1793,7 +1793,7 @@ body.has-notes .bar{bottom:42vh}
 
   const PAD   = 20;     // px of air to keep between a shape and any content
   const EDGE  = 12;     // px of air to keep at the frame edge
-  const OVER  = 0.45;   // how much of a shape may hang off the frame -
+  const OVER  = 0.5;      // how much of a shape may hang off the frame -
                         // the stage clips it, so it reads as drifting in
                         // from off-screen rather than bouncing off a wall
   const SEEK  = 5.0;    // how hard it steers toward its chosen spot
@@ -1801,7 +1801,7 @@ body.has-notes .bar{bottom:42vh}
   const VMAX  = 260;    // px/s - about a second and a half across the
                         // frame. slower than this and a shape spends most
                         // of its life in transit ACROSS the type.
-  const ORBIT = 16;     // px, the idle wander once it has arrived
+  const ORBIT = 34;     // px, the idle wander once it has arrived
   const EVERY = 4.5;    // s between routine re-picks
   const COLS = 26, ROWS = 15;   // candidate grid
 
@@ -1850,7 +1850,7 @@ body.has-notes .bar{bottom:42vh}
   // How much room is there at (x,y)? Distance to the nearest content edge,
   // and to the frame edge, whichever is closer.
   function clearance(x, y, r = 0) {
-    let m = Math.min(x, y, W - x, H - y) + r * OVER;
+    let m = Math.min(x, y, W - x, H - y) + r * OVER + PAD;
     for (const o of obstacles) {
       const cx = Math.max(o.left, Math.min(x, o.right));
       const cy = Math.max(o.top, Math.min(y, o.bottom));
@@ -1862,7 +1862,7 @@ body.has-notes .bar{bottom:42vh}
 
   function retarget(s) {
     const need = s.r + PAD;
-    const cap  = need + 60;          // past this, extra room stops mattering
+    const cap  = need + 24;          // past this, extra room stops mattering
     let best = null, bestScore = -1e9;
     for (let gx = 0; gx < COLS; gx++) {
       for (let gy = 0; gy < ROWS; gy++) {
@@ -1871,6 +1871,7 @@ body.has-notes .bar{bottom:42vh}
         const y = -ov + (gy + 0.5) / ROWS * (H + 2 * ov);
         let score = Math.min(clearance(x, y, s.r), cap);
         if (score < need) score -= (need - score) * 6;      // hard no
+        score += (Math.random() - 0.5) * 30;                  // roam
         for (const o of S) {
           if (o === s || o.tx === null) continue;
           const want = s.r + o.r + 40;
