@@ -1600,8 +1600,19 @@ body.has-notes .bar{bottom:42vh}
       const kind=p.startsWith('LAND: ')?'land':'p';
       const body=kind==='land'?p.slice(6):p;
       let cur='';
+      const units=[];
       for(let x of body.split(/(?<=[.!?])\s+(?=[A-Z"\u201c\[(])/)){
         x=x.trim(); if(!x) continue;
+        if(wc(x)<=PAGE_WORDS+4){ units.push(x); continue; }
+        // a sentence too long for one page: break it at clause boundaries
+        let c='';
+        for(const part of x.split(/(?<=,|;|\s-)\s+/)){
+          if(c && wc(c)+wc(part)>PAGE_WORDS){ units.push(c); c=''; }
+          c=c?c+' '+part:part;
+        }
+        if(c) units.push(c);
+      }
+      for(const x of units){
         if(cur && wc(cur)+wc(x)>PAGE_WORDS){ push(cur,kind); cur=''; }
         cur=cur?cur+' '+x:x;
       }
