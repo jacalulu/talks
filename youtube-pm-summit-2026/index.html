@@ -192,6 +192,22 @@ ul.items li::before{
 .shots{display:grid;grid-template-columns:1.347fr 2.332fr;gap:3cqw;margin-top:3.2cqw;align-items:start}
 .shot{margin:0;display:flex;flex-direction:column}
 .shots.solo{grid-template-columns:1fr;justify-items:center}
+/* audit: lead slides that carry a diagram were running into the frame padding */
+.s-dg .inner{padding:7cqw 9cqw 8cqw}
+.s-dg h2{font-size:5.2cqw}
+.s-dg .sub{font-size:2cqw;margin-top:2cqw}
+.s-dg .dgm{margin-top:3cqw;max-width:54cqw}
+.s-dg .dg-narrow{max-width:46cqw}
+.s-sdg .inner{padding:7cqw 9cqw 8cqw}
+.s-sdg .q-lg{font-size:4.5cqw}
+.s-sdg .dgm{margin-top:3cqw;max-width:56cqw}
+.s-build h2{font-size:5.4cqw}
+.s-build .inner{padding:7cqw 9cqw 8cqw}
+.s-proof .inner{padding:7cqw 7cqw 8cqw}
+.pf-k{font-size:1.35cqw}
+.pf-sk,.pf-src{font-size:1.2cqw}
+.tl-k{font-size:1.2cqw}
+.pf-card{height:38.6cqw}
 .s-tight .inner,.s-instinct .inner{padding:5cqw 7cqw 6cqw}
 .s-instinct .inner{display:grid;grid-template-columns:1fr 34cqw;gap:5cqw;align-items:center}
 .s-instinct .col-l{min-width:0}
@@ -1211,7 +1227,7 @@ body.has-notes .bar{bottom:42vh}
     </div>
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     <span class="kick">Framework 03</span>
     <h2>You don&rsquo;t have one user. You have two.</h2>
@@ -1246,7 +1262,7 @@ body.has-notes .bar{bottom:42vh}
 </svg></div>
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     <span class="kick">Framework 03</span>
     <h2>You don&rsquo;t have one user. You have two.</h2>
@@ -1281,7 +1297,7 @@ body.has-notes .bar{bottom:42vh}
 </svg></div>
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     <span class="kick">Question one</span>
     <h2>Is natural language a better interface than your UI?</h2>
@@ -1315,7 +1331,7 @@ body.has-notes .bar{bottom:42vh}
     
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     <span class="kick">Question three</span>
     <h2>One experience. Different people, different paths.</h2>
@@ -1345,7 +1361,7 @@ body.has-notes .bar{bottom:42vh}
 </svg></div>
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     <span class="kick">Framework 04</span>
     <h2>Collapsing workflows</h2>
@@ -1380,7 +1396,7 @@ body.has-notes .bar{bottom:42vh}
 </svg></div>
   </div>
 </div></section>
-<section class="s s-feature s-statement"><div class="frame">
+<section class="s s-feature s-statement s-sdg"><div class="frame">
   <div class="inner">
     
     <p class="q q-lg">Making this talk used to be three tools and three sittings.<br><span class='hl'>Nobody shipped me that feature.</span></p>
@@ -1436,7 +1452,7 @@ body.has-notes .bar{bottom:42vh}
     
   </div>
 </div></section>
-<section class="s s-cream s-lead"><div class="frame">
+<section class="s s-cream s-lead s-dg"><div class="frame">
   <div class="inner">
     
     <h2>Automating the building doesn&rsquo;t delete the job. It moves it.</h2>
