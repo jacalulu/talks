@@ -77,7 +77,8 @@ at sentence ends; the arrow key turns pages; the last page moves to the next sli
 
 Presenter: `P` opens the window (sized to the screen), `N` the drawer, `T` toggles the
 timer (it starts by itself on the first forward press),
-`+` and `-` the text size (remembered), `F` full screen. Home and End jump.
+`+` and `-` the text size (remembered), `F` full screen. Home and End jump. `G`, or a click on the slide counter in either
+window, opens a jump panel: type a number and press Enter, or pick a slide from the list.
 
 ## Layout rules from the audit
 
