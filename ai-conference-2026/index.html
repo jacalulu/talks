@@ -840,7 +840,7 @@ body.has-notes .bar{bottom:42vh}
     <span class="np-cue" id="npcue"></span>
     <span class="np-clock" id="npclock">00:00</span>
     <span class="np-next" id="npnext"></span>
-    <span class="np-hint">N notes &middot; T timer &middot; P window &middot; F full screen</span>
+    <span class="np-hint">N notes &middot; T timer (starts on first press) &middot; P window &middot; F full screen</span>
   </div>
   <div class="np-body" id="npbody"></div>
 </div>
@@ -948,6 +948,7 @@ body.has-notes .bar{bottom:42vh}
     return Math.min(c+pk, steps(slides[i]));};
   function paintPage(){ st=stepOf(); paintSteps(); paintNotes(); pushPres(); }
   function go(d){
+    if(d>0 && t0===null) timer(true);   // the clock starts on the first forward press
     const P=PAGES[i]||[]; const cur=P[pg]||{clicks:0,text:''};
     if(d>0){
       if(pk<cur.clicks){pk++; paintPage(); return;}

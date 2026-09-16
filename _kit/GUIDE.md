@@ -75,7 +75,8 @@ at sentence ends; the arrow key turns pages; the last page moves to the next sli
 - Keep spoken notes under about 160 words a slide; split a heavier slide into two
   slides at a click, each with its own notes.
 
-Presenter: `P` opens the window (sized to the screen), `N` the drawer, `T` the timer,
+Presenter: `P` opens the window (sized to the screen), `N` the drawer, `T` toggles the
+timer (it starts by itself on the first forward press),
 `+` and `-` the text size (remembered), `F` full screen. Home and End jump.
 
 ## Layout rules from the audit
