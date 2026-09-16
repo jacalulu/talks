@@ -36,6 +36,9 @@ export default async function middleware(request) {
   if (path === '/unlock') return unlock(request, url);
 
   const talk = talkFor(path);
+  // A deck opened without its trailing slash would resolve every relative
+  // asset against the site root. Send it to the slash form first.
+  if (talk && path === talk) return redirect(path + '/' + url.search, {}, 308);
   const password = talk && process.env[TALKS[talk]];
   if (!talk || !password) return next();
 
@@ -81,9 +84,9 @@ function safePath(v) {
   return s.startsWith('/') && !s.startsWith('//') ? s : '/';
 }
 
-function redirect(location, extra = {}) {
+function redirect(location, extra = {}, status = 303) {
   return new Response(null, {
-    status: 303,
+    status,
     headers: { Location: location, 'Cache-Control': 'no-store', ...extra },
   });
 }
