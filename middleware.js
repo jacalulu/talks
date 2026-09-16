@@ -1,65 +1,79 @@
 // Password gate for talks that are not public yet.
 //
-// The index at / is always public. Only the folders listed in PROTECTED ask
-// for a password, and the index shows them as a locked "upcoming" block until
-// the visitor unlocks. The password is the TALKS_PASSWORD environment variable
-// on Vercel - it is not in this repo.
+// The index at / is always public. Each folder in TALKS asks for its own
+// password, read from the named environment variable on Vercel, and sets
+// its own cookie, so unlocking one talk never unlocks another. The index
+// shows a gated talk as a locked block until the visitor unlocks it.
 //
-// To publish a talk: delete its line from PROTECTED and from config.matcher
-// below, move the contents of <talk>/card.html into index.html as a normal
-// entry, delete the locked block, and push.
+// To add a talk: add its folder here and in config.matcher, add the env
+// var on Vercel, add a locked block to index.html, put the talk's card in
+// <talk>/card.html. To publish a talk: remove it from both lists, move the
+// card into index.html as a normal entry, delete the locked block, push.
 
 import { next } from '@vercel/functions';
 
-const PROTECTED = ['/youtube-pm-summit-2026'];
+const TALKS = {
+  '/youtube-pm-summit-2026': 'TALKS_PASSWORD',
+  '/ai-conference-2026': 'TALKS_PASSWORD_AI_CONFERENCE_2026',
+};
 
-const COOKIE = 'talks_access';
 const COOKIE_DAYS = 30;
 
 export const config = {
   runtime: 'nodejs',
-  // Keep in step with PROTECTED. Everything else never touches this file.
-  matcher: ['/unlock', '/youtube-pm-summit-2026', '/youtube-pm-summit-2026/:path*'],
+  // Keep in step with TALKS. Everything else never touches this file.
+  matcher: [
+    '/unlock',
+    '/youtube-pm-summit-2026', '/youtube-pm-summit-2026/:path*',
+    '/ai-conference-2026', '/ai-conference-2026/:path*',
+  ],
 };
 
 export default async function middleware(request) {
-  const password = process.env.TALKS_PASSWORD;
   const url = new URL(request.url);
   const path = url.pathname;
 
-  if (path === '/unlock') return unlock(request, url, password);
-  if (!password || !isProtected(path)) return next();
+  if (path === '/unlock') return unlock(request, url);
 
-  const expected = await token(password);
-  if (readCookie(request, COOKIE) === expected) return next();
+  const talk = talkFor(path);
+  const password = talk && process.env[TALKS[talk]];
+  if (!talk || !password) return next();
+
+  const expected = await token(password, talk);
+  if (readCookie(request, cookieName(talk)) === expected) return next();
 
   if (request.method === 'POST') {
     const form = await request.formData().catch(() => null);
     const attempt = form ? String(form.get('password') ?? '') : '';
-    if (await equal(attempt, password)) return granted(expected, path + url.search);
+    if (await equal(attempt, password, talk)) return granted(talk, expected, path + url.search);
     return page(true);
   }
   return page(false);
 }
 
-// The form on the index posts here, then goes back where it came from.
-async function unlock(request, url, password) {
+// The form on the index posts here with the talk it belongs to.
+async function unlock(request, url) {
   if (request.method !== 'POST') return redirect('/');
   const form = await request.formData().catch(() => null);
+  const talk = form ? String(form.get('talk') ?? '') : '';
   const attempt = form ? String(form.get('password') ?? '') : '';
   const back = safePath(form ? form.get('next') : null);
-  if (password && (await equal(attempt, password))) {
-    return granted(await token(password), back);
+  if (!(talk in TALKS)) return redirect('/');
+  const password = process.env[TALKS[talk]];
+  if (password && (await equal(attempt, password, talk))) {
+    return granted(talk, await token(password, talk), back);
   }
   const u = new URL(back, url.origin);
-  u.searchParams.set('denied', '1');
-  u.hash = 'upcoming';
+  u.searchParams.set('denied', slug(talk));
+  u.hash = 'up-' + slug(talk);
   return redirect(u.pathname + u.search + u.hash);
 }
 
-function isProtected(path) {
-  return PROTECTED.some((p) => path === p || path.startsWith(p + '/'));
+function talkFor(path) {
+  return Object.keys(TALKS).find((p) => path === p || path.startsWith(p + '/')) || null;
 }
+const slug = (talk) => talk.slice(1);
+const cookieName = (talk) => 'talks_' + slug(talk).replace(/[^a-z0-9]/gi, '_');
 
 // Only same-site paths - never an absolute URL someone pasted into the form.
 function safePath(v) {
@@ -74,10 +88,10 @@ function redirect(location, extra = {}) {
   });
 }
 
-function granted(expected, location) {
+function granted(talk, expected, location) {
   return redirect(location, {
     'Set-Cookie':
-      `${COOKIE}=${expected}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; ` +
+      `${cookieName(talk)}=${expected}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; ` +
       'HttpOnly; Secure; SameSite=Lax',
   });
 }
@@ -91,18 +105,20 @@ function readCookie(request, name) {
   return null;
 }
 
-async function token(password) {
+// The cookie value is an HMAC of a fixed message under the talk's password,
+// so it proves the password without containing it.
+async function token(password, talk) {
   const key = await crypto.subtle.importKey(
     'raw', new TextEncoder().encode(password),
     { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
   );
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('talks-access-v1'));
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('talks-access-v2:' + talk));
   return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Compare via HMAC digests so the comparison does not leak length or prefix.
-async function equal(a, b) {
-  const [x, y] = await Promise.all([token(a), token(b)]);
+// Compare via digests so the comparison does not leak length or prefix.
+async function equal(a, b, talk) {
+  const [x, y] = await Promise.all([token(a, talk), token(b, talk)]);
   return x === y;
 }
 

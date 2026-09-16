@@ -112,25 +112,46 @@ footer a:hover{color:var(--pink);border-bottom-color:var(--pink)}
   </header>
   <ul>
     <!-- Talks that are public go here as plain entries, newest first.
-         A talk that is not public yet lives in its own folder behind the
-         password, with its details in <talk>/card.html. The block below
-         asks for the password and, once unlocked, swaps in that card. -->
-    <li class="t t-lock" id="upcoming" data-card="youtube-pm-summit-2026/card.html">
+         A talk that is not public yet lives in its own folder behind its own
+         password, with its details in <talk>/card.html. Each locked block
+         asks for that talk's password and, once unlocked, swaps in the card. -->
+    <li class="t t-lock" id="up-ai-conference-2026" data-card="ai-conference-2026/card.html" data-talk="/ai-conference-2026">
       <span class="t-d">Upcoming</span>
       <details class="lock">
         <summary>
-          <span class="lock-h"><svg class="lock-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>One talk, not public yet</span>
-          <span class="lock-b">If you have the password, unlock it to see the details and open the deck.</span>
+          <span class="lock-h"><svg class="lock-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>The AI Conference</span>
+          <span class="lock-b">Not public yet. If you have the password, unlock it to see the details and open the deck.</span>
           <span class="t-go">Enter password <span>&#8594;</span></span>
         </summary>
         <form class="unlock" method="post" action="/unlock">
           <input type="hidden" name="next" value="/">
-          <label for="pw">Password</label>
+          <input type="hidden" name="talk" value="/ai-conference-2026">
+          <label for="pw-ai-conference-2026">Password</label>
           <div class="row">
-            <input id="pw" name="password" type="password" autocomplete="off" required>
+            <input id="pw-ai-conference-2026" name="password" type="password" autocomplete="off" required>
             <button type="submit">Unlock <span>&#8594;</span></button>
           </div>
-          <p class="err" id="denied" hidden>That is not it - try again.</p>
+          <p class="err" hidden>That is not it - try again.</p>
+        </form>
+      </details>
+    </li>
+    <li class="t t-lock" id="up-youtube-pm-summit-2026" data-card="youtube-pm-summit-2026/card.html" data-talk="/youtube-pm-summit-2026">
+      <span class="t-d">Upcoming</span>
+      <details class="lock">
+        <summary>
+          <span class="lock-h"><svg class="lock-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>YouTube Ads PM Summit</span>
+          <span class="lock-b">Not public yet. If you have the password, unlock it to see the details and open the deck.</span>
+          <span class="t-go">Enter password <span>&#8594;</span></span>
+        </summary>
+        <form class="unlock" method="post" action="/unlock">
+          <input type="hidden" name="next" value="/">
+          <input type="hidden" name="talk" value="/youtube-pm-summit-2026">
+          <label for="pw-youtube-pm-summit-2026">Password</label>
+          <div class="row">
+            <input id="pw-youtube-pm-summit-2026" name="password" type="password" autocomplete="off" required>
+            <button type="submit">Unlock <span>&#8594;</span></button>
+          </div>
+          <p class="err" hidden>That is not it - try again.</p>
         </form>
       </details>
     </li>
@@ -141,21 +162,23 @@ footer a:hover{color:var(--pink);border-bottom-color:var(--pink)}
   </footer>
 </div>
 <script>
-// If the visitor already unlocked, the card behind the password loads and
-// replaces the locked block. Without the cookie that request is a 401 and the
-// block stays as it is. No details of the talk are in this file.
+// For each locked block: if the visitor already unlocked that talk, its card
+// loads and replaces the block. Without the cookie that request is a 401 and
+// the block stays. No details of a gated talk are in this file.
 (async()=>{
-  const li=document.getElementById('upcoming'); if(!li) return;
-  if(new URLSearchParams(location.search).get('denied')){
-    li.querySelector('details').open=true;
-    document.getElementById('denied').hidden=false;
-    history.replaceState(null,'',location.pathname+'#upcoming');
-    document.getElementById('pw').focus();
+  const denied=new URLSearchParams(location.search).get('denied');
+  for(const li of document.querySelectorAll('.t-lock')){
+    if(denied && li.id==='up-'+denied){
+      li.querySelector('details').open=true;
+      li.querySelector('.err').hidden=false;
+      history.replaceState(null,'',location.pathname+'#'+li.id);
+      li.querySelector('input[type=password]').focus();
+    }
+    try{
+      const r=await fetch(li.dataset.card,{cache:'no-store'});
+      if(r.ok){ li.innerHTML=await r.text(); li.classList.remove('t-lock'); }
+    }catch(e){}
   }
-  try{
-    const r=await fetch(li.dataset.card,{cache:'no-store'});
-    if(r.ok){ li.innerHTML=await r.text(); li.classList.remove('t-lock'); }
-  }catch(e){}
 })();
 </script>
 </body>
