@@ -1159,6 +1159,7 @@ body.has-notes .bar{bottom:42vh}
   document.querySelector('.prev').onclick=()=>go(-1);
   deck.addEventListener('click',e=>{
     if(e.target.closest('.hud,.jump'))return;
+    if(!deckJump.panel.hidden){deckJump.close();return;}   // a click outside just dismisses the jump panel
     go(e.clientX > innerWidth*0.5 ? 1 : -1);
   });
   let x0=null;
@@ -1338,6 +1339,7 @@ body.has-notes .bar{bottom:42vh}
     list.addEventListener('click',e=>{ const b=e.target.closest('.j'); if(b){ e.stopPropagation(); goTo(b.dataset.n); } });
     inp.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Enter') goTo(inp.value); if(e.key==='Escape') close(); });
     panel.addEventListener('click',e=>e.stopPropagation());
+    doc.addEventListener('click',e=>{ if(!panel.hidden && !e.target.closest('.jump,.count,.pos')) close(); });
     doc.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!panel.hidden) close(); if((e.key==='g'||e.key==='G')&&doc.activeElement!==inp){ e.preventDefault(); panel.hidden?open():close(); } });
     return {open,close,panel};
   }
