@@ -51,6 +51,7 @@ and sections fall out of step the notes show on the wrong slides.
 | `s-cream s-duo s-shots` | two screenshots side by side; `.shots.solo` for one |
 | `s-cream s-list s-instinct` | list left, screenshot right |
 | `s-feature s-image` | full-bleed image with `.cap` caption |
+| `s-feature s-image s-video` | full-bleed muted looping clip; `data-vid` maps to webm+mp4 in the `vid-src` JSON |
 | `s-cream s-duo` | two text columns |
 | `s-feature s-close` | thank you |
 
@@ -58,6 +59,10 @@ Click builds: give elements `data-step="1"`, `data-step="2"`... on the slide. It
 `.items` and `[data-step]` inside `.dgm` hide until their step; anything else needs its
 own hide rule (see `.shot[data-step]`). The number of `[[CLICK]]` markers in the notes
 must equal the highest step, in order.
+
+Revealing a second screenshot across two slides: give the first slide the same two-column
+`.shots` grid with the second `<figure class="shot ghost">` present but hidden, so the headline
+never moves. Headlines accept `<strong>` for bold and `<i class="it">` for an italic line.
 
 Images: reference files in the talk folder (`shot.png`), not base64. Use originals at
 1600 pixels or wider. Screenshots of tweets go fuzzy; get the article's image.
@@ -97,7 +102,8 @@ window, opens a jump panel: type a number and press Enter, or pick a slide from 
   on load. Multi-key presses across a slide change fail in the automated browser;
   one key per action, or dispatch `KeyboardEvent`s.
 - `window.__pgdbg()` reports slide, page, click state. `window.__dbg()` reports shapes.
-- Videos play fine but capture black in screenshots. Test with `readyState` or by
+- Videos: `ffmpeg -an -vf scale=960:-2 -c:v libvpx-vp9 -crf 34` for WebM and `-c:v libx264 -crf 26`
+for the MP4 fallback. They play fine but capture black in screenshots. Test with `readyState` or by
   drawing a frame to a canvas.
 - Extract the main `<script>` and run `node --check` before every push.
 
