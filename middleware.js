@@ -13,7 +13,6 @@
 import { next } from '@vercel/functions';
 
 const TALKS = {
-  '/youtube-pm-summit-2026': 'TALKS_PASSWORD',
   '/ai-conference-2026': 'TALKS_PASSWORD_AI_CONFERENCE_2026',
 };
 
@@ -24,7 +23,6 @@ export const config = {
   // Keep in step with TALKS. Everything else never touches this file.
   matcher: [
     '/unlock',
-    '/youtube-pm-summit-2026', '/youtube-pm-summit-2026/:path*',
     '/ai-conference-2026', '/ai-conference-2026/:path*',
   ],
 };
