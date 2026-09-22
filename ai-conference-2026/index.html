@@ -416,6 +416,10 @@ ul.items li::before{
 .nav:hover{background:rgba(255,255,255,.9)}
 .nav:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 .count{cursor:pointer}
+.keys{position:fixed;left:1.2rem;bottom:1.2rem;z-index:9;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.1em;color:rgba(40,32,26,.5);transition:opacity .45s var(--e-micro)}
+.keys.away{opacity:0}
+body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
 .jump[hidden]{display:none}
 .jump{position:fixed;right:1.2rem;bottom:4.4rem;z-index:20;width:min(26rem,calc(100vw - 2.4rem));max-height:62vh;
   display:flex;flex-direction:column;background:#15120F;color:#F2EDE6;border-radius:14px;
@@ -1293,6 +1297,7 @@ body.dark .pips i.on{background:var(--pink)}
   <button class="nav fs" id="fs" aria-label="Full screen" title="Full screen (F)">&#9974;</button>
 </div>
 <div class="bar"><span id="fill"></span></div>
+<div class="keys" id="keys">&#8592; &#8594; slides &middot; N speaker notes</div>
 <div class="jump" id="jump" hidden>
   <div class="jump-bar"><input id="jumpn" type="number" min="1" inputmode="numeric" placeholder="Slide #"><span class="jump-hint">Enter to go &middot; Esc to close</span></div>
   <div class="jump-list" id="jumplist"></div>
@@ -1417,14 +1422,14 @@ body.dark .pips i.on{background:var(--pink)}
     else d.requestFullscreen?.().catch(()=>{});
   }
   document.getElementById('fs').onclick=e=>{e.stopPropagation();toggleFS();};
-  const hud=document.getElementById('hud'), bar=document.querySelector('.bar');
+  const hud=document.getElementById('hud'), bar=document.querySelector('.bar'), keys=document.getElementById('keys');
   let idle;
   function wake(){
-    hud.classList.remove('away'); bar.classList.remove('away');
+    hud.classList.remove('away'); bar.classList.remove('away'); keys.classList.remove('away');
     document.body.style.cursor='';
     clearTimeout(idle);
     idle=setTimeout(()=>{
-      hud.classList.add('away'); bar.classList.add('away');
+      hud.classList.add('away'); bar.classList.add('away'); keys.classList.add('away');
       document.body.style.cursor='none';
     }, 2600);
   }
