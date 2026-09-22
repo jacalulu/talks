@@ -69,19 +69,20 @@ Images: reference files in the talk folder (`shot.png`), not base64. Use origina
 
 ## Speaker notes
 
-Notes are the verbatim script. The presenter cuts them into pages of about two lines
-at sentence ends; the arrow key turns pages; the last page moves to the next slide.
+Notes are the verbatim script, shown whole for the current slide. The arrow key fires the
+slide's next build if it has one, otherwise moves to the next slide.
 
-- `[[CLICK]]` in the text fires the slide's next build on that press, right where the
-  word is. A click at the very start of a page fires as the page turns.
+- `[[CLICK]]` in the text marks where a build fires, right at the word. The pill for the
+  next press is blue; fired ones go grey. When no builds are left, a blue pill at the end
+  says "next slide".
 - `LAND: ...` - a line to say word for word. Red bar, bold.
-- `>> ...` - a director note. Italic, muted, attached to the page before it, never read.
+- `>> ...` - a director note. Italic, muted, never read.
 - `**bold**` - bright highlight for the words to land. Added during rehearsal.
-- Keep spoken notes under about 160 words a slide; split a heavier slide into two
-  slides at a click, each with its own notes.
+- Keep spoken notes under about 180 words a slide so they fit the presenter window
+  without scrolling; split a heavier slide into two at a click.
 
-Presenter: `P` opens the window (sized to the screen), `N` the drawer, `T` toggles the
-timer (it starts by itself on the first forward press),
+Presenter: `P` opens the window (sized to the screen), `N` the drawer, `T` toggles the timer
+(it starts by itself on the first forward press),
 `+` and `-` the text size (remembered), `F` full screen. Home and End jump. `G`, or a click on the slide counter in either
 window, opens a jump panel: type a number and press Enter, or pick a slide from the list.
 

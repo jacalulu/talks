@@ -1009,7 +1009,7 @@ body.has-notes .bar{bottom:42vh}
     bg.style.opacity=(t==='title')?0:1;
   }
   function show(n){
-    i=Math.max(0,Math.min(slides.length-1,n)); pg=0; pk=0;
+    i=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach((s,k)=>s.classList.toggle('on',k===i));
     slides.forEach(s=>s.querySelectorAll('[data-count]').forEach(el=>{
       if(!s.classList.contains('on')){delete el.dataset.ran; el.textContent='0.0';}
@@ -1026,7 +1026,7 @@ body.has-notes .bar{bottom:42vh}
     try{location.hash=i+1;}catch(e){}
   }
   // ── click-to-build: a slide with data-step items advances inside itself ──
-  let st=0, pg=0, pk=0;   // build step, notes page, clicks consumed on that page
+  let st=0;   // build step on the current slide
   const steps=s=>{const e=[...s.querySelectorAll('[data-step]')];
     return e.length?Math.max(...e.map(x=>+x.dataset.step)):0;};
   // A real number, revealed. It counts to 24.1 and stops - the figure is off
@@ -1052,67 +1052,22 @@ body.has-notes .bar{bottom:42vh}
     pips.innerHTML = t ? Array.from({length:t},(_,k)=>
       `<i class="${k<st?'on':''}"></i>`).join('') : '';
   }
-  // ── notes pages ──────────────────────────────────────────────────
-  // Each slide's notes are cut into short pages so the laptop never shows
-  // more than a couple of lines. → turns the page. A page that carries a
-  // [[CLICK]] builds the slide on that press (a click at the very start of
-  // a page fires as the page turns). The last page hands off to the next
-  // slide. Director lines (>>) ride along with the page before them.
-  const PAGE_WORDS=26;
-  const wc=t=>t.split(/\s+/).filter(Boolean).length;
-  const lead=pg_=>!!pg_&&pg_.text.startsWith('[[CLICK]]');
-  function paginate(n){
-    const pages=[]; let pend=[];
-    const push=(text,kind)=>{pages.push({text,kind,pre:pend,dir:[],
-      clicks:(text.match(/\[\[CLICK\]\]/g)||[]).length}); pend=[];};
-    for(const p of n.paras){
-      if(p.startsWith('>> ')){ if(pages.length) pages[pages.length-1].dir.push(p.slice(3)); else pend.push(p.slice(3)); continue; }
-      const kind=p.startsWith('LAND: ')?'land':'p';
-      const body=kind==='land'?p.slice(6):p;
-      let cur='';
-      const units=[];
-      for(let x of body.split(/(?<=[.!?])\s+(?=[A-Z"\u201c\[(])/)){
-        x=x.trim(); if(!x) continue;
-        if(wc(x)<=PAGE_WORDS+4){ units.push(x); continue; }
-        // a sentence too long for one page: break it at clause boundaries
-        let c='';
-        for(const part of x.split(/(?<=,|;|\s-)\s+/)){
-          if(c && wc(c)+wc(part)>PAGE_WORDS){ units.push(c); c=''; }
-          c=c?c+' '+part:part;
-        }
-        if(c) units.push(c);
-      }
-      for(const x of units){
-        if(cur && wc(cur)+wc(x)>PAGE_WORDS){ push(cur,kind); cur=''; }
-        cur=cur?cur+' '+x:x;
-      }
-      if(cur) push(cur,kind);
-    }
-    if(!pages.length) push('','p');
-    if(pend.length) pages[pages.length-1].dir.push(...pend);
-    return pages;
-  }
-  const stepOf=()=>{const P=PAGES[i]||[]; let c=0; for(let q=0;q<pg;q++) c+=P[q].clicks;
-    return Math.min(c+pk, steps(slides[i]));};
-  function paintPage(){ st=stepOf(); paintSteps(); paintNotes(); pushPres(); }
+  // ── advancing ────────────────────────────────────────────────────
+  // → fires the slide's next build if it has one, otherwise moves to the
+  // next slide. The whole of a slide's notes shows at once; the blue pill
+  // marks the click that the next press will fire.
   function go(d){
     if(d>0 && t0===null) timer(true);   // the clock starts on the first forward press
-    const P=PAGES[i]||[]; const cur=P[pg]||{clicks:0,text:''};
-    if(d>0){
-      if(pk<cur.clicks){pk++; paintPage(); return;}
-      if(pg<P.length-1){pg++; pk=lead(P[pg])?1:0; paintPage(); return;}
-      const t=steps(slides[i]); if(st<t){st++;paintSteps();return;}   // more builds than clicks
-      if(i+1>=slides.length) return;
-      pg=0; pk=0; show(i+1); pk=lead((PAGES[i]||[])[0])?1:0; st=stepOf(); paintSteps(); paintNotes(); pushPres();
-    } else {
-      if(pk>(lead(cur)?1:0)){pk--; paintPage(); return;}
-      if(pg>0){pg--; pk=P[pg].clicks; paintPage(); return;}
-      if(st>0){st--;paintSteps();return;}
-      if(i-1<0) return;
-      show(i-1); const Q=PAGES[i]||[]; pg=Math.max(0,Q.length-1); pk=(Q[pg]||{clicks:0}).clicks; st=steps(slides[i]); paintSteps(); paintNotes(); pushPres();
-    }
+    const t=steps(slides[i]);
+    if(d>0 && st<t){st++; paintSteps(); paintNotes(); pushPres(); return;}
+    if(d<0 && st>0){st--; paintSteps(); paintNotes(); pushPres(); return;}
+    const n=i+d;
+    if(n<0||n>=slides.length) return;
+    show(n);
+    st = d<0 ? steps(slides[n]) : 0;
+    paintSteps(); paintNotes(); pushPres();
   }
-  window.__pgdbg=()=>({slide:i+1,pg,pk,st,pages:(PAGES[i]||[]).length});
+  window.__pgdbg=()=>({slide:i+1,st,steps:steps(slides[i])});
   document.addEventListener('keydown',e=>{
     if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
     if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
@@ -1132,8 +1087,8 @@ body.has-notes .bar{bottom:42vh}
   // ── notes text size: + and - in either window, remembered between runs ──
   let nsf=1; try{nsf=parseFloat(localStorage.getItem('notes-size'))||1;}catch(e){}
   function applyNotesSize(){
-    document.documentElement.style.setProperty('--ns',(1.3*nsf).toFixed(3)+'rem');
-    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.6*nsf).toFixed(3)+'rem');
+    document.documentElement.style.setProperty('--ns',(1.2*nsf).toFixed(3)+'rem');
+    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.45*nsf).toFixed(3)+'rem');
   }
   function notesSize(d){
     nsf=Math.min(2.2,Math.max(0.7,Math.round((nsf+d*0.1)*10)/10));
@@ -1186,8 +1141,8 @@ body.has-notes .bar{bottom:42vh}
     if(!pres || pres.closed) return;
     const d=pres.document, n=NOTES[i]; if(!n) return;
     d.getElementById('cue').textContent=n.cue;
-    d.getElementById('pos').textContent=(i+1)+' / '+slides.length+' \u00b7 page '+(pg+1)+'/'+(PAGES[i]||[]).length;
-    d.getElementById('body').innerHTML=renderPage('');
+    d.getElementById('pos').textContent=(i+1)+' / '+slides.length;
+    d.getElementById('body').innerHTML=renderNote(n,'');
     d.getElementById('next').innerHTML = (i+1<HEADS.length && HEADS[i+1])
       ? '<b>Next</b>'+esc(HEADS[i+1]) : '<b>Next</b>-';
     d.getElementById('body').scrollTop=0;
@@ -1261,7 +1216,6 @@ body.has-notes .bar{bottom:42vh}
   // The full narrative per slide, straight from the script. Hidden until N,
   // so the deck is still a deck; the clock is for practice runs.
   const NOTES=[{"cue": "Open \u00b7 0:00-2:00", "paras": ["Cover. Up while people settle. **Bold** words render as a bright highlight for the words you want to land."]}, {"cue": "Open \u00b7 0:00-2:00", "paras": ["Speaker slide. The logo track animates on its own.", ">> Director lines start with two angle brackets. They ride along under the page before them and never get read aloud."]}, {"cue": "Act I", "paras": ["Section divider. One line of notes is plenty here."]}, {"cue": "Act I", "paras": ["A lead slide: kick, headline, sub-line. Notes are cut into pages of about two lines at sentence ends. Each press of the arrow turns a page. The last page moves to the next slide."]}, {"cue": "Act I", "paras": ["A lead slide with a diagram. Diagram slides use the s-dg class for a compact scale so they keep their margins.", "You've got [[CLICK]] the first build and [[CLICK]] the second build. A click marker in the notes fires the slide's next data-step on that press.", "LAND: A line that starts with LAND: gets the red bar and bold. Say it word for word."]}, {"cue": "Act I", "paras": ["A statement slide. The highlighted span carries the payoff.", "LAND: Statement slides usually get a land line."]}, {"cue": "Act II", "paras": ["A list slide with a click build. [[CLICK]] Item one. [[CLICK]] Item two. Each item is a data-step on the slide and a marker in the notes, in the same order."]}, {"cue": "Act II", "paras": ["Four items need the s-tight class, otherwise the list runs off the bottom. [[CLICK]] One. [[CLICK]] Two. [[CLICK]] Three. [[CLICK]] Four."]}, {"cue": "Act II", "paras": ["Two screenshots side by side. Columns are sized by the images' aspect ratios so both come out the same height. For one image, add the solo class to the shots grid."]}, {"cue": "Act II", "paras": ["A full-bleed image with a caption. Use the original file at 1600 pixels or wider; a screenshot of a tweet goes fuzzy on a projector."]}, {"cue": "Act II", "paras": ["A video slide. The clip starts when the slide comes up and loops. Keep it under about a megabyte: 960 pixels wide, muted, WebM with an MP4 fallback."]}, {"cue": "Act II", "paras": ["Two text columns with a click build. [[CLICK]] Left column. [[CLICK]] Right column."]}, {"cue": "Close", "paras": ["Thank you. Same words as the open if the talk has a refrain."]}], HEADS=["Cover", "Speaker", "Section divider", "Lead", "Lead with diagram", "Statement", "List", "Tight list", "Two screenshots", "Image", "Video", "Two columns", "Thank you"];
-  const PAGES=NOTES.map(paginate);
   const np=document.getElementById('np'), npb=document.getElementById('npbody'),
         npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
         npk=document.getElementById('npclock');
@@ -1279,9 +1233,9 @@ body.has-notes .bar{bottom:42vh}
   }
   function paintNotes(){
     const n=NOTES[i]; if(!n) return;
-    npc.textContent=n.cue+' \u00b7 '+(pg+1)+'/'+(PAGES[i]||[]).length;
+    npc.textContent=n.cue;
     npn.textContent = i+1<HEADS.length && HEADS[i+1] ? 'Next: '+HEADS[i+1] : '';
-    npb.innerHTML = renderPage('np-');
+    npb.innerHTML = renderNote(n,'np-');
   }
   const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
   // ── the click cue lives IN the sentence ───────────────────────────
@@ -1289,37 +1243,22 @@ body.has-notes .bar{bottom:42vh}
   // lines in. [[CLICK]] in notes.py is written at the exact word she should
   // click on, and becomes an inline pill here. Function declaration, not a
   // const, because pushPres() calls it from higher up the file.
-  function renderPage(P){
-    const pages=PAGES[i]||[]; const page=pages[pg]||{text:'',kind:'p',clicks:0,pre:[],dir:[]};
+  function renderNote(n, P){
     let k=0;
     const bold=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>');
     const mark=t=>bold(t).replace(/\[\[CLICK\]\]/g,()=>{
-      k++; const c=k<=pk?'ck done':(k===pk+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
+      k++; const c=k<=st?'ck done':(k===st+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
     });
-    const dirs=a=>a.map(d=>'<p class="'+P+'dir">'+bold(d).replace(/\[\[CLICK\]\]/g,'<i class="ck">click</i>')+'</p>').join('');
-    let h=dirs(page.pre||[]);
-    h+= page.kind==='land' ? '<p class="'+P+'land"><b>Land this</b>'+mark(page.text)+'</p>' : '<p>'+mark(page.text)+'</p>';
-    h+=dirs(page.dir||[]);
-    let what=null;
-    if(pk>=page.clicks) what = pg<pages.length-1 ? 'next line' : (i+1<slides.length ? 'next slide' : null);
-    if(what) h+='<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>';
-    const nx=pages[pg+1];
-    if(nx) h+='<p class="'+P+'peek">'+bold(nx.text).replace(/\[\[CLICK\]\]/g,'<i class="ck">click</i>')+'</p>';
-    return h;
-  }
-  function renderNote(n, P){
-    const total=(n.paras.join(' ').match(/\[\[CLICK\]\]/g)||[]).length;
-    let k=0;
-    const mark=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>').replace(/\[\[CLICK\]\]/g,()=>{
-      k++; return '<i class="ck">'+(total>1?'click '+k:'click')+'</i>';
-    });
-    return n.paras.map(p=>{
+    const body=n.paras.map(p=>{
       if(p.startsWith('LAND: '))
         return '<p class="'+P+'land"><b>Land this</b>'+mark(p.slice(6))+'</p>';
       if(p.startsWith('>> '))
         return '<p class="'+P+'dir">'+mark(p.slice(3))+'</p>';
       return '<p>'+mark(p)+'</p>';
     }).join('');
+    const pending = st < Math.min(k, steps(slides[i]));
+    const what = pending ? null : (i+1<slides.length ? 'next slide' : null);
+    return body + (what ? '<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>' : '');
   }
   applyNotesSize();
   // ── jump to a slide ───────────────────────────────────────────────
@@ -1334,7 +1273,7 @@ body.has-notes .bar{bottom:42vh}
   }
   function goSlide(n){
     n=Math.max(0,Math.min(slides.length-1,n));
-    pg=0; pk=0; show(n); pk=lead((PAGES[n]||[])[0])?1:0; st=stepOf(); paintSteps(); paintNotes(); pushPres();
+    show(n); st=0; paintSteps(); paintNotes(); pushPres();
   }
   function wireJump(doc){
     const panel=doc.getElementById('jump'), list=doc.getElementById('jumplist'), inp=doc.getElementById('jumpn');

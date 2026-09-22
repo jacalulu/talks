@@ -1324,7 +1324,7 @@ body.dark .pips i.on{background:var(--pink)}
     bg.style.opacity=(t==='title')?0:1;
   }
   function show(n){
-    i=Math.max(0,Math.min(slides.length-1,n)); pg=0; pk=0;
+    i=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach((s,k)=>s.classList.toggle('on',k===i));
     slides.forEach(s=>s.querySelectorAll('[data-count]').forEach(el=>{
       if(!s.classList.contains('on')){delete el.dataset.ran; el.textContent='0.0';}
@@ -1341,7 +1341,7 @@ body.dark .pips i.on{background:var(--pink)}
     try{location.hash=i+1;}catch(e){}
   }
   // ── click-to-build: a slide with data-step items advances inside itself ──
-  let st=0, pg=0, pk=0;   // build step, notes page, clicks consumed on that page
+  let st=0;   // build step on the current slide
   const steps=s=>{const e=[...s.querySelectorAll('[data-step]')];
     return e.length?Math.max(...e.map(x=>+x.dataset.step)):0;};
   // A real number, revealed. It counts to 24.1 and stops - the figure is off
@@ -1367,67 +1367,22 @@ body.dark .pips i.on{background:var(--pink)}
     pips.innerHTML = t ? Array.from({length:t},(_,k)=>
       `<i class="${k<st?'on':''}"></i>`).join('') : '';
   }
-  // ── notes pages ──────────────────────────────────────────────────
-  // Each slide's notes are cut into short pages so the laptop never shows
-  // more than a couple of lines. → turns the page. A page that carries a
-  // [[CLICK]] builds the slide on that press (a click at the very start of
-  // a page fires as the page turns). The last page hands off to the next
-  // slide. Director lines (>>) ride along with the page before them.
-  const PAGE_WORDS=26;
-  const wc=t=>t.split(/\s+/).filter(Boolean).length;
-  const lead=pg_=>!!pg_&&pg_.text.startsWith('[[CLICK]]');
-  function paginate(n){
-    const pages=[]; let pend=[];
-    const push=(text,kind)=>{pages.push({text,kind,pre:pend,dir:[],
-      clicks:(text.match(/\[\[CLICK\]\]/g)||[]).length}); pend=[];};
-    for(const p of n.paras){
-      if(p.startsWith('>> ')){ if(pages.length) pages[pages.length-1].dir.push(p.slice(3)); else pend.push(p.slice(3)); continue; }
-      const kind=p.startsWith('LAND: ')?'land':'p';
-      const body=kind==='land'?p.slice(6):p;
-      let cur='';
-      const units=[];
-      for(let x of body.split(/(?<=[.!?])\s+(?=[A-Z"\u201c\[(])/)){
-        x=x.trim(); if(!x) continue;
-        if(wc(x)<=PAGE_WORDS+4){ units.push(x); continue; }
-        // a sentence too long for one page: break it at clause boundaries
-        let c='';
-        for(const part of x.split(/(?<=,|;|\s-)\s+/)){
-          if(c && wc(c)+wc(part)>PAGE_WORDS){ units.push(c); c=''; }
-          c=c?c+' '+part:part;
-        }
-        if(c) units.push(c);
-      }
-      for(const x of units){
-        if(cur && wc(cur)+wc(x)>PAGE_WORDS){ push(cur,kind); cur=''; }
-        cur=cur?cur+' '+x:x;
-      }
-      if(cur) push(cur,kind);
-    }
-    if(!pages.length) push('','p');
-    if(pend.length) pages[pages.length-1].dir.push(...pend);
-    return pages;
-  }
-  const stepOf=()=>{const P=PAGES[i]||[]; let c=0; for(let q=0;q<pg;q++) c+=P[q].clicks;
-    return Math.min(c+pk, steps(slides[i]));};
-  function paintPage(){ st=stepOf(); paintSteps(); paintNotes(); pushPres(); }
+  // ── advancing ────────────────────────────────────────────────────
+  // → fires the slide's next build if it has one, otherwise moves to the
+  // next slide. The whole of a slide's notes shows at once; the blue pill
+  // marks the click that the next press will fire.
   function go(d){
     if(d>0 && t0===null) timer(true);   // the clock starts on the first forward press
-    const P=PAGES[i]||[]; const cur=P[pg]||{clicks:0,text:''};
-    if(d>0){
-      if(pk<cur.clicks){pk++; paintPage(); return;}
-      if(pg<P.length-1){pg++; pk=lead(P[pg])?1:0; paintPage(); return;}
-      const t=steps(slides[i]); if(st<t){st++;paintSteps();return;}   // more builds than clicks
-      if(i+1>=slides.length) return;
-      pg=0; pk=0; show(i+1); pk=lead((PAGES[i]||[])[0])?1:0; st=stepOf(); paintSteps(); paintNotes(); pushPres();
-    } else {
-      if(pk>(lead(cur)?1:0)){pk--; paintPage(); return;}
-      if(pg>0){pg--; pk=P[pg].clicks; paintPage(); return;}
-      if(st>0){st--;paintSteps();return;}
-      if(i-1<0) return;
-      show(i-1); const Q=PAGES[i]||[]; pg=Math.max(0,Q.length-1); pk=(Q[pg]||{clicks:0}).clicks; st=steps(slides[i]); paintSteps(); paintNotes(); pushPres();
-    }
+    const t=steps(slides[i]);
+    if(d>0 && st<t){st++; paintSteps(); paintNotes(); pushPres(); return;}
+    if(d<0 && st>0){st--; paintSteps(); paintNotes(); pushPres(); return;}
+    const n=i+d;
+    if(n<0||n>=slides.length) return;
+    show(n);
+    st = d<0 ? steps(slides[n]) : 0;
+    paintSteps(); paintNotes(); pushPres();
   }
-  window.__pgdbg=()=>({slide:i+1,pg,pk,st,pages:(PAGES[i]||[]).length});
+  window.__pgdbg=()=>({slide:i+1,st,steps:steps(slides[i])});
   document.addEventListener('keydown',e=>{
     if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
     if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
@@ -1447,8 +1402,8 @@ body.dark .pips i.on{background:var(--pink)}
   // ── notes text size: + and - in either window, remembered between runs ──
   let nsf=1; try{nsf=parseFloat(localStorage.getItem('notes-size'))||1;}catch(e){}
   function applyNotesSize(){
-    document.documentElement.style.setProperty('--ns',(1.3*nsf).toFixed(3)+'rem');
-    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.6*nsf).toFixed(3)+'rem');
+    document.documentElement.style.setProperty('--ns',(1.2*nsf).toFixed(3)+'rem');
+    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.45*nsf).toFixed(3)+'rem');
   }
   function notesSize(d){
     nsf=Math.min(2.2,Math.max(0.7,Math.round((nsf+d*0.1)*10)/10));
@@ -1501,8 +1456,8 @@ body.dark .pips i.on{background:var(--pink)}
     if(!pres || pres.closed) return;
     const d=pres.document, n=NOTES[i]; if(!n) return;
     d.getElementById('cue').textContent=n.cue;
-    d.getElementById('pos').textContent=(i+1)+' / '+slides.length+' \u00b7 page '+(pg+1)+'/'+(PAGES[i]||[]).length;
-    d.getElementById('body').innerHTML=renderPage('');
+    d.getElementById('pos').textContent=(i+1)+' / '+slides.length;
+    d.getElementById('body').innerHTML=renderNote(n,'');
     d.getElementById('next').innerHTML = (i+1<HEADS.length && HEADS[i+1])
       ? '<b>Next</b>'+esc(HEADS[i+1]) : '<b>Next</b>-';
     d.getElementById('body').scrollTop=0;
@@ -1576,7 +1531,6 @@ body.dark .pips i.on{background:var(--pink)}
   // The full narrative per slide, straight from the script. Hidden until N,
   // so the deck is still a deck; the clock is for practice runs.
   const NOTES=[{"cue": "Open \u00b7 0:00-0:50", "paras": ["Cover. Up while people settle. Move on when you start speaking."]}, {"cue": "Open \u00b7 0:00-0:50", "paras": ["Hi - I'm Jaclyn Konzelmann, a Product Director at Google Labs, where I've been shipping 0-to-1 AI products for the last four years. I started with the launch of the Gemini API and Google AI Studio, which should sound familiar to everyone here.", "I then went on to launch Project Mariner - Google's first experiment into agents that could browse and use the internet. A concept that felt wild at the time. Now every agent is doing it.", "And most recently I've moved on to a portfolio of product experiments, from Opal and Mixboard to Pomelli, as well as several new dig sites we're actively exploring.", ">> The logo track animates on its own. Keep it moving."]}, {"cue": "Open \u00b7 0:00-0:50", "paras": ["This talk is about how to build AI products when agents can actually do things. It's how I'm thinking about what to build these days.", "I'll share some of the frameworks I keep coming back to, the lessons I've learned - informed by a few scars along the way - and examples from shipping at Google Labs scale, as well as from running my own agents in my actual life."]}, {"cue": "Hook \u00b7 0:50-2:50", "paras": ["I want to start somewhere personal.", "Over the past year I've been spinning up agents across my life to do things I never thought I'd be able to achieve on my own. [[CLICK]] Building and launching two Amazon coloring books. [[CLICK]] Finally printing my personal salad cookbook. [[CLICK]] Building a mermaid game iPad app. Recording a custom song with my daughter singing. [[CLICK]] And most recently, publishing a scary-story podcast on Spotify. And there's a bunch more I've left off this list.", ">> Four clicks. The song has no tile - it comes back later as the DJ agent."]}, {"cue": "Hook \u00b7 0:50-2:50", "paras": ["Now, I use the term \"agent\" to cover many things - from my OpenClaws and Grok bots to Claude Code and, of course, Antigravity.", "But the way I use these agents to do things - from thinking of use cases to the way I set them up and how they work - is heavily influenced by my day job, which has taught me how to think about products and build out systems.", "I wouldn't expect the average consumer to casually live this way, even though it's technically possible.", "LAND: That's part of the design problem."]}, {"cue": "Hook \u00b7 0:50-2:50", "paras": ["Anyway - back to the podcast. It's called Maya and the Fog. Maya is the main character, closely modeled after my five-year-old daughter, Ophelia.", "Episode one took me about 24 hours to make. We did it in chunks so I could coach the agent along the way - from dialogue and pacing to voice and sound design. After each segment I gave feedback, the agent incorporated it, and got better. So the quality bar of the next segment's first pass got steadily higher.", "I took the time to embed my taste into the agent because I wanted something actually worth listening to. And we did. Ophelia loved it the first time she heard it. And the second. And the fifth."]}, {"cue": "Hook \u00b7 0:50-2:50", "paras": ["So I decided to start building episode two. Same approach - ask the agent to build out only the first segment so we could QA it and give feedback.", "But when we finished listening to that first segment, Ophelia looked at me and said:", "LAND: \"I want the rest. Can you tell the agent to make the rest?\"", "She had no notes. I had only minor ones. So I had the agent build out the entire episode. The baseline quality was high enough that I didn't have to work at such a granular cadence anymore."]}, {"cue": "Hook \u00b7 0:50-2:50", "paras": ["So why am I sharing this? I'll come back to this example later, when I talk about product taste. But more importantly:", "LAND: That moment is the agentic shift in miniature.", "My \"scary stories agent\" isn't a chatbot that helps me brainstorm. I built an entire system that helped me write, compose and generate a published podcast. And this is the new normal for my five-year-old, who is growing up expecting AI that does things.", "Now let's talk about how to design for that, without the over-exaggerated hype."]}, {"cue": "Shift \u00b7 2:50-3:40", "paras": ["Section. One breath, then on."]}, {"cue": "Shift \u00b7 2:50-3:40", "paras": ["For a long time, our playbooks assumed two things that are no longer true.", "[[CLICK]] One: there's basically one user of your product - a human clicking a UI.", "[[CLICK]] Two: the ground under the product is relatively stable. Code was just code. You wrote it. It functioned. It was deterministic."]}, {"cue": "Shift \u00b7 2:50-3:40", "paras": ["Both assumptions are breaking. Models didn't just get better - agents started doing things.", "LAND: Answers were the old game. Actions are the new one.", "Agents can now call tools, browse the web and talk to other systems. And if you're designing for the world that existed back in January, your product is already far behind."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["I find it useful to name three forces that are all moving at once.", ">> All three rails are here from the start. They light up as you name each one."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["First: the models and the harness. The models got dramatically better. And the harness around them - the thing that gives an agent hands, tools, memory, the ability to act - is becoming more capable.", "The surface area of what's possible jumps weekly. If not daily, or even hourly. If your product assumes last month's ceiling, you're already behind."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["Second: the ecosystem. It's not just humans talking to chatbots anymore. Agents are using products, and products are deciding whether any agent can use them, or only their agent.", "Permissions, integrations, bots, business models. The contract of the internet is being renegotiated in real time."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["Third: users. What people will trust an agent to do is shifting. The Overton window moves. Some markets lean in hard. Some push back on slop and fake.", "You're designing into a moving baseline of \"normal\" - right down to the UX patterns and the shape of the product."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["You don't get to pick one force and ignore the others.", "LAND: You build while all three are sliding.", ">> All three rails are live now. Let them move under the line for a beat."]}, {"cue": "Forces \u00b7 3:40-5:40", "paras": ["Of the three forces, the first is the one the industry already talks about constantly. Benchmarks, frontier labs versus open source, the interesting harnesses people are building in the open. I'm not going to turn this talk into a specs tour.", "My best advice if you care about models and harnesses: use them firsthand. Push them to their limits. That's honestly why I keep so many personal projects going at once - coloring books, cookbooks, games, songs, podcasts. They're an excuse to see what these models and harnesses can actually do right now.", "That firsthand feel is what informs which products are worth building.", ">> CUT IF LONG: this whole slide goes without anything noticing."]}, {"cue": "Mariner \u00b7 5:40-7:25", "paras": ["Project Mariner gave me a first-hand glimpse of that ecosystem force.", "It was a browser agent that acted on the internet - navigating, clicking, filling in forms, completing workflows. It launched as a research preview before browser agents became, well, normal.", "And when we were building it, it wasn't just the technical challenges that had to be worked out. It forced us to think through much bigger questions - because the moment an agent can click, everything changes.", "User contracts and identity. Who is the customer? What sign-in should mean. Whether an agent should have its own identity. How business models bend when the \"user\" isn't a person. Like - what does it mean for an agent to watch Netflix, or listen to Spotify?"]}, {"cue": "Mariner \u00b7 5:40-7:25", "paras": ["It also brings up questions like: [[CLICK]] should agents get a subset of your product, or the whole thing?", "[[CLICK]] Should an agent that shops for you talk to another agent that represents the store - or simply drive the UI like a person would?", "[[CLICK]] How do you think about security, influence, good faith, when something is negotiating on your behalf?"]}, {"cue": "Mariner \u00b7 5:40-7:25", "paras": ["I'm not going to turn this into a Mariner retrospective. The point for you is:", "LAND: When agents can use your product, you have to decide what that means for the agent and for your users.", "You're designing into a live ecosystem. Third parties, permissions, what an agent can and can't do, should and shouldn't do. Reversibility. One-way doors versus two-way doors. Human in the loop for sensitive actions - purchase, delete, send.", "Those questions don't go away. They show up again when we get to risk. Hold them lightly for now."]}, {"cue": "Opal \u00b7 7:25-8:55", "paras": ["That was the ecosystem force up close. The user behaviour force shows up just as fast - and it rewrites what a \"good product shape\" even means.", "That has been one of the biggest learnings so far from Opal, an experimental node-based AI mini-app and workflow builder from Google Labs. The idea is simple: you chain prompts, models and tools into something you can see and share.", "What we heard from users was that they didn't only want a chat box to interact with AI. They wanted AI to work for them. And that required visibility into their workflow - the steps that needed to happen, not just the final paragraph. And they wanted control over it."]}, {"cue": "Opal \u00b7 7:25-8:55", "paras": ["The node UI we landed on isn't something I'd claim is the final form of agent UX. We started exploring that pattern before \"skills\" became a well-established way people think about packaging agent capability.", "It was a useful way to go beyond a single prompt and a generic agent - to make the structure of the work legible."]}, {"cue": "Opal \u00b7 7:25-8:55", "paras": ["Chat is powerful. But it isn't always enough. And this is a live example of that third force: user expectations and \"the new best pattern\" changing in real time.", "Skills didn't exist when Opal started. Now skills are what a lot of the industry has normalized as the way you customize your agents.", "LAND: The ground moved under our feet while we were shipping."]}, {"cue": "Two users \u00b7 8:55-11:15", "paras": ["So if models and harnesses keep expanding what's possible, the ecosystem keeps renegotiating who can act, and users keep rewriting what \"good\" looks like - what do you actually do as a product builder?"]}, {"cue": "Two users \u00b7 8:55-11:15", "paras": ["Mariner taught us you have to design for the agent in the loop. Opal reminds us of the importance of designing for humans. Those aren't conflicting thoughts. They point to where things are heading: the need to design for two users.", "[[CLICK]] User one: the human. They need a real UI - something they can see, use, and feel in control of. Chat is one interface, but it is not automatically the answer to all product design.", "[[CLICK]] User two: the agent. Anything a human can do in your product, I'd argue an agent should be able to do programmatically. And in some cases natural language can go further than what you'd ever expose as sliders and toggles - because the better interface might be a conversation that drives a complex tool underneath."]}, {"cue": "Two users \u00b7 8:55-11:15", "paras": ["[[CLICK]] If you only design for the human, you run the risk that agents will scrape you, break you, or skip you - and new products will replace you.", "[[CLICK]] If you only design for the agent, humans feel like passengers. Out of control.", "Good product work means accounting for both. Balancing the tension."]}, {"cue": "Two users \u00b7 8:55-11:15", "paras": ["LAND: One product. Two users. Same work, and an interface that accounts for both."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["A practical way to calibrate those two users is a spectrum I return to often: Do It With Me versus Do It For Me.", "[[CLICK]] With Me: the human stays in the loop and can drive the experience. Creative direction, taste, high-judgment calls. The agent handles the grind inside that collaboration, and enables the human to do things they never could have done before - like making a podcast, or building an app.", "[[CLICK]] For Me: the agent does it all. You trust the goal, maybe you review the outcome, and the experience is pure delegation.", "[[CLICK]] Different people sit in different places on that spectrum, and your product should be malleable. Near term, that can be as simple as a toggle: accept-all versus ask-before-you-move. Longer term, the agent becomes more like a chief of staff who knows you. Asks when you care, assumes when you don't."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["Pomelli Photoshoot is a feature example of how we productized a point on that spectrum.", "You select a product photo, then choose which templates to apply. We automatically select what we think are the best ones - that's the \"do it For Me\" lean - but you can still pick different ones. After the Photoshoot generates, you can keep editing and tweaking last-minute things.", "With Me at the moments that matter to them. For Me for the heavy lift. Same product, movable dial."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["And that For Me lean only works because we did a lot of heavy lifting when we built the feature. The goal was: go from a poorly shot cell-phone photo to something that feels like a professional photoshoot, in a few clicks.", "LAND: That is not \"tell a model to make the image look better.\" It's product work. Taste, pipelines, constraints, brand context.", "That's where Business DNA comes in. Photoshoot isn't generic beautify. It generates in the direction of this business's brand and design. Give it a product photo that belongs to that brand, and it looks natural."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["Here's a salad brand. Casual cell-phone input. [[CLICK]] And what Photoshoot generates when the input fits the brand."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["Give it something that just doesn't make sense for that business, and it goes off in the wrong direction. Same salad-brand DNA. Here's my dog.", "[[CLICK]] In one run, it put her on a piece of slate with random salad ingredients scattered around her.", "[[CLICK]] In another, it mostly ignored the dog and leaned into the grass and plants. Because I'm a salad brand, so it tried to turn the world into salad."]}, {"cue": "With me, for me \u00b7 11:15-13:15", "paras": ["That's encoded taste doing real work. When the context fits, For Me feels magical. When it doesn't, you see the opinion peeking through. Which is why you still need With Me controls.", "LAND: And why taste isn't a one-line prompt.", "Photoshoot was one point on the spectrum, and that baseline is already moving again. Maya and the Fog is the personal version of encoding taste: early deep coaching, and later the agent had absorbed enough that first drafts got closer to what I wanted. Different story, same lesson. Taste compounding. Which feeds the moat. Hold that thought."]}, {"cue": "Chat \u00b7 13:15-15:15", "paras": ["Another personal example that changed how I think: my DJ agent. We made a song called Purple Urple - a rewrite of Mellow Yellow - with my daughter's vocals.", "The agent had its own computer. It found and installed Ultimate Vocal Remover, an open source tool. Downloaded the original Mellow Yellow, along with a local AI model. Stripped the vocals, helped chop Ophelia's recordings, and laid them on the instrumental track.", "I never once saw what that software looked like. I simply had a conversation, and my agent sent work-in-progress clips back."]}, {"cue": "Chat \u00b7 13:15-15:15", "paras": ["I told this story to someone a few months later and they were amazed. Apparently that tool, which they had learned years ago, was very powerful and incredibly hard to learn.", "But because it was open source, the agent could figure out the code and how it worked. It didn't need the human UI.", "LAND: A human could use UVR. And so could my agent.", "And in that moment, for me, natural language was a better interface than the complex GUI."]}, {"cue": "Chat \u00b7 13:15-15:15", "paras": ["But also - chat was not the right long-term UX if I wanted that process to be repeatable and enjoyable. It was a breakthrough moment, not a finished product pattern.", "LAND: Chat is powerful. But chat can also be a trap if you pretend conversation replaces craft forever."]}, {"cue": "Risk \u00b7 15:15-17:15", "paras": ["There's a feeling I get every time an agent actually does something. The podcast episode that continues. The vocal track that just appears. The Photoshoot that lands in a few clicks. It feels like magic.", "And if you're building products in this space, you want more of that. More agency. More \"it just handled it.\"", "But the honest flip side is: the more you let an agent act, the bigger the mess if it acts wrong."]}, {"cue": "Risk \u00b7 15:15-17:15", "paras": ["LAND: More agency is more magic. It is also more blast radius.", "I find myself thinking about it along two dimensions: one-way doors versus reversible decisions, and the cost of getting it wrong."]}, {"cue": "Risk \u00b7 15:15-17:15", "paras": ["You do not want to ask the user for confirmation on every little thing. That's decision fatigue. They'll mash Next even when you actually needed their opinion.", "[[CLICK]] The pattern a lot of popular chatbots use: when there's a real fork, ask the user - but make it easy to answer. Give them a choice: A, B, C, D, or type your own. And use that sparingly.", "Ideally you make it user-dependent. As the relationship compounds, the agent gets better at asking only when this person actually has an opinion. And that becomes your moat."]}, {"cue": "Risk \u00b7 15:15-17:15", "paras": ["On blast radius: as we push more agentic experiences into products, you should be asking yourself questions like [[CLICK]] can the agent read everything? Can it write? If it can write, what could it leak, erase, or overwrite?", "[[CLICK]] What could go wrong? Have you red-teamed? [[CLICK]] Are you balancing capability against permission? Build systems that maximize the magic while containing the harm.", "You've probably seen the stories. An agent speed-running someone's inbox delete. Agents ordering things nobody meant to buy. Funny until it's your product and your users.", "More permissions, more agency, higher chance something goes wrong. That's the product tension. Hold it. Work through it. Design with it in mind. And don't pretend it isn't there."]}, {"cue": "Moat \u00b7 17:15-19:30", "paras": ["I said a minute ago that asks should get more user-dependent as the relationship compounds - that the relationship is the moat. Let me make that concrete.", "Because once agents can actually do things, a slightly existential product question shows up in almost every product discussion I have these days.", "LAND: If an anything-agent is capable of everything - call any product, build anything on demand, act in the real world - is there space for any other product to exist? What's left as a moat?"]}, {"cue": "Moat \u00b7 17:15-19:30", "paras": ["Not the chrome. Not a UI someone can one-shot rebuild.", "LAND: Growing context plus encoded taste.", "Every session teaches the product who the user is. Preferences, corrections, workflow memory, how you work together, and a growing body of context. Leaving means abandoning a co-pilot that already knows them, and knows how to use their data and context.", "Takeout and agent interoperability can move files. They don't automatically move compiled judgment - the way an agent thinks because of weeks of lived use, and the taste that was built into how that product thinks and acts."]}, {"cue": "Moat \u00b7 17:15-19:30", "paras": ["[[CLICK]] Maya and the Fog is the personal proof. Segment-by-segment coaching wasn't just efficiency. It was encoding taste, so later drafts showed up closer to what I meant. That's compiled judgment.", "[[CLICK]] Pomelli is the product version. You already saw it in Photoshoot. The quality work from the team, amplified by the Business DNA that holds the brand context, means the output isn't generic \"make it pretty.\" It's a tasteful opinion about how a cell-phone shot becomes professional and on-brand for this business."]}, {"cue": "Moat \u00b7 17:15-19:30", "paras": ["LAND: The moat is the relationship. Design like you're trying to earn more of it every week."]}, {"cue": "Mixboard \u00b7 19:30-20:50", "paras": ["I've been talking a lot about taste. Encoding it, defending it, earning the relationship week by week. There's a less glamorous half of taste that doesn't show up in the launch blog: knowing when to stop.", "We recently told people we're shutting down the Mixboard experiment. So I can say this out loud.", "Build to learn. Hold the lessons, not the prototype. It's hard to kill your darlings, but sometimes it's necessary. You take what you learned into everything next."]}, {"cue": "Mixboard \u00b7 19:30-20:50", "paras": ["And sometimes, when you've been building to learn and you've pivoted so many times that where you ended is unrecognizable from where you started, a hard reset is the honest move. Not one more patch. Start fresh.", "LAND: Taste in the edit includes knowing when to stop."]}, {"cue": "Monday \u00b7 20:50-22:20", "paras": ["Three things you can do next week.", "[[CLICK]] Step one: map the human path. What they actually do, click and decide, in their words.", "[[CLICK]] Step two: map the agent path. Anything a human can do, an agent should be able to do. If it can't, that's a product gap.", "[[CLICK]] Step three: let each person choose. Chat-heavy, UI-heavy, or a mix - as long as both paths work together. Different users will prefer different routes through the same product. That's a feature of designing for two users, not a failure to pick one modality."]}, {"cue": "Close \u00b7 22:20-23:10", "paras": ["LAND: The gap between an AI agent demo and an AI agent daily driver is not mostly a model problem. It's a design problem. And a product problem."]}, {"cue": "Close \u00b7 22:20-23:10", "paras": ["Design for two users. [[CLICK]] Treat chat as power and trap. Surface UI when judgment matters. [[CLICK]] Ask when it's a one-way door, and evolve those asks with the relationship.", "[[CLICK]] Compound context and taste so the product gets harder to leave for the right reasons. [[CLICK]] Kill prototypes that taught you everything but still need to die."]}, {"cue": "Close \u00b7 22:20-23:10", "paras": ["Stay curious. Keep building. Thank you.", "I'd love to take questions."]}], HEADS=["Cover", "Speaker", "This talk", "Agents across my life", "The design problem", "Maya and the Fog", "Ophelia's line", "The shift in miniature", "Section 01", "Two assumptions", "Answers to actions", "Three forces", "Models and harness", "Ecosystem", "Users", "All three sliding", "Use them firsthand", "Mariner", "The questions", "Decide what it means", "Opal", "Opal screenshot", "The ground moved", "Section 02", "Two users", "Failure modes", "One product, two users", "With me, for me", "Photoshoot", "Product work", "Salad, before and after", "The dog", "Encoded taste", "Purple Urple", "So could my agent", "Chat, power and trap", "Section 03", "Blast radius", "When to ask", "Checklist", "The moat question", "Context plus taste", "Two proofs", "The relationship", "Mixboard", "Knowing when to stop", "Monday rule", "Demo to daily driver", "Recap", "Thank you"];
-  const PAGES=NOTES.map(paginate);
   const np=document.getElementById('np'), npb=document.getElementById('npbody'),
         npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
         npk=document.getElementById('npclock');
@@ -1594,9 +1548,9 @@ body.dark .pips i.on{background:var(--pink)}
   }
   function paintNotes(){
     const n=NOTES[i]; if(!n) return;
-    npc.textContent=n.cue+' \u00b7 '+(pg+1)+'/'+(PAGES[i]||[]).length;
+    npc.textContent=n.cue;
     npn.textContent = i+1<HEADS.length && HEADS[i+1] ? 'Next: '+HEADS[i+1] : '';
-    npb.innerHTML = renderPage('np-');
+    npb.innerHTML = renderNote(n,'np-');
   }
   const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
   // ── the click cue lives IN the sentence ───────────────────────────
@@ -1604,37 +1558,22 @@ body.dark .pips i.on{background:var(--pink)}
   // lines in. [[CLICK]] in notes.py is written at the exact word she should
   // click on, and becomes an inline pill here. Function declaration, not a
   // const, because pushPres() calls it from higher up the file.
-  function renderPage(P){
-    const pages=PAGES[i]||[]; const page=pages[pg]||{text:'',kind:'p',clicks:0,pre:[],dir:[]};
+  function renderNote(n, P){
     let k=0;
     const bold=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>');
     const mark=t=>bold(t).replace(/\[\[CLICK\]\]/g,()=>{
-      k++; const c=k<=pk?'ck done':(k===pk+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
+      k++; const c=k<=st?'ck done':(k===st+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
     });
-    const dirs=a=>a.map(d=>'<p class="'+P+'dir">'+bold(d).replace(/\[\[CLICK\]\]/g,'<i class="ck">click</i>')+'</p>').join('');
-    let h=dirs(page.pre||[]);
-    h+= page.kind==='land' ? '<p class="'+P+'land"><b>Land this</b>'+mark(page.text)+'</p>' : '<p>'+mark(page.text)+'</p>';
-    h+=dirs(page.dir||[]);
-    let what=null;
-    if(pk>=page.clicks) what = pg<pages.length-1 ? 'next line' : (i+1<slides.length ? 'next slide' : null);
-    if(what) h+='<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>';
-    const nx=pages[pg+1];
-    if(nx) h+='<p class="'+P+'peek">'+bold(nx.text).replace(/\[\[CLICK\]\]/g,'<i class="ck">click</i>')+'</p>';
-    return h;
-  }
-  function renderNote(n, P){
-    const total=(n.paras.join(' ').match(/\[\[CLICK\]\]/g)||[]).length;
-    let k=0;
-    const mark=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>').replace(/\[\[CLICK\]\]/g,()=>{
-      k++; return '<i class="ck">'+(total>1?'click '+k:'click')+'</i>';
-    });
-    return n.paras.map(p=>{
+    const body=n.paras.map(p=>{
       if(p.startsWith('LAND: '))
         return '<p class="'+P+'land"><b>Land this</b>'+mark(p.slice(6))+'</p>';
       if(p.startsWith('>> '))
         return '<p class="'+P+'dir">'+mark(p.slice(3))+'</p>';
       return '<p>'+mark(p)+'</p>';
     }).join('');
+    const pending = st < Math.min(k, steps(slides[i]));
+    const what = pending ? null : (i+1<slides.length ? 'next slide' : null);
+    return body + (what ? '<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>' : '');
   }
   applyNotesSize();
   // ── jump to a slide ───────────────────────────────────────────────
@@ -1649,7 +1588,7 @@ body.dark .pips i.on{background:var(--pink)}
   }
   function goSlide(n){
     n=Math.max(0,Math.min(slides.length-1,n));
-    pg=0; pk=0; show(n); pk=lead((PAGES[n]||[])[0])?1:0; st=stepOf(); paintSteps(); paintNotes(); pushPres();
+    show(n); st=0; paintSteps(); paintNotes(); pushPres();
   }
   function wireJump(doc){
     const panel=doc.getElementById('jump'), list=doc.getElementById('jumplist'), inp=doc.getElementById('jumpn');
