@@ -788,14 +788,20 @@ body.has-notes .bar{bottom:42vh}
 @keyframes tr-ride{0%{translate:-45.0px 58.0px;scale:1.0}7.143%{translate:-37.9px 57.2px;scale:1.0}14.29%{translate:-31.7px 54.9px;scale:1.0}21.43%{translate:-26.2px 51.5px;scale:1.0}28.57%{translate:-21.5px 47.1px;scale:1.0}35.71%{translate:-17.3px 42.1px;scale:1.0}42.86%{translate:-13.7px 36.6px;scale:1.0}50%{translate:-10.6px 30.8px;scale:1.0}57.14%{translate:-8.0px 24.9px;scale:1.0}64.29%{translate:-5.8px 19.2px;scale:1.0}71.43%{translate:-3.9px 13.8px;scale:1.0}78.57%{translate:-2.4px 8.9px;scale:1.18}85.71%{translate:-1.2px 4.7px;scale:1.18}92.86%{translate:-0.4px 1.6px;scale:1.0}100%{translate:0.0px 0.0px;scale:1.0}}
 
 /* ══ The AI Conference 2026 ═══════════════════════════════════════════
-   The conference template is near-black with violet washes and white type.
-   The feature slides - cover, dividers, statements, images, close - take
-   that ground. Content slides stay on the cream so the deck is still hers.
-   paint() adds body.dark on those slides; the wash is one fixed layer that
-   crossfades with the ground.                                            */
-:root{--night:#0C0416;--violet:#7A1FFF;--violet-2:#B24BFF;--lav:#E3C8FF}
+   The conference template is near-black with violet washes, white type
+   and a few translucent blocks and outlines at the edges. The whole deck
+   takes that ground. The Labs elements of the kit - cream paper, floating
+   shapes, the coral gradient - are switched off here. paint() puts the
+   tone on the body as a class so the wash is stronger on feature slides. */
+:root{
+  --night:#0A0312;--violet:#7A1FFF;--violet-2:#B24BFF;--magenta:#F06BFF;--lav:#D9A6FF;
+  --ink:#FFFFFF;--ink-soft:rgba(255,255,255,.68);
+  --pink:#C58BFF;--coral:#D9A6FF;--blush:#E36BFF;
+  --grad:linear-gradient(90deg,#9B5CFF 0%,#C46BFF 50%,#F06BFF 100%);
+}
+body{background:var(--night)!important}
 body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.78;
   transition:opacity .7s var(--e-big);
   background:
     radial-gradient(56% 72% at 2% 100%, rgba(122,31,255,.78), rgba(122,31,255,0) 62%),
@@ -804,34 +810,54 @@ body::before{
     radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.3px);
   background-size:auto,auto,auto,22px 22px;
 }
-body.dark::before{opacity:1}
-.s-feature{color:#fff}
-.s-feature .kick,.s-section .num{color:var(--lav)}
-.s-feature .sub,.s-feature .li-b,.s-feature .attrib,.s-feature .cap,.s-feature .col p{color:rgba(255,255,255,.68)}
-.s-feature .q{color:#fff}
-.s-feature .rail-l{color:rgba(255,255,255,.5)}
-.s-feature .rail.lit .rail-l{color:#fff}
-.s-feature .rail-t{background:rgba(255,255,255,.14)}
-.s-feature .rail-f{background:rgba(255,255,255,.28)}
-.s-feature .rail-m{background:var(--night);border-color:rgba(255,255,255,.45)}
-.s-image img,.s-video video{box-shadow:0 2cqw 6cqw -2cqw rgba(0,0,0,.65)}
-body.dark .hud,body.dark .count{color:rgba(255,255,255,.6)}
-body.dark .nav{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85)}
-body.dark .nav:hover{background:rgba(255,255,255,.2)}
-body.dark .bar{background:rgba(255,255,255,.12)}
-body.dark .pips i{background:rgba(255,255,255,.3)}
-body.dark .pips i.on{background:var(--pink)}
-
-/* statement with the rails under it: pull the quote up so both fit */
+body.tone-feature::before,body.tone-image::before,body.tone-title::before{opacity:1}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='%23fff'%3E%3Crect x='0' y='690' width='130' height='210' opacity='.05'/%3E%3Crect x='130' y='790' width='110' height='110' opacity='.035'/%3E%3Crect x='240' y='845' width='90' height='55' opacity='.05'/%3E%3Crect x='1470' y='750' width='130' height='150' opacity='.045'/%3E%3Crect x='1360' y='840' width='110' height='60' opacity='.03'/%3E%3Crect x='1120' y='0' width='120' height='70' opacity='.03'/%3E%3C/g%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.5'%3E%3Crect x='1230' y='60' width='310' height='170' opacity='.13'/%3E%3Crect x='250' y='0' width='270' height='120' opacity='.1'/%3E%3Crect x='1040' y='700' width='180' height='120' opacity='.08'/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+}
+.stage-shapes{display:none}
+.s-feature,.s-cream{color:#fff}
+.kick,.s-feature .kick,.s-section .num{color:var(--lav)}
+.s-feature .sub,.s-feature .li-b,.s-feature .attrib,.s-feature .cap,.s-feature .col p{color:var(--ink-soft)}
+.q{color:#fff}
+.col{border-top-color:rgba(255,255,255,.2)}
+.dg-line{stroke:rgba(255,255,255,.32)}
+.rail-t{background:rgba(255,255,255,.14)}
+.rail-f{background:rgba(255,255,255,.3)}
+.rail-m{background:var(--night);border-color:rgba(255,255,255,.45)}
+.rail-l{color:rgba(255,255,255,.5)}
+.rail.lit .rail-l{color:#fff}
+.tl-art{background:rgba(255,255,255,.06);box-shadow:0 1.1cqw 3cqw -1.2cqw rgba(0,0,0,.6)}
+.shot img,.pics .shot img{box-shadow:0 1.6cqw 5cqw -1.6cqw rgba(0,0,0,.6)}
+.s-image img,.s-video video{box-shadow:0 2cqw 6cqw -2cqw rgba(0,0,0,.7)}
 .s-statement .rails{margin-top:5cqw;max-width:50cqw}
-.s-statement .rails .rail-l{color:rgba(255,255,255,.5)}
-
+/* hud on the dark ground */
+.hud,.count{color:rgba(255,255,255,.6)}
+.nav{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85)}
+.nav:hover{background:rgba(255,255,255,.2)}
+.bar{background:rgba(255,255,255,.12)}
+.pips i{background:rgba(255,255,255,.3)}
+.pips i.on{background:var(--magenta)}
+/* speaker slide: same composition, on the night ground */
+.s-title{background:transparent}
+.tl-wash{
+  background:
+    radial-gradient(60% 90% at 4% 0%, rgba(122,31,255,.75), rgba(122,31,255,0) 64%),
+    radial-gradient(40% 60% at 96% 6%, rgba(178,75,255,.55), rgba(178,75,255,0) 66%),
+    radial-gradient(44% 70% at 70% 60%, rgba(64,12,128,.6), rgba(64,12,128,0) 72%);
+}
+.tl-name{color:#fff}
+.tl-role{color:var(--lav)}
+.tl-portrait{box-shadow:0 0 0 .28cqw rgba(255,255,255,.92), .3cqw .5cqw 1.6cqw -.7cqw rgba(0,0,0,.5)}
+.nd{background:var(--night);border-color:var(--magenta)}
+.mk[alt="Google Labs"]{filter:invert(1)}
+.mk[alt="Microsoft"]{filter:brightness(1.7)}
 /* portrait photos side by side, sized by height so a phone shot and its
    photoshoot sit level and the row never overflows the frame */
 .s-pics .inner{padding:6cqw 7cqw 6cqw}
 .s-pics h2{font-size:4.6cqw;max-width:20em}
 .pics{display:flex;gap:2.6cqw;margin-top:2.4cqw;align-items:flex-start}
-.pics .shot img{height:25cqw;width:auto;border-radius:1.2cqw;box-shadow:0 1.6cqw 5cqw -1.6cqw rgba(60,45,35,.35)}
+.pics .shot img{height:25cqw;width:auto;border-radius:1.2cqw}
 .shots.solo{grid-template-columns:1fr;max-width:62cqw}
 .s-close .q{font-size:6cqw}
 /* gallery: the headline sits on a compact scale so four tiles keep the bottom margin */
@@ -875,7 +901,7 @@ body.dark .pips i.on{background:var(--pink)}
 <!-- The three pitch icons used to live here as <use> targets. They are INLINE
      now, in PITCH_ICONS below - see the note there. -->
 </defs></svg>
-<div class="stage-shapes" id="bg" aria-hidden="true"><span class="sl" style="width:10cqw"><svg class="blob" viewBox="0 0 360 360" aria-hidden="true"><g class="rot rot1" style="--tilt:-18deg"><use href="#sh-hexagon" fill="#48F08B"/></g></svg></span><span class="sl" style="width:10cqw"><svg class="blob" viewBox="0 0 360 360" aria-hidden="true"><g class="rot rot2" style="--tilt:22deg"><use href="#sh-circle" fill="#5E9BFF"/></g></svg></span><span class="sl" style="width:10cqw"><svg class="blob" viewBox="0 0 360 360" aria-hidden="true"><g class="rot rot3" style="--tilt:-25deg"><use href="#sh-square" fill="#FFBDF9"/></g></svg></span><span class="sl" style="width:10cqw"><svg class="blob" viewBox="0 0 360 360" aria-hidden="true"><g class="rot rot4" style="--tilt:0deg"><use href="#sh-clover" fill="#FCC934"/></g></svg></span></div>
+<div class="stage-shapes" id="bg" aria-hidden="true"></div>
 <script type="application/json" id="vid-src">{"vid-mermaid": {"webm": "mermaid.webm", "mp4": "mermaid.mp4"}, "vid-mariner": {"webm": "mariner.webm", "mp4": "mariner.mp4"}, "vid-opal": {"webm": "opal.webm", "mp4": "opal.mp4"}, "vid-photoshoot": {"webm": "photoshoot.webm", "mp4": "photoshoot.mp4"}}</script>
 <div class="deck" id="deck">
 <section class="s s-feature s-section s-cover"><div class="frame">
@@ -1038,9 +1064,9 @@ body.dark .pips i.on{background:var(--pink)}
     <p class="sub">The human, and the agent. The system has to work for both.</p>
     <div class="dgm"><svg viewBox="0 0 620 196" aria-hidden="true">
   <rect class="dg-box" x="366" y="26" width="212" height="126" rx="16"/>
-  <path d="M390 54h78" stroke="#FF4D6D" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <path d="M390 54h78" stroke="#C46BFF" stroke-width="9" stroke-linecap="round" fill="none"/>
   <path class="dg-line" d="M390 80h132M390 99h96"/>
-  <rect x="390" y="116" width="64" height="22" rx="11" fill="none" stroke="#FF4D6D" stroke-width="3"/>
+  <rect x="390" y="116" width="64" height="22" rx="11" fill="none" stroke="#C46BFF" stroke-width="3"/>
   <text class="dg-k" x="472" y="184" font-size="13" text-anchor="middle">YOUR PRODUCT</text>
   <g data-step="1">
     <circle class="dg-box" cx="60" cy="40" r="14"/>
@@ -1052,11 +1078,11 @@ body.dark .pips i.on{background:var(--pink)}
   <g data-step="2">
     <rect class="dg-box" x="38" y="108" width="48" height="40" rx="11"/>
     <path class="dg-box" d="M50 108v-11M74 108v-11"/>
-    <circle cx="53" cy="128" r="4.5" fill="#5E9BFF"/>
-    <circle cx="71" cy="128" r="4.5" fill="#5E9BFF"/>
+    <circle cx="53" cy="128" r="4.5" fill="#F06BFF"/>
+    <circle cx="71" cy="128" r="4.5" fill="#F06BFF"/>
     <text class="dg-k" x="106" y="134" font-size="14">AGENT USER</text>
-    <path class="dg-line" style="stroke:#5E9BFF;stroke-dasharray:9 8" d="M244 128C308 128 312 110 360 110"/>
-    <circle cx="366" cy="110" r="6" fill="#5E9BFF"/>
+    <path class="dg-line" style="stroke:#F06BFF;stroke-dasharray:9 8" d="M244 128C308 128 312 110 360 110"/>
+    <circle cx="366" cy="110" r="6" fill="#F06BFF"/>
   </g>
 </svg></div>
   </div>
@@ -1080,17 +1106,17 @@ body.dark .pips i.on{background:var(--pink)}
     <h2>Do it <strong>with</strong> me. Do it <strong>for</strong> me.</h2>
     <p class="sub">A practical way to calibrate those two users.</p>
     <div class="dgm"><svg viewBox="0 0 620 150" aria-hidden="true">
-  <defs><linearGradient id="spec-g" x1="0" x2="1"><stop offset="0" stop-color="#FF7235"/><stop offset="1" stop-color="#FF4D6D"/></linearGradient></defs>
+  <defs><linearGradient id="spec-g" x1="0" x2="1"><stop offset="0" stop-color="#9B5CFF"/><stop offset="1" stop-color="#F06BFF"/></linearGradient></defs>
   <rect x="10" y="70" width="600" height="7" rx="3.5" fill="url(#spec-g)"/>
   <text class="dg-k" x="10" y="52" font-size="13" fill="var(--ink)">DO IT WITH ME</text>
   <text class="dg-k" x="610" y="52" font-size="13" text-anchor="end" fill="var(--ink)">DO IT FOR ME</text>
   <g data-step="1">
-    <circle cx="70" cy="73.5" r="13" fill="#FFFCF8" stroke="#FF7235" stroke-width="4"/>
+    <circle cx="70" cy="73.5" r="13" fill="#0A0312" stroke="#9B5CFF" stroke-width="4"/>
     <text class="dg-t" x="10" y="112" font-size="15">You stay in the loop and drive.</text>
     <text class="dg-k" x="10" y="136" font-size="12">CREATIVE DIRECTION &middot; TASTE &middot; HIGH-JUDGMENT CALLS</text>
   </g>
   <g data-step="2">
-    <circle cx="550" cy="73.5" r="13" fill="#FFFCF8" stroke="#FF4D6D" stroke-width="4"/>
+    <circle cx="550" cy="73.5" r="13" fill="#0A0312" stroke="#F06BFF" stroke-width="4"/>
     <text class="dg-t" x="610" y="112" font-size="15" text-anchor="end">You trust the goal and review the outcome.</text>
     <text class="dg-k" x="610" y="136" font-size="12" text-anchor="end">PURE DELEGATION</text>
   </g>
@@ -1098,7 +1124,7 @@ body.dark .pips i.on{background:var(--pink)}
     <path d="M150 34 Q310 -8 470 34" fill="none" stroke="var(--ink)" stroke-width="3" stroke-dasharray="8 7" stroke-linecap="round"/>
     <path d="M458 26l12 8-14 5" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M162 26l-12 8 14 5" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text class="dg-k" x="310" y="40" font-size="12" text-anchor="middle" fill="#FF4D6D">A MOVABLE DIAL</text>
+    <text class="dg-k" x="310" y="40" font-size="12" text-anchor="middle" fill="#F06BFF">A MOVABLE DIAL</text>
   </g>
 </svg></div>
   </div>
@@ -1189,23 +1215,23 @@ body.dark .pips i.on{background:var(--pink)}
     <h2>When to ask, and when to just go</h2>
     <div class="dgm"><svg viewBox="0 0 620 290" aria-hidden="true">
   <path class="dg-line" d="M120 20v240M120 260h480"/>
-  <path d="M112 30l8-12 8 12M588 252l12 8-12 8" fill="none" stroke="rgba(40,32,26,.28)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M112 30l8-12 8 12M588 252l12 8-12 8" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   <text class="dg-k" x="140" y="286" font-size="14">REVERSIBLE</text>
   <text class="dg-k" x="600" y="286" font-size="14" text-anchor="end">ONE-WAY DOOR</text>
   <text class="dg-k" x="104" y="258" font-size="14" text-anchor="end">CHEAP</text>
   <text class="dg-k" x="104" y="32" font-size="14" text-anchor="end">COSTLY</text>
   <text class="dg-k" x="22" y="145" font-size="14" text-anchor="middle" transform="rotate(-90 22 145)">IF IT GOES WRONG</text>
-  <rect x="140" y="146" width="220" height="104" rx="14" fill="rgba(40,32,26,.05)"/>
+  <rect x="140" y="146" width="220" height="104" rx="14" fill="rgba(255,255,255,.07)"/>
   <text class="dg-t" x="250" y="192" font-size="21" text-anchor="middle">Just go</text>
   <text class="dg-k" x="250" y="218" font-size="13" text-anchor="middle">AND SHOW YOUR WORK</text>
-  <rect x="140" y="30" width="220" height="104" rx="14" fill="rgba(40,32,26,.05)"/>
+  <rect x="140" y="30" width="220" height="104" rx="14" fill="rgba(255,255,255,.07)"/>
   <text class="dg-t" x="250" y="76" font-size="21" text-anchor="middle">Go, but undoable</text>
   <text class="dg-k" x="250" y="102" font-size="13" text-anchor="middle">KEEP THE WAY BACK</text>
-  <rect x="372" y="146" width="220" height="104" rx="14" fill="rgba(40,32,26,.05)"/>
+  <rect x="372" y="146" width="220" height="104" rx="14" fill="rgba(255,255,255,.07)"/>
   <text class="dg-t" x="482" y="192" font-size="21" text-anchor="middle">Say what you did</text>
   <text class="dg-k" x="482" y="218" font-size="13" text-anchor="middle">AFTER THE FACT</text>
   <g data-step="1">
-    <rect x="372" y="30" width="220" height="104" rx="14" fill="#FF4D6D"/>
+    <rect x="372" y="30" width="220" height="104" rx="14" fill="#A855F7"/>
     <text class="dg-t" x="482" y="76" font-size="21" text-anchor="middle" fill="#fff">Ask first</text>
     <text class="dg-k" x="482" y="102" font-size="13" text-anchor="middle" fill="rgba(255,255,255,.88)">OPTIONS, OR YOUR OWN</text>
   </g>
@@ -1319,14 +1345,14 @@ body.dark .pips i.on{background:var(--pink)}
   const cur=document.getElementById('cur'), fill=document.getElementById('fill');
   const pips=document.getElementById('pips');
   const TONE=["feature", "title", "cream", "cream", "feature", "image", "feature", "feature", "feature", "cream", "feature", "cream", "cream", "cream", "cream", "feature", "cream", "image", "cream", "feature", "image", "image", "feature", "feature", "cream", "cream", "feature", "cream", "image", "cream", "cream", "cream", "feature", "cream", "feature", "feature", "feature", "feature", "cream", "cream", "cream", "feature", "cream", "feature", "cream", "feature", "cream", "feature", "cream", "feature"];
-  const GROUND={feature:'#0C0416',cream:'#F6F2EC',image:'#0C0416',title:'#FAF7F2'};
+  const GROUND={feature:'#0A0312',cream:'#0A0312',image:'#0A0312',title:'#0A0312'};
   const bg=document.getElementById('bg');
   // The shapes are never repositioned. A slide change touches the ground tone
   // and nothing else - that reaction was the jarring part.
   function paint(n){
     const t=TONE[n]||'cream';
     document.body.style.backgroundColor=GROUND[t]||'#F6F2EC';
-    document.body.classList.toggle('dark', t==='feature'||t==='image');
+    document.body.className=document.body.className.replace(/\btone-\S+/g,'').trim()+' tone-'+t;
     bg.style.opacity=(t==='title')?0:1;
   }
   function show(n){
