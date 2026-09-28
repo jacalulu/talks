@@ -1456,16 +1456,16 @@ body.reader #hud .kbd{display:none}
 <div id="progress"></div>
 <nav id="hud" aria-label="Deck controls">
   <button id="b-prev" class="kbd" type="button" aria-label="Previous">&larr;</button>
-  <span class="count kbd" id="count">01 / 29</span>
+  <span class="count kbd" id="count">01 / 31</span>
   <button id="b-next" class="kbd" type="button" aria-label="Next">&rarr;</button>
   <span class="seg"><button id="b-human" type="button" aria-pressed="true" title="Human view">Human</button><button id="b-agent" type="button" aria-pressed="false" title="Agent view (A)">Agent</button></span>
   <button id="b-ov" type="button" title="All slides (O)">Grid</button>
-  <button id="b-notes" type="button" title="Presenter view (P)">Notes</button>
+  <button id="b-notes" type="button" title="Notes drawer (N) - presenter window is P">Notes</button>
   <button id="b-fs" class="kbd" type="button" title="Fullscreen (F)">Full</button>
 </nav>
 <div id="overview" role="dialog" aria-label="All slides">
   <div style="display:flex;justify-content:space-between;gap:20px;align-items:flex-start"><div><h2>The Agentic Shift</h2>
-  <p>→ / space / clicker: next build · A: agent view · P: presenter view · S: start or pause the clock · F: fullscreen · B: blank · O: this grid<br>Open the deck in a second window and both stay in sync (the presenter window is muted).</p></div>
+  <p>→ / space / clicker: next build · A: agent view · P: presenter window · N: notes drawer · S: start or pause the clock · F: fullscreen · B: blank · O: this grid<br>P opens the presenter window: drag it to your laptop screen and keep this one on the projector. Both stay in sync and only this one plays sound.</p></div>
   <button id="ov-close" type="button" style="background:#F5F5F5;color:#000;border:0;border-radius:999px;padding:10px 18px;font-family:var(--mono);font-size:12px;cursor:pointer">Close</button></div>
   <div id="ovgrid"></div>
 </div>
@@ -1486,6 +1486,7 @@ body.reader #hud .kbd{display:none}
   var planned=slides.map(function(s,i){var c=s.dataset.ch,a=byCh[c];return CH[c].s+CH[c].d*a.indexOf(i)/a.length;});
   var maxStep=slides.map(function(s){var m=+(s.dataset.steps||0);[].forEach.call(s.querySelectorAll('[data-b],[data-x]'),function(e){m=Math.max(m,+(e.dataset.b||0),+(e.dataset.x||0));});return m;});
   var isPresenter=function(){return document.body.classList.contains('presenter');};
+  var isPresWin=/presenter/.test(location.search),presWin=null;
 
   /* ---------- agent view ---------- */
   function esc(x){return String(x).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
@@ -1535,7 +1536,7 @@ body.reader #hud .kbd{display:none}
   function countUp(el){var to=+el.dataset.to,dec=+(el.dataset.dec||0),t0=performance.now(),dur=+(el.dataset.dur||1400);function f(n){var k=Math.min(1,(n-t0)/dur),v=to*(1-Math.pow(1-k,3));el.textContent=v.toFixed(dec);if(k<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
   function videos(s){return [].slice.call(s.querySelectorAll('video'));}
   function stopVideos(s){videos(s).forEach(function(v){try{v.pause();v.currentTime=0;}catch(e){}});}
-  function playVideo(v){v.muted=(isPresenter()&&bcPeer)||v.hasAttribute('data-muted');try{var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}catch(e){}}
+  function playVideo(v){v.muted=(isPresenter()&&(bcPeer||isPresWin))||v.hasAttribute('data-muted');try{var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}catch(e){}}
   function syncVideos(s,n){videos(s).forEach(function(v){var at=v.dataset.play;if(at==='enter'||(at!==undefined&&n>=+at)){if(v.paused&&!v.ended&&!v._started){v._started=true;playVideo(v);}}});}
   videos(frame).forEach(function(v){v.addEventListener('ended',function(){if(v.hasAttribute('data-next')&&slides[cur].contains(v)&&(!isPresenter()||!bcPeer))next();});});
   /* elements that light up in sync with the slide's video: data-vt="start-end" (seconds) */
@@ -1589,7 +1590,7 @@ body.reader #hud .kbd{display:none}
 
   /* ---------- navigation + two-window sync ---------- */
   var bc=null,bcPeer=false;
-  try{bc=new BroadcastChannel(KEY);bc.onmessage=function(m){var d=m.data||{};if(!bcPeer){bcPeer=true;if(isPresenter())videos(frame).forEach(function(x){x.muted=true;});}if(d.reload)location.reload();if(typeof d.i==='number')show(d.i,d.step,true);if(typeof d.agent==='boolean')setAgent(d.agent,true);if(d.hello&&!d.reply)post({hello:1,reply:1,i:cur,step:step});};}catch(e){}
+  try{bc=new BroadcastChannel(KEY);bc.onmessage=function(m){var d=m.data||{};if(!bcPeer){bcPeer=true;if(isPresenter())videos(frame).forEach(function(x){x.muted=true;});}if(d.reload)location.reload();if(typeof d.i==='number'){if(!d.hello&&t0===null&&(d.i>cur||(d.i===cur&&d.step>step)))startTimer();show(d.i,d.step,true);}if(typeof d.agent==='boolean')setAgent(d.agent,true);if(d.hello&&!d.reply)post({hello:1,reply:1,i:cur,step:step});};}catch(e){}
   function post(o){try{bc&&bc.postMessage(o);}catch(e){}}
   function show(i,st,remote){
     i=Math.max(0,Math.min(N-1,i));st=Math.max(0,Math.min(maxStep[i],st||0));
@@ -1611,7 +1612,14 @@ body.reader #hud .kbd{display:none}
   function openOv(){grid.innerHTML='';slides.forEach(function(s,i){var b=document.createElement('button');b.type='button';b.className='thumb'+(i===cur?' cur':'');b.innerHTML='<div class="tf"></div><div class="tl">'+pad(i+1)+' · '+CH[s.dataset.ch].n+'</div>';b.querySelector('.tf').appendChild(staticClone(s));b.onclick=function(){closeOv();show(i,0);};grid.appendChild(b);});
     ov.classList.add('on');requestAnimationFrame(function(){[].forEach.call(grid.querySelectorAll('.tf'),function(tf){tf.firstChild.style.transform='scale('+tf.clientWidth/1920+')';});});}
   function closeOv(){ov.classList.remove('on');}
-  function togglePresenter(){document.body.classList.toggle('presenter');store(KEY+':presenter',isPresenter()?'1':'0');videos(frame).forEach(function(v){v.muted=(isPresenter()&&bcPeer)||v.hasAttribute('data-muted');});setTimeout(fit,30);renderSide();}
+  function togglePresenter(){if(isPresWin)return;document.body.classList.toggle('presenter');videos(frame).forEach(function(v){v.muted=(isPresenter()&&bcPeer)||v.hasAttribute('data-muted');});setTimeout(fit,30);renderSide();}
+  function openPresenter(){
+    if(isPresWin)return;
+    if(presWin&&!presWin.closed){presWin.focus();return;}
+    if(isPresenter())togglePresenter();
+    presWin=window.open(location.pathname+'?presenter#'+(cur+1),'agentic-shift-presenter','width='+Math.min(screen.availWidth,1600)+',height='+screen.availHeight+',left=0,top=0');
+    if(!presWin)togglePresenter();
+  }
   function fullscreen(){try{if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}catch(e){}}
 
   document.addEventListener('keydown',function(e){
@@ -1622,7 +1630,7 @@ body.reader #hud .kbd{display:none}
     else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(k)>-1){e.preventDefault();prev();}
     else if(k==='Home')show(0,0);else if(k==='End')show(N-1,maxStep[N-1]);
     else if(k==='a')setAgent(!document.body.classList.contains('agent'));
-    else if(k==='p'||k==='n')togglePresenter();else if(k==='f')fullscreen();else if(k==='o'||k==='g')openOv();
+    else if(k==='p'||k==='P')openPresenter();else if(k==='n'||k==='N')togglePresenter();else if(k==='f')fullscreen();else if(k==='o'||k==='g')openOv();
     else if(k==='s')startTimer();else if(k==='r')resetTimer();
     else if(k==='b'||k==='.')frame.style.opacity=frame.style.opacity==='0'?'':'0';
   });
@@ -1657,7 +1665,7 @@ body.reader #hud .kbd{display:none}
 
   /* ---------- boot ---------- */
   window.__deck={show:show,next:next,prev:prev,maxStep:maxStep,N:N,get cur(){return cur;},get step(){return step;}};
-  if(/presenter/.test(location.search)||store(KEY+':presenter')==='1')document.body.classList.add('presenter');
+  if(isPresWin){document.body.classList.add('presenter');document.title='Presenter - '+document.title;}
   var h=parseInt((location.hash||'').slice(1),10);cur=(h>=1&&h<=N)?h-1:0;
   slides[cur].classList.add('active');applyStep(slides[cur],0);enterSlide(slides[cur]);
   document.getElementById('count').textContent=pad(cur+1)+' / '+pad(N);
