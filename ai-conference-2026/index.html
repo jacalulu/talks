@@ -155,12 +155,20 @@ body.agent .active .agentv .ln{animation:scan .5s both;animation-delay:calc(var(
 
 /* ---------- presenter ---------- */
 #side{display:none}
-body.presenter #app{grid-template-columns:minmax(0,1.6fr) minmax(380px,1fr)}
-body.presenter #side{display:flex;flex-direction:column;background:#0B0816;border-left:1px solid #1E1830;min-height:0}
+/* presenter: notes get the room; current + next are small thumbnails on the left */
+body.presenter #app{grid-template-columns:minmax(280px,30%) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"cur notes" "nxt notes" "tmr notes";background:#0B0816}
+body.presenter #stage{grid-area:cur;align-self:start;aspect-ratio:16/9;margin:30px 18px 0;border-radius:10px;box-shadow:0 0 0 2px #FB5C70}
+body.presenter #stage::before{content:"Now";position:absolute;left:8px;top:6px;z-index:40;background:#FB5C70;color:#fff;padding:3px 7px;border-radius:5px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+body.presenter #side{display:contents}
+body.presenter #side .top{display:contents}
+body.presenter #next{grid-area:nxt;align-self:start;margin:14px 18px 0}
+body.presenter #timer{grid-area:tmr;align-self:start;padding:18px 18px 80px}
+body.presenter #notes{grid-area:notes;border-top:0;border-left:1px solid #1E1830;padding:8px 48px 96px}
+body.presenter .nt{max-width:none}
 #side .top{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:18px}
 #next{position:relative;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #2C2640}
 .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8E8AA3}
-#next .lbl{position:absolute;left:8px;top:6px;z-index:2;background:rgba(0,0,0,.75);padding:3px 7px;border-radius:5px}
+#next .lbl{position:absolute;left:8px;top:6px;z-index:2;background:#0B0816;color:#C9A7FF;padding:3px 7px;border-radius:5px}
 #timer{display:flex;flex-direction:column;gap:7px;justify-content:center;font-family:var(--mono)}
 #timer .big{font-size:46px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-family:var(--hv);font-weight:500}
 #timer .row{font-size:12px;color:#AEAEB2;font-variant-numeric:tabular-nums;line-height:1.5}
@@ -198,11 +206,11 @@ body.reader #hud{left:12px;right:12px;bottom:12px;justify-content:space-between}
 body.reader #hud.hide{opacity:1;pointer-events:auto}
 body.reader #hud .kbd{display:none}
 
-
 /* slide 20: a click switches the slide itself into agent view, so the clicker can do it */
 .slide.agentclick[data-step="1"] .agentv{opacity:1;visibility:visible;transition:opacity .5s}
 .slide.agentclick[data-step="1"]>:not(.agentv){filter:blur(3px) grayscale(.6);opacity:.3;transition:filter .5s,opacity .5s}
 .slide.agentclick[data-step="1"] .agentv .ln{animation:scan .5s both;animation-delay:calc(var(--i) * 35ms)}
+
 </style>
 </head>
 <body>
@@ -1437,7 +1445,6 @@ body.reader #hud .kbd{display:none}
     <p>build it for both types of users: people, and agents</p>
   </aside>
 </section>
-
   </div></main>
   <aside id="side" aria-label="Presenter notes">
     <div class="top">
@@ -1563,15 +1570,17 @@ body.reader #hud .kbd{display:none}
 
   /* ---------- presenter ---------- */
   var nextBox=document.getElementById('next'),notesEl=document.getElementById('nt'),nh=document.getElementById('nh-t');
-  var fsz=+(store(KEY+':fs')||22);
+  var fsz=+(store(KEY+':fs2')||34);
   function staticClone(s){var c=s.cloneNode(true);c.classList.remove('active');c.classList.add('static','all');c.removeAttribute('data-step');[].forEach.call(c.querySelectorAll('video'),function(v){v.removeAttribute('autoplay');v.muted=true;v.preload='metadata';});[].forEach.call(c.querySelectorAll('[data-x]'),function(e){e.classList.remove('off');});return c;}
+  function buildClone(s,n){var c=s.cloneNode(true);c.classList.remove('active');c.classList.add('static');c.removeAttribute('data-step');[].forEach.call(c.querySelectorAll('video'),function(v){v.removeAttribute('autoplay');v.muted=true;v.preload='metadata';});[].forEach.call(c.querySelectorAll('[data-b]'),function(e){e.classList.toggle('on',+e.dataset.b<=n);});[].forEach.call(c.querySelectorAll('[data-x]'),function(e){e.classList.toggle('off',+e.dataset.x<=n);});return c;}
   function renderSide(){
     notesEl.style.fontSize=fsz+'px';
     var n=slides[cur].querySelector('aside.notes');notesEl.innerHTML=n?n.innerHTML:'';
     nh.textContent=pad(+slides[cur].dataset.ch)+' · '+CH[slides[cur].dataset.ch].n+' · slide '+(cur+1)+'/'+N+(maxStep[cur]?' · build '+step+'/'+maxStep[cur]:'');
     var nextIsBuild=step<maxStep[cur];
-    nextBox.innerHTML='<div class="lbl">'+(nextIsBuild?'Next: build on this slide':(cur<N-1?'Next slide':'End'))+'</div>';
-    if(!nextIsBuild&&cur<N-1){nextBox.appendChild(staticClone(slides[cur+1]));fitBox(nextBox);}
+    nextBox.innerHTML='<div class="lbl">'+(nextIsBuild?'Next: build '+(step+1)+'/'+maxStep[cur]+' on this slide':(cur<N-1?'Next slide':'End'))+'</div>';
+    if(nextIsBuild){nextBox.appendChild(buildClone(slides[cur],step+1));fitBox(nextBox);}
+    else if(cur<N-1){nextBox.appendChild(staticClone(slides[cur+1]));fitBox(nextBox);}
     tick();
   }
   var t0=null,pausedAt=null;
@@ -1665,8 +1674,8 @@ body.reader #hud .kbd{display:none}
   on('b-notes',function(){if(document.body.classList.contains('reader'))document.body.classList.toggle('shownotes');else togglePresenter();});
   on('b-human',function(){setAgent(false);});on('b-agent',function(){setAgent(true);});
   on('b-start',startTimer);on('b-reset',resetTimer);
-  on('b-fplus',function(){fsz=Math.min(40,fsz+2);store(KEY+':fs',String(fsz));renderSide();});
-  on('b-fminus',function(){fsz=Math.max(14,fsz-2);store(KEY+':fs',String(fsz));renderSide();});
+  on('b-fplus',function(){fsz=Math.min(64,fsz+2);store(KEY+':fs2',String(fsz));renderSide();});
+  on('b-fminus',function(){fsz=Math.max(16,fsz-2);store(KEY+':fs2',String(fsz));renderSide();});
 
   /* ---------- reader mode ---------- */
   var reader=document.getElementById('reader'),built=false;
