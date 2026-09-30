@@ -211,6 +211,12 @@ body.reader #hud .kbd{display:none}
 .slide.agentclick[data-step="1"]>:not(.agentv){filter:blur(3px) grayscale(.6);opacity:.3;transition:filter .5s,opacity .5s}
 .slide.agentclick[data-step="1"] .agentv .ln{animation:scan .5s both;animation-delay:calc(var(--i) * 35ms)}
 
+/* notes size controls: A- / size / A+ / Fit, also + and - keys */
+body.presenter .fs{align-items:center;gap:6px}
+body.presenter .fs button{font-size:15px;padding:8px 13px;letter-spacing:.04em}
+#fs-v{font-family:var(--mono);font-size:12px;color:#C9A7FF;min-width:7.5ch;text-align:center;text-transform:none;letter-spacing:.04em}
+#b-ffit[aria-pressed="true"]{background:var(--vio);color:#fff}
+
 </style>
 </head>
 <body>
@@ -1457,7 +1463,7 @@ body.reader #hud .kbd{display:none}
         <div class="tb"><button id="b-start" type="button">Start / pause · S</button><button id="b-reset" type="button">Reset · R</button></div>
       </div>
     </div>
-    <div id="notes"><div class="nh"><span id="nh-t"></span><span class="fs"><button id="b-fminus" type="button" aria-label="Smaller notes">A-</button><button id="b-fplus" type="button" aria-label="Larger notes">A+</button></span></div><div class="nt" id="nt"></div></div>
+    <div id="notes"><div class="nh"><span id="nh-t"></span><span class="fs"><button id="b-fminus" type="button" aria-label="Smaller notes" title="Smaller notes (-)">A-</button><span id="fs-v"></span><button id="b-fplus" type="button" aria-label="Larger notes" title="Larger notes (+)">A+</button><button id="b-ffit" type="button" aria-pressed="false" title="Largest size where the whole note fits">Fit</button></span></div><div class="nt" id="nt"></div></div>
   </aside>
 </div>
 <div id="reader"><header><div class="k">The AI Conference 2026 · Jaclyn Konzelmann</div><h1>The Agentic <span class="hl">Shift</span></h1><p>Scroll through the talk. Tap Notes to read the script under each slide. Open on a laptop to present.</p></header></div>
@@ -1566,22 +1572,28 @@ body.reader #hud .kbd{display:none}
   var stage=document.getElementById('stage');
   function fit(){frame.style.setProperty('--s',Math.min(stage.clientWidth/1920,stage.clientHeight/1080));fitBox(document.getElementById('next'));}
   function fitBox(box){if(!box)return;var s=box.querySelector('.slide');if(s)s.style.transform='scale('+(box.clientWidth/1920)+')';}
-  window.addEventListener('resize',function(){fit();checkMode();});
+  window.addEventListener('resize',function(){fit();checkMode();if(ffit)applyFs();});
 
   /* ---------- presenter ---------- */
   var nextBox=document.getElementById('next'),notesEl=document.getElementById('nt'),nh=document.getElementById('nh-t');
-  var fsz=+(store(KEY+':fs2')||34);
+  var fsz=+(store(KEY+':fs3')||28),ffit=store(KEY+':fit')==='1',shown=fsz;
+  function applyFs(){
+    var box=document.getElementById('notes'),v=document.getElementById('fs-v');shown=fsz;
+    if(ffit&&isPresenter()&&box.clientHeight){var lo=14,hi=44;while(lo<hi){var mid=Math.ceil((lo+hi)/2);notesEl.style.fontSize=mid+'px';if(box.scrollHeight<=box.clientHeight+1)lo=mid;else hi=mid-1;}shown=lo;}
+    notesEl.style.fontSize=shown+'px';
+    if(v)v.textContent=(ffit?'fit ':'')+shown+'px';document.getElementById('b-ffit').setAttribute('aria-pressed',String(ffit));
+  }
+  function fontStep(d){ffit=false;store(KEY+':fit','0');fsz=Math.max(14,Math.min(64,shown+d));store(KEY+':fs3',String(fsz));applyFs();}
   function staticClone(s){var c=s.cloneNode(true);c.classList.remove('active');c.classList.add('static','all');c.removeAttribute('data-step');[].forEach.call(c.querySelectorAll('video'),function(v){v.removeAttribute('autoplay');v.muted=true;v.preload='metadata';});[].forEach.call(c.querySelectorAll('[data-x]'),function(e){e.classList.remove('off');});return c;}
   function buildClone(s,n){var c=s.cloneNode(true);c.classList.remove('active');c.classList.add('static');c.removeAttribute('data-step');[].forEach.call(c.querySelectorAll('video'),function(v){v.removeAttribute('autoplay');v.muted=true;v.preload='metadata';});[].forEach.call(c.querySelectorAll('[data-b]'),function(e){e.classList.toggle('on',+e.dataset.b<=n);});[].forEach.call(c.querySelectorAll('[data-x]'),function(e){e.classList.toggle('off',+e.dataset.x<=n);});return c;}
   function renderSide(){
-    notesEl.style.fontSize=fsz+'px';
     var n=slides[cur].querySelector('aside.notes');notesEl.innerHTML=n?n.innerHTML:'';
     nh.textContent=pad(+slides[cur].dataset.ch)+' · '+CH[slides[cur].dataset.ch].n+' · slide '+(cur+1)+'/'+N+(maxStep[cur]?' · build '+step+'/'+maxStep[cur]:'');
     var nextIsBuild=step<maxStep[cur];
     nextBox.innerHTML='<div class="lbl">'+(nextIsBuild?'Next: build '+(step+1)+'/'+maxStep[cur]+' on this slide':(cur<N-1?'Next slide':'End'))+'</div>';
     if(nextIsBuild){nextBox.appendChild(buildClone(slides[cur],step+1));fitBox(nextBox);}
     else if(cur<N-1){nextBox.appendChild(staticClone(slides[cur+1]));fitBox(nextBox);}
-    tick();
+    applyFs();tick();
   }
   var t0=null,pausedAt=null;
   function elapsed(){return t0===null?0:((pausedAt||Date.now())-t0)/1000;}
@@ -1660,6 +1672,7 @@ body.reader #hud .kbd{display:none}
     else if(k==='a')setAgent(!document.body.classList.contains('agent'));
     else if(k==='p'||k==='P')openPresenter();else if(k==='n'||k==='N')togglePresenter();else if(k==='f')fullscreen();else if(k==='o'||k==='g')openOv();
     else if(k==='s')startTimer();else if(k==='r')resetTimer();
+    else if(isPresenter()&&(k==='+'||k==='='))fontStep(2);else if(isPresenter()&&(k==='-'||k==='_'))fontStep(-2);
     else if(k==='b'||k==='.')frame.style.opacity=frame.style.opacity==='0'?'':'0';
   });
   var tx=null,ty=null;
@@ -1674,8 +1687,9 @@ body.reader #hud .kbd{display:none}
   on('b-notes',function(){if(document.body.classList.contains('reader'))document.body.classList.toggle('shownotes');else togglePresenter();});
   on('b-human',function(){setAgent(false);});on('b-agent',function(){setAgent(true);});
   on('b-start',startTimer);on('b-reset',resetTimer);
-  on('b-fplus',function(){fsz=Math.min(64,fsz+2);store(KEY+':fs2',String(fsz));renderSide();});
-  on('b-fminus',function(){fsz=Math.max(16,fsz-2);store(KEY+':fs2',String(fsz));renderSide();});
+  on('b-fplus',function(){fontStep(2);});
+  on('b-fminus',function(){fontStep(-2);});
+  on('b-ffit',function(){ffit=!ffit;store(KEY+':fit',ffit?'1':'0');applyFs();});
 
   /* ---------- reader mode ---------- */
   var reader=document.getElementById('reader'),built=false;
