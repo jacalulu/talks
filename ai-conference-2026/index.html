@@ -1551,7 +1551,7 @@ body.presenter .fs button{font-size:15px;padding:8px 13px;letter-spacing:.04em}
   function videos(s){return [].slice.call(s.querySelectorAll('video'));}
   function stopVideos(s){videos(s).forEach(function(v){try{v.pause();v.currentTime=0;}catch(e){}});}
   function playVideo(v){v.muted=(isPresenter()&&(bcPeer||isPresWin))||v.hasAttribute('data-muted');v.volume=1;try{var p=v.play();if(p&&p.catch)p.catch(function(err){if(err&&err.name==='NotAllowedError'&&!v.muted&&!isPresenter()){sndBlocked=true;showPill('blocked');postSnd();}v.muted=true;v.play().catch(function(){});});}catch(e){}}
-  function syncVideos(s,n){videos(s).forEach(function(v){var at=v.dataset.play;if(at==='enter'||(at!==undefined&&n>=+at)){if(v.paused&&!v.ended&&!v._started){v._started=true;playVideo(v);}}});}
+  function syncVideos(s,n){videos(s).forEach(function(v){var at=v.dataset.play;if(at==='enter'||(at!==undefined&&n>=+at)){if(v.paused&&!v.ended&&!v._started){v._started=true;playVideo(v);}}else if(at!==undefined&&v._started){v._started=false;try{v.pause();v.currentTime=0;}catch(e){}}});}
   videos(frame).forEach(function(v){v.addEventListener('ended',function(){if(v.hasAttribute('data-next')&&slides[cur].contains(v)&&(!isPresenter()||!bcPeer))next();});});
   /* elements that light up in sync with the slide's video: data-vt="start-end" (seconds) */
   var vtRaf=null;
@@ -1644,7 +1644,8 @@ body.presenter .fs button{font-size:15px;padding:8px 13px;letter-spacing:.04em}
     if(!remote)post({i:cur,step:step});
   }
   function next(){if(t0===null)startTimer();if(step<maxStep[cur])show(cur,step+1);else if(cur<N-1)show(cur+1,0);}
-  function prev(){if(step>0)show(cur,step-1);else if(cur>0)show(cur-1,maxStep[cur-1]);}
+  function backStep(i){var m=maxStep[i];videos(slides[i]).forEach(function(v){var at=v.dataset.play;if(at!==undefined&&at!=='enter'&&!v.hasAttribute('data-muted'))m=Math.min(m,+at-1);});return Math.max(0,m);}
+  function prev(){if(step>0)show(cur,step-1);else if(cur>0)show(cur-1,backStep(cur-1));}
   function setAgent(on,remote){document.body.classList.toggle('agent',on);document.getElementById('b-human').setAttribute('aria-pressed',String(!on));document.getElementById('b-agent').setAttribute('aria-pressed',String(on));if(!remote)post({agent:on});}
 
   /* ---------- overview ---------- */
