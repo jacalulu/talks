@@ -1537,7 +1537,7 @@ body.reader #hud .kbd{display:none}
   function countUp(el){var to=+el.dataset.to,dec=+(el.dataset.dec||0),t0=performance.now(),dur=+(el.dataset.dur||1400);function f(n){var k=Math.min(1,(n-t0)/dur),v=to*(1-Math.pow(1-k,3));el.textContent=v.toFixed(dec);if(k<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
   function videos(s){return [].slice.call(s.querySelectorAll('video'));}
   function stopVideos(s){videos(s).forEach(function(v){try{v.pause();v.currentTime=0;}catch(e){}});}
-  function playVideo(v){v.muted=(isPresenter()&&(bcPeer||isPresWin))||v.hasAttribute('data-muted');try{var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}catch(e){}}
+  function playVideo(v){v.muted=(isPresenter()&&(bcPeer||isPresWin))||v.hasAttribute('data-muted');v.volume=1;try{var p=v.play();if(p&&p.catch)p.catch(function(err){if(err&&err.name==='NotAllowedError'&&!v.muted&&!isPresenter()){sndBlocked=true;showPill('blocked');postSnd();}v.muted=true;v.play().catch(function(){});});}catch(e){}}
   function syncVideos(s,n){videos(s).forEach(function(v){var at=v.dataset.play;if(at==='enter'||(at!==undefined&&n>=+at)){if(v.paused&&!v.ended&&!v._started){v._started=true;playVideo(v);}}});}
   videos(frame).forEach(function(v){v.addEventListener('ended',function(){if(v.hasAttribute('data-next')&&slides[cur].contains(v)&&(!isPresenter()||!bcPeer))next();});});
   /* elements that light up in sync with the slide's video: data-vt="start-end" (seconds) */
@@ -1591,8 +1591,26 @@ body.reader #hud .kbd{display:none}
 
   /* ---------- navigation + two-window sync ---------- */
   var bc=null,bcPeer=false;
-  try{bc=new BroadcastChannel(KEY);bc.onmessage=function(m){var d=m.data||{};if(!bcPeer){bcPeer=true;if(isPresenter())videos(frame).forEach(function(x){x.muted=true;});}if(d.reload)location.reload();if(typeof d.i==='number'){if(!d.hello&&t0===null&&(d.i>cur||(d.i===cur&&d.step>step)))startTimer();show(d.i,d.step,true);}if(typeof d.agent==='boolean')setAgent(d.agent,true);if(d.hello&&!d.reply)post({hello:1,reply:1,i:cur,step:step});};}catch(e){}
+  try{bc=new BroadcastChannel(KEY);bc.onmessage=function(m){var d=m.data||{};if(!bcPeer){bcPeer=true;if(isPresenter())videos(frame).forEach(function(x){x.muted=true;});}if(d.reload)location.reload();if(typeof d.i==='number'){if(!d.hello&&t0===null&&(d.i>cur||(d.i===cur&&d.step>step)))startTimer();show(d.i,d.step,true);}if(typeof d.agent==='boolean')setAgent(d.agent,true);if(d.sound&&isPresenter())showPill(d.sound);if(d.hello&&!d.reply){sndSent=null;post({hello:1,reply:1,i:cur,step:step,sound:sndState()});}};}catch(e){}
   function post(o){try{bc&&bc.postMessage(o);}catch(e){}}
+
+  /* ---------- sound: a window may only play sound after a click or key press in it ---------- */
+  var sndBlocked=false,sndSent=null,pill=null;
+  function sndState(){if(isPresenter())return undefined;return (sndBlocked||(navigator.userActivation&&!navigator.userActivation.hasBeenActive))?'blocked':'ok';}
+  function showPill(state){
+    if(!pill){pill=document.createElement('div');pill.id='sndpill';pill.style.cssText='position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:999px;background:#FB5C70;color:#fff;font:600 15px/1.2 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.5);cursor:pointer;white-space:nowrap';document.body.appendChild(pill);}
+    pill.textContent=isPresenter()?'No sound in the audience window yet - click it once':'Click anywhere to turn on sound';
+    pill.hidden=state!=='blocked';
+  }
+  function postSnd(){var s=sndState();if(s&&s!==sndSent){sndSent=s;post({sound:s});}}
+  function unlockSound(){
+    if(isPresenter())return;
+    sndBlocked=false;
+    videos(slides[cur]).forEach(function(v){if(!v.paused&&!v.hasAttribute('data-muted'))v.muted=false;});
+    showPill(sndState());postSnd();
+  }
+  document.addEventListener('pointerdown',unlockSound,true);
+  document.addEventListener('keydown',unlockSound,true);
   function show(i,st,remote){
     i=Math.max(0,Math.min(N-1,i));st=Math.max(0,Math.min(maxStep[i],st||0));
     var changed=i!==cur||!slides[i].classList.contains('active');
@@ -1671,7 +1689,7 @@ body.reader #hud .kbd{display:none}
   slides[cur].classList.add('active');applyStep(slides[cur],0);enterSlide(slides[cur]);
   document.getElementById('count').textContent=pad(cur+1)+' / '+pad(N);
   document.getElementById('progress').style.width=((cur+1)/N*100)+'%';
-  checkMode();fit();renderSide();showHud();post({hello:1});
+  checkMode();fit();renderSide();showHud();showPill(isPresenter()?'ok':sndState());post({hello:1,sound:sndState()});
 })();
 
 </script>
