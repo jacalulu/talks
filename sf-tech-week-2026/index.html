@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="SF Tech Week 2026 - Lessons from Launching: Deploying Agentic Workflows at Scale.">
+<meta property="og:title" content="Lessons from Launching · Jaclyn Konzelmann">
+<meta property="og:description" content="SF Tech Week 2026 - Deploying Agentic Workflows at Scale. Real-world lessons from launching Pomelli.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://talks.jaclynkonzelmann.com/sf-tech-week-2026/">
+<meta property="og:image" content="https://talks.jaclynkonzelmann.com/sf-tech-week-2026/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Lessons from Launching · Jaclyn Konzelmann</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Antonio:wght@600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --vh:100vh;
+  --ground:#0F1218;
+  --ink:#FFFFFF;
+  --ink-soft:rgba(255,255,255,.66);
+  --blue:#4F7FFE; --cyan:#56D3D0; --gold:#E3BE2E; --red:#E8722A;
+  --pink:#4F7FFE;   /* the kit's accent hooks (pips, focus rings) read this */
+  --grad:linear-gradient(90deg,#4F7FFE 0%,#56D3D0 45%,#E3BE2E 75%,#E8722A 100%);
+  --face:"Google Sans","Google Sans Text",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Space Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --e-big:cubic-bezier(.65,0,.35,1);
+  --e-dec:cubic-bezier(.2,0,0,1);
+  --e-micro:cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ── stage (from the kit) ─────────────────────────────────── */
+.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.s{position:absolute;inset:0;overflow:hidden;display:none;isolation:isolate}
+.s.on{display:block}
+.frame{position:absolute;left:50%;top:50%;translate:-50% -50%;
+  width:min(100vw, calc(var(--vh) * 1.7778));height:min(56.25vw, var(--vh));
+  container-type:inline-size}
+.inner{position:absolute;inset:0;z-index:3;padding:9cqw 9cqw 11cqw;
+  display:flex;flex-direction:column;justify-content:center}
+
+/* ── cover: a recreation of the Google for Startups SF Tech Week title.
+   Everything is placed in % of the 16:9 frame, measured off the Slides
+   export, so it holds at any projector size. ─────────────────────────── */
+.aura{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.s-title .frame>*:not(.aura){position:absolute;z-index:2;margin:0}
+.gfs{left:3.9%;top:6.3%;font-size:1.99cqw;font-weight:500;letter-spacing:-.005em;line-height:1;color:#E8EAED}
+.sftw{inset:0;font-family:Antonio,"Arial Narrow",sans-serif;font-weight:700;color:#fff;pointer-events:none}
+.sftw span{position:absolute;font-size:5.35cqw;line-height:1;letter-spacing:-.015em;
+  transform:scaleX(.86);transform-origin:left top}
+.w-tech{left:7.15%;top:12.1%}
+.w-sf{left:3.75%;top:20.4%}
+.w-week{left:14.05%;top:20.4%}
+.tt{left:3.9%;top:58.6%;font-size:7.3cqw;line-height:.96;font-weight:400;letter-spacing:-.012em;color:#fff}
+.tt-sub{left:4%;top:86.9%;font-size:2.85cqw;line-height:1;font-weight:400;color:#fff}
+.tt-photo{left:59.27%;top:9.26%;width:33.44%;height:61.3%;border-radius:2cqw;
+  background:#E9E9E9 url("portrait.webp") center 22%/cover no-repeat}
+.tt-name{left:60.3%;top:73.7%;width:31.4%;height:18.3%;border-radius:1.4cqw;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25cqw;
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.04));
+  border:.12cqw solid rgba(255,255,255,.42);
+  backdrop-filter:blur(.8cqw) saturate(1.15);-webkit-backdrop-filter:blur(.8cqw) saturate(1.15);
+  box-shadow:0 .6cqw 2.4cqw -1cqw rgba(0,0,0,.45)}
+.tt-name b{font-size:2.6cqw;font-weight:700;letter-spacing:-.005em;line-height:1.15}
+.tt-name span{font-size:1.81cqw;line-height:1.2}
+
+/* ── draft slides: placeholders until each one is designed ─── */
+.kick{font-size:1.5cqw;font-weight:500;letter-spacing:.02em;color:var(--blue);margin-bottom:2.2cqw;display:block}
+.s h2{font-size:5.6cqw;line-height:1.1;letter-spacing:-.018em;font-weight:400;margin:0;text-wrap:balance;max-width:20em}
+.s .sub{font-size:2.2cqw;line-height:1.45;color:var(--ink-soft);margin:2.6cqw 0 0;max-width:36em}
+.draft-tag{position:absolute;right:3cqw;top:2.6cqw;z-index:4;font-family:var(--mono);font-size:1cqw;
+  letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.32);
+  border:1px solid rgba(255,255,255,.18);border-radius:10cqw;padding:.4cqw 1cqw}
+.s-draft .frame::after{content:"";position:absolute;left:9cqw;bottom:8cqw;width:14cqw;height:.42cqw;
+  border-radius:1cqw;background:var(--grad)}
+.s.on .kick,.s.on h2,.s.on .sub{animation:rise .55s var(--e-dec) both}
+.s.on h2{animation-delay:.08s}.s.on .sub{animation-delay:.16s}
+@keyframes rise{from{opacity:0;translate:0 .9cqw}to{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){.s.on .kick,.s.on h2,.s.on .sub{animation:none!important}}
+
+/* ── chrome (from the kit, recoloured for a dark ground) ───── */
+.hud{position:fixed;right:1.1rem;bottom:1.1rem;z-index:9;display:flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+.nav{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.75);width:1.9rem;height:1.9rem;border-radius:100px;font-size:1rem;line-height:1;
+  cursor:pointer;padding:0;transition:background .2s var(--e-micro)}
+.nav:hover{background:rgba(255,255,255,.16)}
+.nav:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.count{cursor:pointer;min-width:3.6rem;text-align:center;color:rgba(255,255,255,.5)}
+.fs{font-size:.82rem}
+.keys{position:fixed;left:1.2rem;bottom:1.2rem;z-index:9;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.1em;color:rgba(255,255,255,.4);transition:opacity .45s var(--e-micro)}
+.keys.away{opacity:0}
+@media (max-width:700px){.keys{display:none}}
+.hud,.bar{transition:opacity .45s var(--e-micro)}
+.hud.away,.bar.away{opacity:0;pointer-events:none}
+.bar{position:fixed;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08);z-index:9}
+.bar span{display:block;height:100%;background:var(--grad);transition:width .7s var(--e-big)}
+.pips{display:flex;gap:.28rem;align-items:center;margin-right:.15rem}
+.pips i{width:.34rem;height:.34rem;border-radius:100px;background:rgba(255,255,255,.22)}
+.pips i.on{background:var(--blue)}
+.jump[hidden]{display:none}
+.jump{position:fixed;right:1.2rem;bottom:4.4rem;z-index:20;width:min(26rem,calc(100vw - 2.4rem));max-height:62vh;
+  display:flex;flex-direction:column;background:#1B1F27;color:#F2F3F5;border-radius:14px;
+  box-shadow:0 1.4rem 3rem -1rem rgba(0,0,0,.6);overflow:hidden;font-family:var(--face)}
+.jump-bar{display:flex;gap:.8rem;align-items:center;padding:.8rem .9rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.jump-bar input{width:6.5rem;font:inherit;font-size:1.1rem;padding:.45rem .6rem;border-radius:8px;
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;outline:none}
+.jump-bar input:focus{border-color:var(--blue)}
+.jump-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.jump-list{overflow-y:auto;padding:.4rem}
+.jump-list .j{display:flex;gap:.8rem;align-items:baseline;width:100%;text-align:left;background:none;border:0;
+  color:inherit;font:inherit;font-size:.95rem;padding:.45rem .6rem;border-radius:8px;cursor:pointer}
+.jump-list .j:hover{background:rgba(255,255,255,.08)}
+.jump-list .j.on{background:rgba(79,127,254,.25)}
+.jump-list .j b{font-family:var(--mono);font-weight:400;font-size:.72rem;color:#8FB0FF;min-width:2.2ch;text-align:right}
+.np[hidden]{display:none}
+.np{position:fixed;left:0;right:0;bottom:0;z-index:12;height:42vh;display:flex;flex-direction:column;
+  background:#1B1F27;color:#F2F3F5;box-shadow:0 -1.4rem 3rem -1.4rem rgba(0,0,0,.6)}
+.np-bar{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap;padding:.75rem 1.5rem .55rem;
+  border-bottom:1px solid rgba(255,255,255,.12);font-family:var(--mono);font-size:.7rem;letter-spacing:.1em}
+.np-cue{text-transform:uppercase;color:#8FB0FF}
+.np-clock{font-size:1.1rem;letter-spacing:.04em;color:#fff;font-variant-numeric:tabular-nums}
+.np-next{color:rgba(255,255,255,.5);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em}
+.np-hint{color:rgba(255,255,255,.32)}
+.np-body{padding:1rem 1.5rem 1.4rem;overflow-y:auto;font-family:var(--face);font-size:var(--ns,1.15rem);line-height:1.5}
+.np-body b.hl{font-weight:700;color:#fff}
+.np-body p{margin:0 0 .85rem;max-width:60em}
+.np-land{border-left:3px solid #E8722A;padding-left:.9rem;font-weight:500}
+.np-land b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:#F29A5C;margin-bottom:.3rem;font-weight:400}
+.np-dir{color:rgba(255,255,255,.55);font-style:italic;font-size:1rem}
+.np-go{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 0;color:rgba(255,255,255,.55);font-size:.9rem}
+.np-go .ck{margin:0}
+.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;border-radius:1em;background:#E8722A;color:#fff;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-style:normal;
+  font-weight:700;white-space:nowrap;translate:0 -.1em}
+.np-body .ck.next{background:#4F7FFE;animation:ckp 1.3s ease-in-out infinite}
+.np-body .ck.done{background:rgba(255,255,255,.16);color:rgba(255,255,255,.55)}
+@keyframes ckp{50%{opacity:.55}}
+body.has-notes{--vh:58vh}
+body.has-notes .deck{bottom:42vh}
+body.has-notes .hud{bottom:calc(42vh + 1.1rem)}
+body.has-notes .bar{bottom:42vh}
+body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
+.toast{position:fixed;left:50%;bottom:2.2rem;translate:-50% 0;z-index:20;background:#1B1F27;color:#F2F3F5;
+  padding:.75rem 1.1rem;border-radius:10px;font-size:.9rem;max-width:34rem;box-shadow:0 1rem 2rem -1rem rgba(0,0,0,.6)}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+<section class="s s-title"><div class="frame">
+  <svg class="aura" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
+    <filter id="b2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="48"/></filter>
+    <filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+    <linearGradient id="gBody" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#1B2A63"/><stop offset=".28" stop-color="#4B86F7"/>
+      <stop offset=".62" stop-color="#4F7FFE"/><stop offset="1" stop-color="#3D5FD0"/>
+    </linearGradient>
+    <linearGradient id="gWarm" gradientUnits="userSpaceOnUse" x1="1380" y1="0" x2="1620" y2="0">
+      <stop offset="0" stop-color="#5FB98A"/><stop offset=".35" stop-color="#E3BE2E"/>
+      <stop offset=".7" stop-color="#E8722A"/><stop offset="1" stop-color="#B8322A"/>
+    </linearGradient>
+  </defs>
+  <path filter="url(#b1)" fill="url(#gBody)"
+        d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
+  <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16"
+        d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
+  <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
+  <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46"
+        d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
+  <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10"
+        d="M620 900C780 800 980 760 1180 776"/>
+  <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110"
+        d="M1440 960C1470 840 1530 720 1660 610"/>
+</svg>
+  <p class="gfs">Google for Startups</p>
+  <div class="sftw" role="img" aria-label="SF Tech Week"><span class="w-sf">SF</span><span class="w-tech">TECH</span><span class="w-week">WEEK</span></div>
+  <h1 class="tt">Lessons from<br>Launching:</h1>
+  <p class="tt-sub">Deploying Agentic Workflows at Scale</p>
+  <div class="tt-photo" role="img" aria-label="Jaclyn Konzelmann"></div>
+  <div class="tt-name"><b>Jaclyn Konzelmann</b><span>Product Director</span><span>Google Labs</span></div>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">The AI Conference - last week</span>
+    <h2>Strip the guardrails as the models earn it.</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Today's prompt</span>
+    <h2>How to build the guardrails.</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Full circle</span>
+    <h2>You can't strip what you never built.</h2>
+    <p class="sub">And you can't loosen them until you know the model has earned it.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">The spectrum</span>
+    <h2>Do It With Me  -  Do It For Me</h2>
+    <p class="sub">“Please take care of this for me.”</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">The catch</span>
+    <h2>The magic and the risk come from the same place.</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Pomelli</span>
+    <h2>One product, more than one point on the spectrum</h2>
+    <p class="sub">Photoshoot  -  Pomelli Agent</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">01 - Why agents break</span>
+    <h2>Five ways agentic workflows break in production</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">01 - No guaranteed output</span>
+    <h2>You don't get a guaranteed output.</h2>
+    <p class="sub">It loops. It does a mediocre job. Or it hands back something you never agreed on.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">02 - Errors compound</span>
+    <h2>Errors compound.</h2>
+    <p class="sub">95% right at every step. Ten steps. About 60% right at the end.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">03 - Out of distribution</span>
+    <h2>Your users will find the case you didn't plan for.</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">04 + 05 - Cost and scope</span>
+    <h2>Cost and scope get away from you.</h2>
+    <p class="sub">Photoshoot is narrow. “Build me a game and keep improving it” is not.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Pomelli</span>
+    <h2>Five questions to answer before launch</h2>
+    <p class="sub">Done  -  Upstream  -  Users  -  Cost  -  Scope</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">02 - Building the guardrails</span>
+    <h2>Start with what it should do. Not the prompt.</h2>
+    <p class="sub">Features first. Then the wireframes and IA. Then the prompts.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Contracts and exits</span>
+    <h2>Every step gets a contract. Every agent gets an exit.</h2>
+    <p class="sub">Schema in, schema out. Loop caps, time and cost budgets, and a fallback.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Check between steps</span>
+    <h2>Check every black box before it feeds the next one.</h2>
+    <p class="sub">Hard rules  -  semantic checks</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Pomelli Photoshoot</span>
+    <h2>Photoshoot, under the hood</h2>
+    <p class="sub">Business DNA  -  pick templates  -  apply in context  -  generate</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Blast radius</span>
+    <h2>Contain the blast radius.</h2>
+    <p class="sub">Imagine the worst thing it could do. Split read from write. Sandbox the rest.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">03 - Earning autonomy</span>
+    <h2>An agent will happily build you something plausible.</h2>
+    <p class="sub">Validation is how you get from plausible to good.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Two jobs</span>
+    <h2>Hill climb on quality. Then let people break it.</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">The loop</span>
+    <h2>Break it. Bucket it. Guard it. Re-check it.</h2>
+    <p class="sub">Repeat until good enough. Good enough is a judgment call.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    <span class="kick">Full circle</span>
+    <h2>What we're stripping now</h2>
+    
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+<section class="s s-lead s-draft"><div class="frame">
+  <div class="inner">
+    
+    <h2>Build them. Validate them. Strip them as the model earns it.</h2>
+    <p class="sub">Thank you.</p>
+  </div>
+  <span class="draft-tag">Draft layout</span>
+</div></section>
+</div>
+<div class="hud" id="hud">
+  <button class="nav prev" aria-label="Previous slide">&#8249;</button>
+  <span class="pips" id="pips"></span>
+  <span class="count"><span id="cur">1</span> / 23</span>
+  <button class="nav next" aria-label="Next slide">&#8250;</button>
+  <button class="nav fs" id="fs" aria-label="Full screen" title="Full screen (F)">&#9974;</button>
+</div>
+<div class="bar"><span id="fill"></span></div>
+<div class="keys" id="keys">&#8592; &#8594; slides &middot; N speaker notes</div>
+<div class="jump" id="jump" hidden>
+  <div class="jump-bar"><input id="jumpn" type="number" min="1" inputmode="numeric" placeholder="Slide #"><span class="jump-hint">Enter to go &middot; Esc to close</span></div>
+  <div class="jump-list" id="jumplist"></div>
+</div>
+<div class="np" id="np" hidden>
+  <div class="np-bar">
+    <span class="np-cue" id="npcue"></span>
+    <span class="np-clock" id="npclock">00:00</span>
+    <span class="np-next" id="npnext"></span>
+    <span class="np-hint">N notes &middot; T timer (starts on first press) &middot; P window &middot; F full screen</span>
+  </div>
+  <div class="np-body" id="npbody"></div>
+</div>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.s')], deck=document.getElementById('deck');
+  let i=0;
+  const cur=document.getElementById('cur'), fill=document.getElementById('fill');
+  const pips=document.getElementById('pips');
+  const TONE=["title", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark"];
+  // One ground for the whole deck - the Google for Startups dark. Kept as a
+  // function so a light slide can be added later without touching show().
+  const GROUND={title:'#0F1218',dark:'#0F1218'};
+  function paint(n){ document.body.style.backgroundColor=GROUND[TONE[n]]||'#0F1218'; }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    slides.forEach(s=>s.querySelectorAll('[data-count]').forEach(el=>{
+      if(!s.classList.contains('on')){delete el.dataset.ran; el.textContent='0.0';}
+    }));
+    // the clip starts from the top every time she lands on the slide
+    slides[i].querySelectorAll('video').forEach(v=>{
+      try{v.currentTime=0;}catch(e){} v.play().catch(()=>{});
+    });
+    cur.textContent=i+1;
+    fill.style.width=((i+1)/slides.length*100)+'%';
+    paint(i);
+    paintNotes();
+    pushPres();
+    try{location.hash=i+1;}catch(e){}
+  }
+  // ── click-to-build: a slide with data-step items advances inside itself ──
+  let st=0;   // build step on the current slide
+  const steps=s=>{const e=[...s.querySelectorAll('[data-step]')];
+    return e.length?Math.max(...e.map(x=>+x.dataset.step)):0;};
+  // A real number, revealed. It counts to 24.1 and stops - the figure is off
+  // the post itself, and there is no claim here about the shape of the climb.
+  const EASE=k=>1-Math.pow(1-k,3);
+  function runCounts(){
+    slides[i].querySelectorAll('.shown [data-count]').forEach(el=>{
+      if(el.dataset.ran) return; el.dataset.ran='1';
+      const to=+el.dataset.count, t0=performance.now(), d=1500;
+      (function tick(t){
+        const k=Math.min(1,(t-t0)/d);
+        el.textContent=(to*EASE(k)).toFixed(1);
+        if(k<1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }
+  function paintSteps(){
+    slides[i].querySelectorAll('[data-step]').forEach(e=>{
+      e.classList.toggle('shown', +e.dataset.step<=st);
+    });
+    runCounts();
+    const t=steps(slides[i]);
+    pips.innerHTML = t ? Array.from({length:t},(_,k)=>
+      `<i class="${k<st?'on':''}"></i>`).join('') : '';
+  }
+  // ── advancing ────────────────────────────────────────────────────
+  // → fires the slide's next build if it has one, otherwise moves to the
+  // next slide. The whole of a slide's notes shows at once; the blue pill
+  // marks the click that the next press will fire.
+  function go(d){
+    if(d>0 && t0===null) timer(true);   // the clock starts on the first forward press
+    const t=steps(slides[i]);
+    if(d>0 && st<t){st++; paintSteps(); paintNotes(); pushPres(); return;}
+    if(d<0 && st>0){st--; paintSteps(); paintNotes(); pushPres(); return;}
+    const n=i+d;
+    if(n<0||n>=slides.length) return;
+    show(n);
+    st = d<0 ? steps(slides[n]) : 0;
+    paintSteps(); paintNotes(); pushPres();
+  }
+  window.__pgdbg=()=>({slide:i+1,st,steps:steps(slides[i])});
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+    if(e.key==='Home'){show(0);} if(e.key==='End'){show(slides.length-1);}
+    if(e.key==='f'||e.key==='F'){e.preventDefault();toggleFS();}
+    if(e.key==='n'||e.key==='N'){
+      e.preventDefault();
+      np.hidden=!np.hidden;
+      document.body.classList.toggle('has-notes',!np.hidden);
+      if(!np.hidden) paintNotes();
+    }
+    if(e.key==='t'||e.key==='T'){e.preventDefault();timer(t0===null);}
+    if(e.key==='p'||e.key==='P'){e.preventDefault();openPres();}
+    if(e.key==='+'||e.key==='='){e.preventDefault();notesSize(1);}
+    if(e.key==='-'||e.key==='_'){e.preventDefault();notesSize(-1);}
+  });
+  // ── notes text size: + and - in either window, remembered between runs ──
+  let nsf=1; try{nsf=parseFloat(localStorage.getItem('notes-size'))||1;}catch(e){}
+  function applyNotesSize(){
+    document.documentElement.style.setProperty('--ns',(1.2*nsf).toFixed(3)+'rem');
+    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.45*nsf).toFixed(3)+'rem');
+  }
+  function notesSize(d){
+    nsf=Math.min(2.2,Math.max(0.7,Math.round((nsf+d*0.1)*10)/10));
+    try{localStorage.setItem('notes-size',nsf);}catch(e){}
+    applyNotesSize();
+  }
+  // ── immersion: real full screen, and chrome that gets out of the way ──
+  function toggleFS(){
+    const d=document.documentElement;
+    if(document.fullscreenElement) document.exitFullscreen?.();
+    else d.requestFullscreen?.().catch(()=>{});
+  }
+  document.getElementById('fs').onclick=e=>{e.stopPropagation();toggleFS();};
+  const hud=document.getElementById('hud'), bar=document.querySelector('.bar'), keys=document.getElementById('keys');
+  let idle;
+  function wake(){
+    hud.classList.remove('away'); bar.classList.remove('away'); keys.classList.remove('away');
+    document.body.style.cursor='';
+    clearTimeout(idle);
+    idle=setTimeout(()=>{
+      hud.classList.add('away'); bar.classList.add('away'); keys.classList.add('away');
+      document.body.style.cursor='none';
+    }, 2600);
+  }
+  ['mousemove','keydown','touchstart','click'].forEach(ev=>
+    document.addEventListener(ev, wake, {passive:true}));
+  wake();
+  document.querySelector('.next').onclick=()=>go(1);
+  document.querySelector('.prev').onclick=()=>go(-1);
+  deck.addEventListener('click',e=>{
+    if(e.target.closest('.hud,.jump'))return;
+    if(!deckJump.panel.hidden){deckJump.close();return;}   // a click outside just dismisses the jump panel
+    go(e.clientX > innerWidth*0.5 ? 1 : -1);
+  });
+  let x0=null;
+  deck.addEventListener('touchstart',e=>x0=e.changedTouches[0].clientX,{passive:true});
+  deck.addEventListener('touchend',e=>{
+    if(x0===null)return; const dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>45) go(dx<0?1:-1); x0=null;
+  },{passive:true});
+  // Chromium will not decode a megabyte-scale data: URI on a media element -
+  // readyState stays 0 and nothing ever loads. The bytes ride in a script tag
+  // and become a blob URL here, which media elements do accept.
+  // ── presenter window ──────────────────────────────────────────────
+  // A second window she puts on the laptop while the deck is on the projector.
+  // Written straight into an about:blank popup rather than served from a URL,
+  // so it is same-origin and scriptable with no second file to keep in sync.
+  let pres=null;
+  function pushPres(){
+    if(!pres || pres.closed) return;
+    const d=pres.document, n=NOTES[i]; if(!n) return;
+    d.getElementById('cue').textContent=n.cue;
+    d.getElementById('pos').textContent=(i+1)+' / '+slides.length;
+    d.getElementById('body').innerHTML=renderNote(n,'');
+    d.getElementById('next').innerHTML = (i+1<HEADS.length && HEADS[i+1])
+      ? '<b>Next</b>'+esc(HEADS[i+1]) : '<b>Next</b>-';
+    d.getElementById('body').scrollTop=0;
+    presClock();
+  }
+  function presClock(){
+    if(!pres || pres.closed) return;
+    pres.document.getElementById('clock').textContent =
+      (t0===null) ? '00:00' : fmt(Date.now()-t0);
+  }
+  function openPres(){
+    if(pres && !pres.closed){ pres.focus(); return; }
+    pres = window.open('', 'deck-notes', 'width='+Math.min(screen.availWidth,1600)+',height='+screen.availHeight+',left=0,top=0');
+    if(!pres){ toast('Pop-up blocked - allow pop-ups for this page, or press N for the drawer.'); return; }
+    pres.document.write("<!doctype html><html><head><meta charset=\"utf-8\">\n<title>Speaker notes</title>\n<style>\n*{box-sizing:border-box}\nhtml,body{height:100%;margin:0}\nbody{background:#15120F;color:#F2EDE6;font:400 17px/1.55 -apple-system,\n     BlinkMacSystemFont,\"Segoe UI\",Helvetica,Arial,sans-serif;\n     display:flex;flex-direction:column;overflow:hidden}\n.bar{display:flex;align-items:baseline;gap:1.4rem;flex-wrap:wrap;\n     padding:.9rem 1.6rem .7rem;border-bottom:1px solid rgba(242,237,230,.14);\n     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;\n     letter-spacing:.1em}\n.cue{text-transform:uppercase;color:#FF8A5C}\n.clock{font-size:1.5rem;letter-spacing:.03em;font-variant-numeric:tabular-nums}\n.pos{color:rgba(242,237,230,.55)}\n.hint{margin-left:auto;color:rgba(242,237,230,.3);text-align:right}\nmain{flex:1;overflow-y:auto;padding:1.5rem 1.6rem 2rem}\nmain p{margin:0 0 1rem;max-width:52em;font-size:var(--ns,1.35rem);line-height:1.5}\nmain b.hl{font-weight:700;color:#fff}\n.ck.next{background:#5E9BFF;animation:ckp 1.3s ease-in-out infinite}\n.ck.done{background:rgba(242,237,230,.16);color:rgba(242,237,230,.55)}\n@keyframes ckp{50%{opacity:.55}}\n.go{display:flex;align-items:center;gap:.7rem;margin:1.4rem 0 0;color:rgba(242,237,230,.55);font-size:1rem}\n.go .ck{margin:0}\n\n.pos{cursor:pointer;border-bottom:1px dotted rgba(242,237,230,.4)}\n.jump[hidden]{display:none}\n.jump{position:fixed;left:1.6rem;right:1.6rem;top:3.6rem;bottom:1.2rem;z-index:20;display:flex;flex-direction:column;background:#1E1A16;color:#F2EDE6;border-radius:14px;box-shadow:0 1.4rem 3rem -1rem rgba(0,0,0,.7);overflow:hidden}\n.jump-bar{display:flex;gap:.8rem;align-items:center;padding:.8rem .9rem;border-bottom:1px solid rgba(242,237,230,.14)}\n.jump-bar input{width:7rem;font:inherit;font-size:1.2rem;padding:.45rem .6rem;border-radius:8px;border:1px solid rgba(242,237,230,.25);background:rgba(242,237,230,.06);color:#fff;outline:none}\n.jump-hint{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(242,237,230,.45)}\n.jump-list{overflow-y:auto;padding:.4rem}\n.jump-list .j{display:flex;gap:.8rem;align-items:baseline;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;font-size:1.05rem;padding:.5rem .7rem;border-radius:8px;cursor:pointer}\n.jump-list .j:hover{background:rgba(242,237,230,.08)}\n.jump-list .j.on{background:rgba(255,77,109,.22)}\n.jump-list .j b{font-family:ui-monospace,Menlo,monospace;font-weight:400;font-size:.72rem;color:#FF8A5C;min-width:2.2ch;text-align:right}\n.peek{opacity:.32;margin-top:1.8rem;font-size:calc(var(--ns,1.6rem)*.78)!important;max-width:52em}\n.land{border-left:3px solid #FF4D6D;padding-left:1rem;font-weight:600}\n.land b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:.62rem;\n        letter-spacing:.2em;text-transform:uppercase;color:#FF6B85;\n        margin-bottom:.35rem;font-weight:400}\n.dir{color:rgba(242,237,230,.55);font-style:italic;font-size:calc(var(--ns,1.35rem)*.82)}\n.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;\n    border-radius:1em;background:#FF4D6D;color:#fff;\n    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;\n    letter-spacing:.14em;text-transform:uppercase;font-style:normal;\n    font-weight:700;white-space:nowrap;translate:0 -.1em}\n.next{border-top:1px solid rgba(242,237,230,.14);padding:.8rem 1.6rem 1rem;\n      font-size:.95rem;color:rgba(242,237,230,.5)}\n.next b{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;\n        letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,230,.35);\n        display:block;margin-bottom:.25rem;font-weight:400}\n.nav{display:flex;gap:.6rem;padding:0 1.6rem 1.1rem}\n.nav button{flex:1;appearance:none;border:1px solid rgba(242,237,230,.2);\n  background:rgba(242,237,230,.05);color:#F2EDE6;border-radius:10px;\n  padding:.7rem;font-size:1rem;cursor:pointer}\n.nav button:hover{background:rgba(242,237,230,.12)}\n</style></head><body>\n<div class=\"bar\"><span class=\"cue\" id=\"cue\"></span>\n  <span class=\"clock\" id=\"clock\">00:00</span>\n  <span class=\"pos\" id=\"pos\"></span>\n  <span class=\"hint\">&#8592; &#8594; move the deck &middot; T timer &middot; + &minus; text size &middot; G or click the count to jump</span></div>\n<div class=\"jump\" id=\"jump\" hidden><div class=\"jump-bar\"><input id=\"jumpn\" type=\"number\" min=\"1\" inputmode=\"numeric\" placeholder=\"Slide #\"><span class=\"jump-hint\">Enter to go &middot; Esc to close</span></div><div class=\"jump-list\" id=\"jumplist\"></div></div>\n<main id=\"body\"></main>\n<div class=\"next\" id=\"next\"></div>\n<div class=\"nav\"><button id=\"prev\">&#8592; Back</button>\n  <button id=\"next-btn\">Next &#8594;</button></div>\n</body></html>");
+    pres.document.close();
+    const d=pres.document;
+    d.getElementById('prev').onclick=()=>go(-1);
+    d.getElementById('next-btn').onclick=()=>go(1);
+    d.addEventListener('keydown', e=>{
+      if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+      if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+      if(e.key==='t'||e.key==='T'){e.preventDefault();timer(t0===null);}
+      if(e.key==='p'||e.key==='P'){e.preventDefault();openPres();}
+      if(e.key==='+'||e.key==='='){e.preventDefault();notesSize(1);}
+      if(e.key==='-'||e.key==='_'){e.preventDefault();notesSize(-1);}
+    });
+    applyNotesSize();
+    const pj=wireJump(d); d.getElementById('pos').addEventListener('click',()=>pj.panel.hidden?pj.open():pj.close());
+    pres.addEventListener('beforeunload',()=>{pres=null;});
+    pushPres();
+  }
+  function toast(msg){
+    const el=document.createElement('div');
+    el.textContent=msg; el.className='toast';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 5200);
+  }
+  window.addEventListener('beforeunload',()=>{ if(pres&&!pres.closed) pres.close(); });
+
+  // One branch, two builds. The split build ships a filename map and the
+  // video just gets an src - the browser then fetches only the encode it can
+  // play, and only when the slide asks it to. The single-file build has no
+  // map, falls through, and decodes its base64 into a blob exactly as before.
+  const VSRC = (()=>{ const el=document.getElementById('vid-src');
+    try { return el ? JSON.parse(el.textContent) : null; } catch(e) { return null; } })();
+  document.querySelectorAll('video[data-vid]').forEach(v=>{
+    const webm = v.canPlayType('video/webm; codecs="vp9"');
+    const pick = webm ? ['webm','video/webm'] : ['mp4','video/mp4'];
+    if(VSRC && VSRC[v.dataset.vid]){
+      // Deliberately NOT calling play() here. preload='none' is pointless if
+      // something asks the video to start, and this loop runs for every clip
+      // in the deck at startup - which pulled 1.3MB before slide one had
+      // finished painting. show() already plays the videos on the slide she
+      // is actually on, and it runs after this, so a deep link still works.
+      v.preload='none';
+      v.src=VSRC[v.dataset.vid][pick[0]];
+      v.muted=true;
+      return;
+    }
+    const raw = document.getElementById(v.dataset.vid+'-'+pick[0]);
+    if(!raw) return;
+    const bin=atob(raw.textContent.trim());
+    const arr=new Uint8Array(bin.length);
+    for(let k=0;k<bin.length;k++) arr[k]=bin.charCodeAt(k);
+    v.src=URL.createObjectURL(new Blob([arr],{type:pick[1]}));
+    v.muted=true; v.play().catch(()=>{});
+    raw.remove();
+  });
+  // ── presenter notes ───────────────────────────────────────────────
+  // The full narrative per slide, straight from the script. Hidden until N,
+  // so the deck is still a deck; the clock is for practice runs.
+  const NOTES=[{"cue": "Open · 0:00", "paras": [">> Up while people settle and the host introduces you. Nothing spoken on this slide."]}, {"cue": "Open · 0:00", "paras": ["Hi everyone. I'm really excited to be here, and to share some real-world lessons from launching **Pomelli**.", "It's a little funny. Last week I gave a talk at The AI Conference. It was all about how to build products now that agents can actually do things.", "And one of the core pieces of advice I left that room with was this.", "LAND: Strip the guardrails as the models earn it."]}, {"cue": "Open · 0:45", "paras": ["And today, the prompt I was given for this talk is...", ">> Beat. Let the room catch up.", "...how to **build** the guardrails.", "I actually think that's the perfect place to start."]}, {"cue": "Open · 1:15", "paras": ["Because it's a full circle.", "LAND: You can't strip what you never built. And you can't loosen them until you know the model has earned it.", "So here's the plan. First, why agentic workflows break when they hit real users. Then, how we built the guardrails for Pomelli. Then, how you validate them at scale.", "And I'll end with what we're actively taking apart right now, because this next generation of models is earning more autonomy."]}, {"cue": "The spectrum · 2:30", "paras": ["Let me start with a framework I use a lot.", "When I design an AI-native product, I think about a spectrum. On one end, **Do It With Me**. The user drives, and the AI helps. On the other end, **Do It For Me**. The user hands the whole thing over.", "And the extreme version of Do It For Me is a sentence I hear all the time: please take care of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:15", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions, more freedom. That's what makes it feel magical.", "It's also exactly what makes it less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side of this spectrum. The job is to **choose where you sit on it, on purpose**, and build the guardrails that make that spot safe."]}, {"cue": "The spectrum · 4:15", "paras": ["Pomelli is a good example, because it lives at more than one point on this spectrum.", "Quick context if you haven't seen it. Pomelli is a Google Labs experiment that helps small businesses create on-brand marketing. It starts by learning your business. We call that your **Business DNA**.", "**Photoshoot** sits toward the narrow end. You give it a product photo, it gives you back professional studio and lifestyle shots. Clear input, clear output.", "Then at I/O in May, we launched the **Pomelli Agent**. You can chat with it, upload docs and photos, and it builds your Business DNA with you. That's much more open-ended.", "Same product, same users, same Business DNA underneath. But one is a narrow pipeline, and one is a conversation that can go almost anywhere.", "And as you'd expect, the two needed very different guardrails.", ">> Screenshots: Photoshoot result grid on the left, Pomelli Agent chat on the right."]}, {"cue": "01 Why agents break · 5:30", "paras": ["So let's start with why agentic workflows break when they hit production. No hype, just the structural stuff.", "These are the five I see over and over.", "One, there's no guaranteed output. Two, errors compound. Three, your users do things you never planned for. Four, cost gets away from you. And five, the more open-ended the agent, the harder all of it gets.", "Notice that every one of these gets worse as you move toward Do It For Me."]}, {"cue": "01 Why agents break · 6:30", "paras": ["First, the output. When you delegate, you have to assume you won't get a deterministic answer back.", "Sometimes the agent loops. It tries, checks, tries again, and churns. Which is why almost every agent has some kind of hard stop, like no more than fifteen loops.", "Sometimes it finishes, but it does a mediocre job, and hands you something you can't really work with.", "And sometimes it returns something that just isn't what you agreed on. You asked for five structured fields. You got a lovely paragraph.", "In Pomelli, done has a shape. A Business DNA has fonts, colors, values and imagery. A photoshoot is a set of on-brand images of your product. Anything else isn't done, however good it sounds.", "None of these are bugs in the usual sense. Nothing crashed. There's no stack trace. The agent did its best, and its best wasn't what you needed. That's what makes them so hard to catch.", "LAND: If you don't define what done looks like, the agent will decide for you."]}, {"cue": "01 Why agents break · 7:45", "paras": ["Second, errors compound. This is a classic control loop problem.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates a little, step three builds on it, and step four builds on that.", "Even without a hallucination, one flaky step can knock the whole run off the rails. The agent kind of loses its mind. And it's very confident while it does it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, a ten step chain is right about **60 percent** of the time.", ">> 0.95 to the tenth is 0.599. Say about sixty percent.", "Last week I talked about Opal, where we went from wiring up a chain of steps to one agent node that figures out the steps itself. Notice what that trade gives up. With a chain, you can see and check every hand-off. With one agent, the hand-offs are still there. You just can't see them anymore.", "The more you do in a single run, the more magic. And the more risk."]}, {"cue": "01 Why agents break · 9:00", "paras": ["Third, your users. You will forget to account for some user state. It's not a question of if.", "There's an old line in security that attackers are always one step ahead of defenders. The same is true in user land.", "Real users upload the photo you didn't expect, type the request you didn't imagine, and combine features in ways nobody on the team thought of.", "Take Photoshoot. Something as simple as a product photo. What happens when someone uploads a photo of their storefront instead? Or a screenshot of their website? Or one photo with six products in it? Or a photo of a product you are absolutely not allowed to put in an ad?", "That's **out of distribution**. Your agent was never tested there, and it will still try its best. Which is sometimes exactly the problem.", "And this is where agents differ from normal software. A normal app with an unexpected input throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:00", "paras": ["Fourth, cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "It can be slow, it can be expensive, and every so often it goes haywire. Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's **price per successful task**. A cheap model that needs three retries costs more than a good one that gets it right the first time.", "And fifth, scope. The more open-ended your agent, the harder it is to make it reliable. Photoshoot is narrow. Go build me a game and keep improving it is very, very broad.", "Part of the work is finding the point on the spectrum where you can **tame the beast**."]}, {"cue": "01 Why agents break · 11:00", "paras": ["So what does that mean for Pomelli? Each of those five turns into a question you have to answer before you launch.", "What does done look like? A Business DNA with real fonts, colors and imagery. A set of images that are actually your product.", "Where do errors compound? Business DNA. It's upstream of everything. If it gets your brand wrong, every photoshoot, campaign and website built on top of it inherits the mistake.", "What will users throw at it? Every kind of photo, every kind of business, every kind of website.", "What does a run cost? Every photoshoot is several generations, so cost scales with every click.", "And how open is it? Photoshoot is narrow. The agent is a conversation.", "LAND: Those five answers are the spec for your guardrails."]}, {"cue": "02 Building the guardrails · 12:30", "paras": ["So how do you build for that? It doesn't start with the prompt. It starts with the features.", "What do you actually want this system to do? Do I want it to refine itself from what it learns? Do I want it running in the background, triggered by cues? Do I want it to act, or only suggest?", "Then you design the wireframes and the information architecture around it. Where does the user see what happened? Where can they step in? Where can they undo?", "This sounds obvious, but it changes what you build. If the answer is it runs in the background, now you need a way to tell the user what it did while they were gone. If the answer is it acts, now you need undo. Those aren't prompt problems. They're product problems.", "Only then do you get to the prompts.", "LAND: Clever prompting gets you a demo. Product-grade engineering gets you a launch."]}, {"cue": "02 Building the guardrails · 13:45", "paras": ["Next, **contracts and exits**.", "Every agent, and every step inside it, needs a contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an exit strategy. A loop cap. A time budget. A cost budget. And a defined fallback for when it hits one. Retry, drop to something simpler, or hand back to the user with something honest.", "The fallback is the part teams skip, because it isn't fun to design. But it's the part your users will actually see on a bad day. A graceful we couldn't do that one, here's what we can do, beats a spinner that never ends.", "LAND: An agent with no exit strategy doesn't fail. It just keeps going."]}, {"cue": "02 Building the guardrails · 14:45", "paras": ["Then, **check between the steps**. Every time a black box finishes its job, check the output before you feed it to the next black box.", "Checks come in two flavors. Hard rules: does it have the fields, is it the right type, is it within limits. And semantic checks: does this look like what I'd expect?", "Take Business DNA. Say one step reads a business's website and pulls out its brand. A hard rule might be: did we get colors, fonts and a logo? A semantic check might be: does this actually look like this business? Did we pick up the brand, or the cookie banner? Catch it there, before every creative downstream builds on top of it.", "Hard rules are cheap. Semantic checks usually mean another model call, a model acting as a judge. That costs time and money.", "And this is where latency and cost come back. You can check after every step, or every third step. That's a dial, and you set it by how much a mistake at that step costs you."]}, {"cue": "02 Building the guardrails · 16:15", "paras": ["Here's what that looks like in Photoshoot. Simplified.", "You start with your Business DNA. You pick a product photo. Behind the scenes, we pick the best templates for that product. Then we work out how to apply each one for your brand.", "If you sell makeup, in context might mean in a purse, or on a counter. If you sell sunglasses, it might mean on someone's face. Then we generate the images.", ">> FILL: where the real checks sit. Two or three is plenty. For example: a check on the input photo, a check that the product is preserved before results are shown, and the fallback when generation fails.", "Notice what the user doesn't see. Sixty-plus options, and a chain of decisions, each with a check. That's a narrow agent with a guardrail at every hand-off."]}, {"cue": "02 Building the guardrails · 17:30", "paras": ["Last piece of the architecture: **contain the blast radius**. Start by imagining the worst thing your agent could do, and protect for that.", "For code execution you want a tightly closed, isolated box. Then manage the information it can see, and split read from write. Reading an inbox is one risk level. Sending from it is a very different one. Bucket the risk, and contain each bucket.", "Borrowing a test from last week: one-way door or two-way door? In Pomelli, generating an image is a two-way door. Don't like it? Generate another one. Sharing it to a business's Instagram, or into a live Google Ads campaign, is a one-way door. That's where a person, not the agent, should be the one who confirms.", ">> Confirm how sharing to connected apps works in Pomelli today before saying the last line as fact.", "LAND: Telling your agent not to do something in a prompt isn't a guardrail. It's a wish."]}, {"cue": "03 Earning autonomy · 19:00", "paras": ["So you've built it. How do you know it's ready?", "Last week I said an agent will happily build you something plausible. The difference between plausible and good is on you.", "Validation is how you close that gap, and it has two jobs. One: **quality in distribution**. What I expect it to do, it does. Two: **misuse out of distribution**. When someone tries something weird, the damage stays inside the blast radius.", "For a marketing product, skipping that second job looks like an ad promising a sale the business never offered. Or a product shot that quietly changes the product."]}, {"cue": "03 Earning autonomy · 20:15", "paras": ["For the first job, you **hill climb on quality**. Build a set of examples of what good looks like, measure against it, improve, repeat.", "For the second, you **red team**. That can be people on your team, or contractors who do this for a living.", "Give them a sandboxed version of the agent, and let them break it in an unconstrained way. Don't hand them a script. The whole point is to find the things you didn't think of.", "What you can hand them is goals. Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Get it to ignore its instructions. Then step back.", "And sandbox it for real. If your red team can break it, so can the internet, and you want that to happen somewhere it doesn't matter."]}, {"cue": "03 Earning autonomy · 21:15", "paras": ["Then you run the loop.", "As people break your agent, collect the **trajectories**, the full record of what it did. Generalize them into **buckets** of behavior. Not one-off fixes. Buckets. Add a **safeguard** for each bucket.", "The bucket matters more than the fix. If one person got the agent to write a fake discount, the one-off fix is to block that phrase. The bucket is: the agent invents offers the business never made. That's the safeguard you want.", "Then, and this is the step people skip, re-run your quality evals. Make sure the safeguard didn't quietly break the thing that was working.", "Repeat until you're happy. And happy is a judgment call. No score tells you it's ready to launch. At some point you decide what good enough means for your users, and you own it."]}, {"cue": "Close · 22:30", "paras": ["Which brings me back to where I started.", "We launched Pomelli with a lot of these guardrails. Contracts, checks, narrow steps, a tight blast radius. They were right for the models we had.", "But the models keep earning more autonomy. So right now, we're actively going back through what we built and asking: which of these guardrails should we strip?", ">> FILL: one or two specifics. For example, steps you're collapsing into one agent, checks that no longer catch anything, or decisions moving from fixed templates to the agent.", "And the only reason we can answer that with confidence is that we built the guardrails, and the validation loop, in the first place. **That loop is what tells you when the model has earned it.**"]}, {"cue": "Close · 24:00", "paras": ["So, three things to take with you.", "One. Choose your spot on the spectrum, on purpose. More autonomy means more magic and more risk, so pick the point where you can actually tame it.", "Two. Design for failure. Contracts and exits, checks between the steps, and a contained blast radius. Assume it will go wrong, and decide ahead of time what happens when it does.", "Three. Earn autonomy through validation. Hill climb, red team, run the loop. That loop is how you'll know when it's time to move to the right on the spectrum.", "LAND: Build the guardrails. Validate them. Then strip them as the model earns it.", "Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Do It With Me / Do It For Me", "Magic and risk", "Pomelli on the spectrum", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost and scope", "Pomelli through the five lenses", "Start from what it should do", "Contracts and exits", "Check between steps", "Photoshoot, under the hood", "Contain the blast radius", "Plausible vs good", "Hill climb, then red team", "The loop", "What we're stripping now", "Thank you"];
+  const np=document.getElementById('np'), npb=document.getElementById('npbody'),
+        npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
+        npk=document.getElementById('npclock');
+  let t0=null, tick=null;
+  const fmt=ms=>{const s=Math.floor(ms/1000);
+    return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+  function clock(){
+    if(t0!==null) npk.textContent=fmt(Date.now()-t0);
+    presClock();
+  }
+  function timer(on){
+    clearInterval(tick);
+    if(on){ t0=Date.now(); tick=setInterval(clock,250); clock(); }
+    else { t0=null; npk.textContent='00:00'; presClock(); }
+  }
+  function paintNotes(){
+    const n=NOTES[i]; if(!n) return;
+    npc.textContent=n.cue;
+    npn.textContent = i+1<HEADS.length && HEADS[i+1] ? 'Next: '+HEADS[i+1] : '';
+    npb.innerHTML = renderNote(n,'np-');
+  }
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  // ── the click cue lives IN the sentence ───────────────────────────
+  // A cue parked at the top of a note is useless by the time she is three
+  // lines in. [[CLICK]] in notes.py is written at the exact word she should
+  // click on, and becomes an inline pill here. Function declaration, not a
+  // const, because pushPres() calls it from higher up the file.
+  function renderNote(n, P){
+    let k=0;
+    const bold=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>');
+    const mark=t=>bold(t).replace(/\[\[CLICK\]\]/g,()=>{
+      k++; const c=k<=st?'ck done':(k===st+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
+    });
+    const body=n.paras.map(p=>{
+      if(p.startsWith('LAND: '))
+        return '<p class="'+P+'land"><b>Land this</b>'+mark(p.slice(6))+'</p>';
+      if(p.startsWith('>> '))
+        return '<p class="'+P+'dir">'+mark(p.slice(3))+'</p>';
+      return '<p>'+mark(p)+'</p>';
+    }).join('');
+    const pending = st < Math.min(k, steps(slides[i]));
+    const what = pending ? null : (i+1<slides.length ? 'next slide' : null);
+    return body + (what ? '<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>' : '');
+  }
+  applyNotesSize();
+  // ── jump to a slide ───────────────────────────────────────────────
+  // Click the counter (or press G) in either window: type a number and
+  // press Enter, or pick a slide from the list. Lands on its first page.
+  function slideLabel(k){
+    const el=slides[k].querySelector('h2,.q,.cap,.tl-name');
+    return ((HEADS[k]||'')||(el?el.textContent:'')).replace(/\s+/g,' ').trim().slice(0,64);
+  }
+  function jumpList(){
+    return slides.map((s,k)=>'<button class="j'+(k===i?' on':'')+'" data-n="'+(k+1)+'"><b>'+(k+1)+'</b><span>'+esc(slideLabel(k))+'</span></button>').join('');
+  }
+  function goSlide(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    show(n); st=0; paintSteps(); paintNotes(); pushPres();
+  }
+  function wireJump(doc){
+    const panel=doc.getElementById('jump'), list=doc.getElementById('jumplist'), inp=doc.getElementById('jumpn');
+    const open=()=>{ list.innerHTML=jumpList(); panel.hidden=false; inp.value=''; inp.focus();
+      const on=list.querySelector('.on'); if(on) on.scrollIntoView({block:'center'}); };
+    const close=()=>{ panel.hidden=true; inp.blur(); };
+    const goTo=v=>{ const n=parseInt(v,10); if(Number.isFinite(n)) goSlide(n-1); close(); };
+    list.addEventListener('click',e=>{ const b=e.target.closest('.j'); if(b){ e.stopPropagation(); goTo(b.dataset.n); } });
+    inp.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Enter') goTo(inp.value); if(e.key==='Escape') close(); });
+    panel.addEventListener('click',e=>e.stopPropagation());
+    doc.addEventListener('click',e=>{ if(!panel.hidden && !e.target.closest('.jump,.count,.pos')) close(); });
+    doc.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!panel.hidden) close(); if((e.key==='g'||e.key==='G')&&doc.activeElement!==inp){ e.preventDefault(); panel.hidden?open():close(); } });
+    return {open,close,panel};
+  }
+  const deckJump=wireJump(document);
+  document.querySelector('.count').addEventListener('click',e=>{ e.stopPropagation(); deckJump.panel.hidden?deckJump.open():deckJump.close(); });
+  const start=parseInt(location.hash.slice(1),10);
+  show(Number.isFinite(start)&&start>0?start-1:0);
+  st=0; paintSteps();
+})();
+</script>
+</body>
+</html>

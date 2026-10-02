@@ -14,6 +14,7 @@ import { next } from '@vercel/functions';
 
 const TALKS = {
   '/ai-conference-2026': 'TALKS_PASSWORD_AI_CONFERENCE_2026',
+  '/sf-tech-week-2026': 'TALKS_PASSWORD_SF_TECH_WEEK_2026',
 };
 
 const COOKIE_DAYS = 30;
@@ -24,6 +25,7 @@ export const config = {
   matcher: [
     '/unlock',
     '/ai-conference-2026', '/ai-conference-2026/:path*',
+    '/sf-tech-week-2026', '/sf-tech-week-2026/:path*',
   ],
 };
 
