@@ -11,50 +11,118 @@
 <meta property="og:image" content="https://talks.jaclynkonzelmann.com/sf-tech-week-2026/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <title>Lessons from Launching · Jaclyn Konzelmann</title>
-<style>@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Antonio:wght@600;700&family=Space+Mono:wght@400;700&display=swap');
+<style>@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;500&family=Antonio:wght@700&display=swap');
+/* ════════════════════════════════════════════════════════════════════
+   Lessons from Launching - SF Tech Week 2026
+   Google for Startups dark ground, Momentum Aura gradient, Google Sans.
+   Everything inside a slide is sized in cqw of the 16:9 .frame, so the
+   composition holds at any projector size.
+   ════════════════════════════════════════════════════════════════════ */
 :root{
   --vh:100vh;
   --ground:#0F1218;
   --ink:#FFFFFF;
-  --ink-soft:rgba(255,255,255,.66);
-  --blue:#4F7FFE; --cyan:#56D3D0; --gold:#E3BE2E; --red:#E8722A;
-  --pink:#4F7FFE;   /* the kit's accent hooks (pips, focus rings) read this */
-  --grad:linear-gradient(90deg,#4F7FFE 0%,#56D3D0 45%,#E3BE2E 75%,#E8722A 100%);
+  --ink-2:rgba(255,255,255,.72);
+  --ink-3:rgba(255,255,255,.46);
+  --line:rgba(255,255,255,.12);
+  --blue:#4F7FFE; --blue-2:#8FB0FF; --cyan:#56D3D0; --green:#5FB98A;
+  --gold:#F2C230; --orange:#E8722A; --red:#E0533F;
+  --magic:linear-gradient(90deg,#4F7FFE,#56D3D0);
+  --risk:linear-gradient(90deg,#F2C230,#E8722A,#E0533F);
+  --aura:linear-gradient(90deg,#4F7FFE 0%,#56D3D0 40%,#F2C230 72%,#E8722A 100%);
   --face:"Google Sans","Google Sans Text",-apple-system,"Helvetica Neue",Arial,sans-serif;
-  --mono:"Space Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --mono:"Google Sans Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --e-big:cubic-bezier(.65,0,.35,1);
   --e-dec:cubic-bezier(.2,0,0,1);
   --e-micro:cubic-bezier(.4,0,.2,1);
+  --e-spring:cubic-bezier(.3,1.35,.5,1);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);font-weight:400;
   -webkit-font-smoothing:antialiased;overflow:hidden}
 
-/* ── stage (from the kit) ─────────────────────────────────── */
-.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.s{position:absolute;inset:0;overflow:hidden;display:none;isolation:isolate}
-.s.on{display:block}
+/* ── stage ─────────────────────────────────────────────────────────── */
+.deck{position:fixed;inset:0;cursor:pointer;z-index:2}
+.s{position:absolute;inset:0;overflow:hidden;isolation:isolate;
+  opacity:0;visibility:hidden;transition:opacity .5s var(--e-micro),visibility 0s linear .5s}
+.s.on{opacity:1;visibility:visible;transition:opacity .7s var(--e-micro) .08s}
 .frame{position:absolute;left:50%;top:50%;translate:-50% -50%;
   width:min(100vw, calc(var(--vh) * 1.7778));height:min(56.25vw, var(--vh));
   container-type:inline-size}
-.inner{position:absolute;inset:0;z-index:3;padding:9cqw 9cqw 11cqw;
-  display:flex;flex-direction:column;justify-content:center}
+.frame>*{position:absolute}
 
-/* ── cover: a recreation of the Google for Startups SF Tech Week title.
-   Everything is placed in % of the 16:9 frame, measured off the Slides
-   export, so it holds at any projector size. ─────────────────────────── */
-.aura{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-.s-title .frame>*:not(.aura){position:absolute;z-index:2;margin:0}
+/* ── ambient aura: one persistent layer that drifts between slides ─── */
+.amb{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:1;transition:opacity 1.2s var(--e-micro)}
+.amb i{position:absolute;border-radius:50%;filter:blur(9vw);opacity:.0;
+  transition:left 1.6s var(--e-big),top 1.6s var(--e-big),width 1.6s var(--e-big),height 1.6s var(--e-big),opacity 1.4s var(--e-big)}
+.amb .a1{background:#3A63E8}.amb .a2{background:#2FB3B0}.amb .a3{background:#E0892A}
+body[data-aura="none"] .amb{opacity:0}
+body[data-aura="low"]   .a1{left:20vw;top:78vh;width:60vw;height:40vh;opacity:.38}
+body[data-aura="low"]   .a2{left:55vw;top:84vh;width:30vw;height:30vh;opacity:.22}
+body[data-aura="low"]   .a3{left:86vw;top:80vh;width:20vw;height:30vh;opacity:.22}
+body[data-aura="left"]  .a1{left:-14vw;top:30vh;width:38vw;height:60vh;opacity:.32}
+body[data-aura="left"]  .a2{left:-6vw;top:70vh;width:24vw;height:30vh;opacity:.2}
+body[data-aura="left"]  .a3{left:-10vw;top:-10vh;width:16vw;height:20vh;opacity:.0}
+body[data-aura="right"] .a1{left:78vw;top:-6vh;width:36vw;height:50vh;opacity:.3}
+body[data-aura="right"] .a2{left:84vw;top:50vh;width:26vw;height:40vh;opacity:.18}
+body[data-aura="right"] .a3{left:95vw;top:80vh;width:16vw;height:30vh;opacity:.2}
+body[data-aura="warm"]  .a1{left:60vw;top:76vh;width:40vw;height:40vh;opacity:.2}
+body[data-aura="warm"]  .a2{left:20vw;top:90vh;width:30vw;height:20vh;opacity:.12}
+body[data-aura="warm"]  .a3{left:76vw;top:-14vh;width:36vw;height:46vh;opacity:.26}
+body[data-aura="center"] .a1{left:30vw;top:30vh;width:40vw;height:40vh;opacity:.22}
+body[data-aura="center"] .a2{left:46vw;top:46vh;width:20vw;height:20vh;opacity:.18}
+body[data-aura="center"] .a3{left:60vw;top:60vh;width:10vw;height:10vh;opacity:.12}
+
+/* ── type ──────────────────────────────────────────────────────────── */
+.k{left:6.2cqw;top:5.6cqw;font-size:1.05cqw;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;align-items:center;gap:.9cqw;white-space:nowrap}
+.k::before{content:"";width:2.4cqw;height:.22cqw;border-radius:1cqw;background:var(--aura)}
+.h{left:6.2cqw;top:8.2cqw;margin:0;font-size:4.2cqw;line-height:1.06;font-weight:500;letter-spacing:-.028em;
+  max-width:62cqw;text-wrap:balance}
+.h.w{max-width:84cqw}
+.hl{background:var(--aura);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hm{background:var(--magic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hr{background:var(--risk);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:var(--mono)}
+.lab{font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.land{left:6.2cqw;right:6.2cqw;bottom:4.6cqw;font-size:2.1cqw;font-weight:500;letter-spacing:-.012em;line-height:1.25}
+.land b{font-weight:500}
+
+/* ── surfaces ──────────────────────────────────────────────────────── */
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.12);border-radius:1.4cqw;
+  backdrop-filter:blur(1.2cqw);-webkit-backdrop-filter:blur(1.2cqw);
+  box-shadow:0 1.6cqw 4cqw -2cqw rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06)}
+.pill{display:inline-flex;align-items:center;gap:.6cqw;padding:.55cqw 1.2cqw;border-radius:10cqw;
+  font-size:1.15cqw;font-weight:500;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);white-space:nowrap}
+.pill.on{border-color:transparent;background:var(--blue);color:#fff}
+.pill.dna{border-color:rgba(86,211,208,.5);color:#BFF2F0;background:rgba(86,211,208,.1)}
+.pill.warn{border-color:rgba(232,114,42,.55);color:#FFC9A6;background:rgba(232,114,42,.12)}
+
+/* ── builds ────────────────────────────────────────────────────────── */
+[data-step]{opacity:0;translate:0 .9cqw;transition:opacity .6s var(--e-dec),translate .7s var(--e-dec)}
+[data-step].shown{opacity:1;translate:0 0}
+svg [data-step]{translate:none}
+.s.on [data-in]{animation:rise .8s var(--e-dec) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;translate:0 1.2cqw}to{opacity:1;translate:0 0}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .s.on [data-in]{animation:none}
+  [data-step]{transition:none}
+}
+
+/* ════ 01 · cover ═══════════════════════════════════════════════════ */
+.aura{inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.s.on .aura{animation:auraIn 2.4s var(--e-dec) both}
+@keyframes auraIn{from{opacity:0;translate:0 3cqw}to{opacity:1;translate:0 0}}
+.s-cover .frame>*:not(.aura){z-index:2;margin:0}
 .gfs{left:3.9%;top:6.3%;font-size:1.99cqw;font-weight:500;letter-spacing:-.005em;line-height:1;color:#E8EAED}
 .sftw{inset:0;font-family:Antonio,"Arial Narrow",sans-serif;font-weight:700;color:#fff;pointer-events:none}
-.sftw span{position:absolute;font-size:5.35cqw;line-height:1;letter-spacing:-.015em;
-  transform:scaleX(.86);transform-origin:left top}
-.w-tech{left:7.15%;top:12.1%}
-.w-sf{left:3.75%;top:20.4%}
-.w-week{left:14.05%;top:20.4%}
-.tt{left:3.9%;top:58.6%;font-size:7.3cqw;line-height:.96;font-weight:400;letter-spacing:-.012em;color:#fff}
-.tt-sub{left:4%;top:86.9%;font-size:2.85cqw;line-height:1;font-weight:400;color:#fff}
+.sftw span{position:absolute;font-size:5.35cqw;line-height:1;letter-spacing:-.015em;transform:scaleX(.86);transform-origin:left top}
+.w-tech{left:7.15%;top:12.1%}.w-sf{left:3.75%;top:20.4%}.w-week{left:14.05%;top:20.4%}
+.tt{left:3.9%;top:58.6%;font-size:7.3cqw;line-height:.96;font-weight:400;letter-spacing:-.012em}
+.tt-sub{left:4%;top:86.9%;font-size:2.85cqw;line-height:1}
 .tt-photo{left:59.27%;top:9.26%;width:33.44%;height:61.3%;border-radius:2cqw;
   background:#E9E9E9 url("portrait.webp") center 22%/cover no-repeat}
 .tt-name{left:60.3%;top:73.7%;width:31.4%;height:18.3%;border-radius:1.4cqw;
@@ -66,21 +134,418 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);
 .tt-name b{font-size:2.6cqw;font-weight:700;letter-spacing:-.005em;line-height:1.15}
 .tt-name span{font-size:1.81cqw;line-height:1.2}
 
-/* ── draft slides: placeholders until each one is designed ─── */
-.kick{font-size:1.5cqw;font-weight:500;letter-spacing:.02em;color:var(--blue);margin-bottom:2.2cqw;display:block}
-.s h2{font-size:5.6cqw;line-height:1.1;letter-spacing:-.018em;font-weight:400;margin:0;text-wrap:balance;max-width:20em}
-.s .sub{font-size:2.2cqw;line-height:1.45;color:var(--ink-soft);margin:2.6cqw 0 0;max-width:36em}
-.draft-tag{position:absolute;right:3cqw;top:2.6cqw;z-index:4;font-family:var(--mono);font-size:1cqw;
-  letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.32);
-  border:1px solid rgba(255,255,255,.18);border-radius:10cqw;padding:.4cqw 1cqw}
-.s-draft .frame::after{content:"";position:absolute;left:9cqw;bottom:8cqw;width:14cqw;height:.42cqw;
-  border-radius:1cqw;background:var(--grad)}
-.s.on .kick,.s.on h2,.s.on .sub{animation:rise .55s var(--e-dec) both}
-.s.on h2{animation-delay:.08s}.s.on .sub{animation-delay:.16s}
-@keyframes rise{from{opacity:0;translate:0 .9cqw}to{opacity:1;translate:0 0}}
-@media (prefers-reduced-motion:reduce){.s.on .kick,.s.on h2,.s.on .sub{animation:none!important}}
+/* ════ 02/03 · the guardrails ═══════════════════════════════════════ */
+.quote{left:6.2cqw;right:6.2cqw;top:15cqw;margin:0;font-size:6.6cqw;line-height:1.02;font-weight:500;letter-spacing:-.035em;text-wrap:balance}
+.attr{left:6.2cqw;top:9.4cqw;display:flex;gap:1cqw;align-items:center}
+.rails{left:0;right:0;top:38cqw;height:12cqw}
+.rail{position:absolute;left:6.2cqw;right:6.2cqw;height:.32cqw;border-radius:1cqw;background:rgba(255,255,255,.22);
+  transition:translate 1.2s var(--e-big),opacity 1s var(--e-big),scale 1.2s var(--e-big)}
+.rail:nth-child(1){top:2cqw}.rail:nth-child(2){top:5.2cqw}.rail:nth-child(3){top:8.4cqw}
+.rail i{position:absolute;top:50%;width:.9cqw;height:3cqw;translate:0 -50%;border-radius:.4cqw;background:rgba(255,255,255,.22)}
+/* slide 2: the click strips them */
+.strip.shown~.rails .rail:nth-child(1){translate:-110cqw 0;opacity:0}
+.strip.shown~.rails .rail:nth-child(2){translate:110cqw 0;opacity:0;transition-delay:.08s}
+.strip.shown~.rails .rail:nth-child(3){translate:-110cqw 0;opacity:0;transition-delay:.16s}
+.strip{left:0;top:0;width:0;height:0;opacity:1!important}
+/* slide 3: they come back and lock */
+.s-build .rail{background:var(--aura)}
+.s-build .rail i{background:#fff}
+.s.on.s-build .rail{animation:railIn 1.3s var(--e-dec) both}
+.s.on.s-build .rail:nth-child(2){animation-delay:.12s}.s.on.s-build .rail:nth-child(3){animation-delay:.24s}
+@keyframes railIn{from{translate:-100cqw 0;opacity:0}to{translate:0 0;opacity:1}}
 
-/* ── chrome (from the kit, recoloured for a dark ground) ───── */
+/* ════ 04 · full circle ring (also the close) ═══════════════════════ */
+.ring{right:6cqw;top:6.5cqw;width:38cqw;height:38cqw}
+.ring svg{width:100%;height:100%;overflow:visible}
+.ring .arc{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;
+  transition:stroke-dashoffset 1.2s var(--e-big)}
+.ring .shown .arc,.ring .arc.shown{stroke-dashoffset:0}
+.ring .node circle{fill:#151A24;stroke:rgba(255,255,255,.3);stroke-width:2}
+.ring .node text{fill:#fff;font-family:var(--face);font-size:22px;font-weight:500;text-anchor:middle}
+.ring .node .sm{fill:rgba(255,255,255,.5);font-size:13px;letter-spacing:.14em}
+.ring .base{fill:none;stroke:rgba(255,255,255,.08);stroke-width:2}
+.fc-h{top:15cqw;max-width:44cqw;font-size:5cqw}
+.fc-sub{left:6.2cqw;top:31cqw;max-width:40cqw;font-size:1.9cqw;line-height:1.4;color:var(--ink-2);margin:0}
+.agenda{left:6.2cqw;right:6.2cqw;bottom:4.4cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw}
+.agenda div{padding:1.4cqw 1.5cqw;border-top:.22cqw solid rgba(255,255,255,.18)}
+.agenda div:first-child{border-color:var(--blue)}.agenda div:nth-child(2){border-color:var(--cyan)}
+.agenda div:nth-child(3){border-color:var(--gold)}.agenda div:nth-child(4){border-color:var(--orange)}
+.agenda b{display:block;font-family:var(--mono);font-size:1cqw;font-weight:500;color:var(--ink-3);margin-bottom:.5cqw}
+.agenda span{font-size:1.6cqw;font-weight:500}
+
+/* ════ 05-07 · the spectrum ═════════════════════════════════════════ */
+.spec{left:6.2cqw;right:6.2cqw;top:38cqw;height:6cqw}
+.spec .track{position:absolute;left:0;right:0;top:2.4cqw;height:.5cqw;border-radius:1cqw;
+  background:linear-gradient(90deg,rgba(79,127,254,.5),rgba(86,211,208,.6) 45%,rgba(242,194,48,.7) 75%,rgba(232,114,42,.9))}
+.spec .end{position:absolute;top:4.6cqw;font-size:1.9cqw;font-weight:500;letter-spacing:-.01em}
+.spec .end small{display:block;font-size:1.05cqw;font-weight:400;color:var(--ink-3);letter-spacing:0;margin-top:.3cqw}
+.spec .end.r{right:0;text-align:right}
+.knob{position:absolute;top:2.65cqw;left:4%;width:2.6cqw;height:2.6cqw;translate:-50% -50%;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 3cqw rgba(143,176,255,.8);
+  transition:left 1.6s var(--e-big),box-shadow 1.6s}
+.go-right.shown~.spec .knob{left:96%;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 4cqw rgba(232,114,42,.9)}
+.go-right{width:0;height:0}
+.ask{right:6.2cqw;top:22cqw;max-width:40cqw;padding:1.6cqw 2.2cqw;font-size:2.6cqw;line-height:1.2;font-weight:500;
+  letter-spacing:-.015em;border-bottom-right-radius:.3cqw}
+.s-spec .h{font-size:5.2cqw;max-width:80cqw}
+.s-spec .h .vs{color:var(--ink-3);font-weight:400;padding:0 .4em}
+
+/* magic vs risk */
+.mr{left:6.2cqw;right:6.2cqw;top:17cqw;height:21cqw}
+.mr svg{width:100%;height:100%;overflow:visible}
+.mr path.c{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s var(--e-big)}
+.mr .shown path.c{stroke-dashoffset:0}
+.mr path.f{opacity:0;transition:opacity 1.2s var(--e-big) .4s}
+.mr .shown path.f{opacity:1}
+.mr .lbl{font-family:var(--face);font-size:24px;font-weight:500}
+.here{left:6.2cqw;right:6.2cqw;top:37.6cqw;height:3cqw;z-index:5}
+.here input{width:100%;margin:0;appearance:none;-webkit-appearance:none;background:transparent;height:3cqw;cursor:grab}
+.here input::-webkit-slider-runnable-track{height:3cqw;background:transparent}
+.here input::-webkit-slider-thumb{-webkit-appearance:none;width:2.6cqw;height:2.6cqw;margin-top:.2cqw;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 .5cqw rgba(255,255,255,.14),0 0 3cqw rgba(255,255,255,.6)}
+.here input::-moz-range-thumb{width:2.6cqw;height:2.6cqw;border:0;border-radius:50%;background:#fff}
+.readout{right:6.2cqw;top:8.6cqw;display:flex;gap:2.4cqw;text-align:right}
+.readout div b{display:block;font-size:3cqw;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.s-mr .h{max-width:56cqw}
+.s-mr .spec{top:38cqw}
+.s-mr .knob{display:none}
+
+/* pomelli on the spectrum */
+.mark{top:0;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:1cqw}
+.mark .stem{width:.18cqw;height:5cqw;background:rgba(255,255,255,.35)}
+.mark .dot{width:1.6cqw;height:1.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 2cqw rgba(255,255,255,.7)}
+.pm{top:15cqw;width:30cqw}
+.pm .card{padding:1.2cqw;width:100%;display:flex;gap:1.2cqw;align-items:center}
+.pm .card img{width:7.5cqw;height:10cqw;object-fit:cover;border-radius:.8cqw}
+.pm .card .t{font-size:2.2cqw;font-weight:500;letter-spacing:-.015em}
+.pm .card .d{font-size:1.2cqw;color:var(--ink-2);margin-top:.4cqw;line-height:1.35}
+.pm .card .tag{margin-top:.8cqw}
+.chat{display:flex;flex-direction:column;gap:.6cqw;width:12cqw}
+.chat i{display:block;height:1.4cqw;border-radius:.8cqw;background:rgba(255,255,255,.14)}
+.chat i.me{align-self:flex-end;width:70%;background:rgba(79,127,254,.6)}
+.chat i:nth-child(2){width:90%}.chat i:nth-child(4){width:60%}
+
+/* ════ 08 · five ways ═══════════════════════════════════════════════ */
+.five{left:6.2cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw}
+.five .glass{padding:1.8cqw 1.6cqw;height:19cqw;display:flex;flex-direction:column}
+.five .n{font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)}
+.five svg{width:5cqw;height:5cqw;margin:1.6cqw 0 auto;overflow:visible}
+.five .t{font-size:1.9cqw;font-weight:500;line-height:1.12;letter-spacing:-.015em}
+.worse{left:6.2cqw;right:6.2cqw;top:42cqw;height:4cqw}
+.worse .wbar{position:absolute;left:0;right:0;top:1.3cqw;height:.5cqw;border-radius:1cqw;background:var(--aura)}
+.worse .wbar::after{content:"";position:absolute;right:-.4cqw;top:50%;translate:0 -50%;border-left:1.4cqw solid var(--orange);
+  border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+.worse span{position:absolute;top:2.8cqw;font-size:1.4cqw;color:var(--ink-2)}
+.worse span.r{right:0;color:#fff;font-weight:500}
+.ic{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.ic .a{stroke:var(--cyan)}.ic .o{stroke:var(--orange)}
+
+/* ════ 09 · no guaranteed output ════════════════════════════════════ */
+.contract{left:6.2cqw;top:20cqw;width:30cqw;padding:2cqw}
+.contract .row{display:flex;justify-content:space-between;align-items:center;padding:.9cqw 0;border-top:1px solid var(--line);font-size:1.5cqw}
+.contract .row:first-of-type{border-top:0}
+.contract .row em{font-style:normal;font-family:var(--mono);font-size:1.15cqw;color:var(--cyan)}
+.contract .sw{display:flex;gap:.4cqw}.contract .sw i{width:1.3cqw;height:1.3cqw;border-radius:50%}
+.outs{left:40cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw}
+.outs .glass{height:23.5cqw;padding:1.6cqw;display:flex;flex-direction:column;gap:1cqw;overflow:hidden}
+.outs .glass .t{font-size:1.7cqw;font-weight:500;letter-spacing:-.01em;margin-top:auto}
+.outs .glass .d{font-size:1.15cqw;color:var(--ink-3);line-height:1.35}
+.loopc{font-family:var(--mono);font-size:5.4cqw;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.loopc small{font-size:1.2cqw;letter-spacing:.1em;color:var(--orange);display:block;margin-top:.6cqw}
+.spin{width:5cqw;height:5cqw;border-radius:50%;border:.4cqw solid rgba(255,255,255,.1);border-top-color:var(--orange)}
+.shown .spin{animation:sp 0.9s linear 0s 6}
+@keyframes sp{to{rotate:360deg}}
+.meh{display:grid;grid-template-columns:repeat(4,1fr);gap:.5cqw}
+.meh i{height:1.4cqw;border-radius:.3cqw;background:rgba(255,255,255,.14)}
+.meh i:nth-child(3n){background:rgba(255,255,255,.05)}
+.para{font-size:1.15cqw;line-height:1.45;color:var(--ink-2);font-style:italic}
+.s-out .land{bottom:3.6cqw}
+
+/* ════ 10 · errors compound ═════════════════════════════════════════ */
+.chain{left:6.2cqw;right:30cqw;top:24cqw;height:10cqw}
+.chain .n{position:absolute;top:3cqw;width:4cqw;height:4cqw;translate:-50% 0;border-radius:1cqw;
+  border:.18cqw solid rgba(255,255,255,.28);background:#151A24;display:grid;place-items:center;
+  font-family:var(--mono);font-size:1cqw;color:var(--ink-3);transition:all .4s var(--e-dec)}
+.chain .n.lit{border-color:var(--blue-2);color:#fff;box-shadow:0 0 2cqw rgba(79,127,254,.5)}
+.chain .n.bad{border-color:var(--orange);box-shadow:0 0 2cqw rgba(232,114,42,.5)}
+.chain .ln{position:absolute;top:5cqw;height:.18cqw;background:rgba(255,255,255,.2)}
+.chain .pc{position:absolute;top:8cqw;translate:-50% 0;font-family:var(--mono);font-size:.95cqw;color:var(--ink-3)}
+.big{right:6.2cqw;top:19cqw;width:22cqw;text-align:right}
+.big .v{font-size:11cqw;font-weight:500;letter-spacing:-.06em;line-height:.9;font-variant-numeric:tabular-nums}
+.big .l{font-size:1.25cqw;color:var(--ink-2);margin-top:1cqw;line-height:1.4}
+.agentnode{left:6.2cqw;right:30cqw;top:21cqw;height:16cqw;border-radius:2cqw;border:.2cqw solid var(--blue-2);
+  background:rgba(79,127,254,.08);display:flex;align-items:flex-end;padding:1.6cqw;font-size:1.6cqw;font-weight:500;
+  box-shadow:0 0 6cqw -1cqw rgba(79,127,254,.5)}
+.agentnode span{color:var(--ink-2);font-weight:400;font-size:1.3cqw;margin-left:1cqw}
+.collapse.shown~.chain .n{scale:.7;opacity:.35}
+.collapse.shown~.chain .ln,.collapse.shown~.chain .pc{opacity:.2}
+.collapse{width:0;height:0}
+.ix{cursor:auto}
+.sliders{left:6.2cqw;bottom:4cqw;display:flex;gap:3cqw;align-items:center;font-size:1.15cqw;color:var(--ink-2)}
+.sliders label{display:flex;align-items:center;gap:1cqw}
+.sliders b{color:#fff;font-weight:500;font-variant-numeric:tabular-nums;min-width:3.4cqw;display:inline-block}
+.sliders input{width:14cqw;accent-color:var(--blue)}
+
+/* ════ 11 · users ═══════════════════════════════════════════════════ */
+.ups{left:6.2cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw}
+.up{height:20cqw;border-radius:1.2cqw;overflow:hidden;position:relative;border:1px solid var(--line);background:#151A24}
+.up img{width:100%;height:100%;object-fit:cover}
+.up .cap{position:absolute;left:0;right:0;bottom:0;padding:1.2cqw;font-size:1.25cqw;font-weight:500;
+  background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.up .ok{position:absolute;right:1cqw;top:1cqw}
+.up svg{position:absolute;left:50%;top:42%;translate:-50% -50%;width:9cqw;height:9cqw}
+.ups .up:not(:first-child){transition-delay:var(--d)}
+.ood{left:50%;top:22cqw;translate:-50% 0;rotate:-6deg;padding:1cqw 2.4cqw;border:.3cqw solid var(--orange);border-radius:1cqw;
+  font-size:3.6cqw;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--orange);background:rgba(15,18,24,.85);
+  box-shadow:0 0 6cqw rgba(232,114,42,.35)}
+.ood.shown{animation:stamp .5s var(--e-spring) both}
+@keyframes stamp{from{scale:1.8;opacity:0}to{scale:1;opacity:1}}
+.improv{left:6.2cqw;right:6.2cqw;bottom:4.6cqw;display:flex;justify-content:space-between;font-size:2cqw;font-weight:500}
+.improv span:first-child{color:var(--ink-3);font-weight:400}
+
+/* ════ 12 · cost and scope ══════════════════════════════════════════ */
+.ppt{left:6.2cqw;top:20cqw;width:42cqw}
+.ppt .row{margin-bottom:2.2cqw}
+.ppt .row .top{display:flex;justify-content:space-between;font-size:1.4cqw;margin-bottom:.8cqw}
+.ppt .row .top b{font-weight:500}
+.ppt .bars{display:flex;gap:.4cqw;height:3cqw}
+.ppt .bars i{height:100%;border-radius:.5cqw;width:0;transition:width .8s var(--e-dec)}
+.ppt .cheap i{background:linear-gradient(90deg,#F2C230,#E8722A)}
+.ppt .good i{background:var(--magic)}
+.shown .ppt .cheap i:nth-child(1),.ppt.shown .cheap i:nth-child(1){width:9cqw}
+.ppt.shown .cheap i:nth-child(2){width:9cqw;transition-delay:.35s}
+.ppt.shown .cheap i:nth-child(3){width:9cqw;transition-delay:.7s}
+.ppt.shown .good i{width:16cqw;transition-delay:.2s}
+.ppt .note{font-size:1.25cqw;color:var(--ink-3);line-height:1.4}
+.scope{left:54cqw;right:6.2cqw;top:15cqw;height:34cqw}
+.scope .c{position:absolute;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:500;letter-spacing:-.01em}
+.scope .c1{left:2cqw;bottom:2cqw;width:9cqw;height:9cqw;background:rgba(79,127,254,.2);border:.2cqw solid var(--blue);font-size:1.3cqw}
+.scope .c2{right:0;top:0;width:30cqw;height:30cqw;background:radial-gradient(circle at 40% 40%,rgba(232,114,42,.22),rgba(224,83,63,.05));
+  border:.2cqw dashed rgba(232,114,42,.6);font-size:1.7cqw;padding:5cqw;line-height:1.25}
+.scope .c2.shown{animation:grow 1.4s var(--e-dec) both}
+@keyframes grow{from{scale:.2;opacity:0}to{scale:1;opacity:1}}
+
+/* ════ 13 · five lenses ═════════════════════════════════════════════ */
+.lens{left:6.2cqw;right:6.2cqw;top:16.6cqw}
+.lens .r{display:grid;grid-template-columns:4cqw 24cqw 1fr;align-items:baseline;padding:1.25cqw 0;border-top:1px solid var(--line)}
+.lens .r b{font-family:var(--mono);font-weight:500;font-size:1.1cqw;color:var(--ink-3)}
+.lens .q{font-size:1.9cqw;font-weight:500;letter-spacing:-.012em}
+.lens .a{font-size:1.65cqw;color:var(--ink-2);line-height:1.35}
+.lens .a em{font-style:normal;color:#BFF2F0}
+.s-lens .land{bottom:3.6cqw}
+
+/* ════ 14 · start with what it should do ════════════════════════════ */
+.tiers{left:6.2cqw;right:6.2cqw;top:19cqw;display:grid;grid-template-columns:1.25fr 1fr .62fr;gap:1.4cqw;align-items:end}
+.tier{padding:2cqw;display:flex;flex-direction:column;gap:1cqw}
+.tier .n{font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)}
+.tier .t{font-size:2.6cqw;font-weight:500;letter-spacing:-.02em}
+.tier ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7cqw}
+.tier li{font-size:1.35cqw;color:var(--ink-2);padding-left:1.4cqw;position:relative;line-height:1.3}
+.tier li::before{content:"";position:absolute;left:0;top:.55em;width:.6cqw;height:.6cqw;border-radius:50%;background:var(--cyan)}
+.tier.t1{height:22cqw;border-color:rgba(79,127,254,.45)}
+.tier.t2{height:18cqw}
+.tier.t3{height:11cqw;opacity:.85}
+
+/* ════ 15 · contracts and exits ═════════════════════════════════════ */
+.ce{left:6.2cqw;right:6.2cqw;top:19cqw;height:22cqw}
+.ce svg{width:100%;height:100%;overflow:visible}
+.ce .box{fill:#151A24;stroke:rgba(255,255,255,.3);stroke-width:2}
+.ce .port{font-family:var(--mono);font-size:15px;fill:#BFF2F0}
+.ce .t{font-family:var(--face);font-size:26px;font-weight:500;fill:#fff}
+.ce .s2{font-family:var(--face);font-size:16px;fill:rgba(255,255,255,.6)}
+.exits{left:52cqw;right:6.2cqw;top:19cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw}
+.exits .glass{padding:1.6cqw}
+.exits .v{font-size:3cqw;font-weight:500;letter-spacing:-.03em}
+.exits .l{font-size:1.2cqw;color:var(--ink-2);margin-top:.3cqw}
+.gauge{height:.4cqw;border-radius:1cqw;background:rgba(255,255,255,.1);margin-top:1cqw;overflow:hidden}
+.gauge i{display:block;height:100%;width:0;background:var(--risk);transition:width 1.8s var(--e-dec) .3s}
+.exits.shown .gauge i{width:var(--w)}
+
+/* ════ 16 · check between steps ═════════════════════════════════════ */
+.pipe{left:6.2cqw;right:6.2cqw;top:19cqw;height:10cqw}
+.pipe .bx{position:absolute;top:1cqw;width:9cqw;height:8cqw;translate:-50% 0;border-radius:1cqw;background:#0A0C10;
+  border:.15cqw solid rgba(255,255,255,.22);box-shadow:inset 0 0 2cqw rgba(0,0,0,.8);display:grid;place-items:center;
+  font-family:var(--mono);font-size:1cqw;color:var(--ink-3)}
+.pipe .ar{position:absolute;top:5cqw;height:.15cqw;background:rgba(255,255,255,.25)}
+.pipe .ck{position:absolute;top:2.9cqw;width:4.2cqw;height:4.2cqw;translate:-50% 0;rotate:45deg;border-radius:.6cqw;
+  background:rgba(86,211,208,.14);border:.2cqw solid var(--cyan);display:grid;place-items:center;
+  transition:opacity .5s var(--e-dec),scale .5s var(--e-spring)}
+.pipe .ck span{rotate:-45deg;font-size:1.5cqw;color:#BFF2F0;font-weight:700}
+.pipe .ck.off{opacity:.12;scale:.6}
+.kinds{left:6.2cqw;top:32cqw;display:flex;gap:1.2cqw}
+.kinds .pill{font-size:1.2cqw}
+.dna{left:44cqw;right:6.2cqw;top:31.5cqw;padding:1.6cqw 2cqw;display:grid;grid-template-columns:auto 1fr;gap:.6cqw 1.6cqw;align-items:center}
+.dna .lab{grid-column:1/-1}
+.dna .q{font-size:1.45cqw}
+.dna .q b{font-weight:500}
+.dna .m{font-family:var(--mono);font-size:1.05cqw;color:var(--cyan);white-space:nowrap}
+.dna .m.sem{color:var(--gold)}
+.dial{left:6.2cqw;bottom:3.6cqw;display:flex;align-items:center;gap:2.4cqw}
+.seg{display:flex;padding:.35cqw;border-radius:10cqw;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{appearance:none;border:0;background:none;color:var(--ink-2);font:inherit;font-size:1.2cqw;font-weight:500;
+  padding:.7cqw 1.6cqw;border-radius:10cqw;cursor:pointer;transition:all .3s var(--e-micro)}
+.seg button.on{background:#fff;color:#0F1218}
+.meters{display:flex;gap:2.4cqw;font-size:1.15cqw;color:var(--ink-2)}
+.meters b{color:#fff;font-weight:500;font-size:1.5cqw;margin-right:.4cqw}
+
+/* ════ 17 · walkthrough ═════════════════════════════════════════════ */
+.bw{left:6.2cqw;top:15.5cqw;width:56cqw;border-radius:1.4cqw;overflow:hidden;background:#000;border:1px solid var(--line);
+  box-shadow:0 3cqw 6cqw -2cqw rgba(0,0,0,.8),0 0 8cqw -2cqw rgba(79,127,254,.35)}
+.bw .bwbar{height:2.4cqw;display:flex;align-items:center;gap:.5cqw;padding:0 1cqw;background:#1B1F27}
+.bw .bwbar i{width:.8cqw;height:.8cqw;border-radius:50%;background:rgba(255,255,255,.2)}
+.bw .bwbar span{margin-left:1.4cqw;font-size:.95cqw;color:var(--ink-3);font-family:var(--mono)}
+.bw video{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.vsteps{left:66cqw;right:6.2cqw;top:17cqw;display:flex;flex-direction:column;gap:2.2cqw}
+.vt{display:grid;grid-template-columns:3cqw 1fr;gap:1.2cqw;opacity:.32;transition:opacity .4s var(--e-micro)}
+.vt.cur{opacity:1}
+.vt .num{width:2.6cqw;height:2.6cqw;border-radius:50%;border:.15cqw solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:1.1cqw;font-weight:500}
+.vt.cur .num{background:#fff;color:#0F1218;border-color:#fff}
+.vt .vh{font-size:1.8cqw;font-weight:500;letter-spacing:-.01em}
+.vt .vs{font-size:1.15cqw;color:var(--ink-2);margin-top:.3cqw;line-height:1.35}
+.src{right:6.2cqw;bottom:3.4cqw;font-size:1cqw;color:var(--ink-3)}
+
+/* ════ 18 · decisions underneath ════════════════════════════════════ */
+.gal{left:6.2cqw;right:6.2cqw;top:15.8cqw;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw}
+.gal figure{margin:0;transition:opacity .6s var(--e-micro)}
+.gal img{width:100%;height:16cqw;object-fit:cover;border-radius:1cqw;display:block}
+.gal figcaption{font-size:1.05cqw;color:var(--ink-2);margin-top:.6cqw}
+.gal figure.ctx img{outline:.25cqw solid var(--blue);outline-offset:.25cqw}
+.dim.shown~.gal figure:not(.ctx){opacity:.32}
+.dim{width:0;height:0}
+.tree{left:6.2cqw;right:6.2cqw;top:37.4cqw;display:flex;align-items:center;gap:1.4cqw}
+.tree .arr{color:var(--ink-3);font-size:2cqw}
+.tree .fork{display:flex;flex-direction:column;gap:.8cqw;padding-left:1.6cqw;border-left:.15cqw solid rgba(255,255,255,.2)}
+.tree .fr{display:flex;align-items:center;gap:.8cqw}
+.tree .gl{width:10cqw;font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.sixty{left:6.2cqw;right:6.2cqw;bottom:3.6cqw;display:flex;justify-content:space-between;align-items:baseline}
+.sixty .t{font-size:2.3cqw;font-weight:500;letter-spacing:-.015em}
+.handoff{right:6.2cqw;top:6cqw;padding:1cqw 1.6cqw;display:flex;gap:1cqw;align-items:center;font-size:1.3cqw}
+.handoff i{width:1.6cqw;height:1.6cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.15)}
+
+/* ════ 19 · blast radius ════════════════════════════════════════════ */
+.br{left:40cqw;top:5cqw;width:46cqw;height:46cqw}
+.br .rg{position:absolute;left:50%;top:50%;translate:-50% -50%;border-radius:50%;display:grid;place-items:start center}
+.br .r1{width:18cqw;height:18cqw;background:radial-gradient(circle,rgba(79,127,254,.45),rgba(79,127,254,.12));border:.2cqw solid var(--blue);place-items:center}
+.br .r2{width:34cqw;height:34cqw;border:.2cqw solid rgba(232,114,42,.65);background:radial-gradient(circle,transparent 52%,rgba(232,114,42,.1))}
+.br .r3{width:46cqw;height:46cqw;border:.18cqw dashed rgba(255,255,255,.2)}
+.br .rl{text-align:center;padding-top:1.4cqw}
+.br .rl b{display:block;font-size:1.6cqw;font-weight:500}
+.br .rl span{font-size:1.05cqw;color:var(--ink-2)}
+.br .r1 .rl{padding:0}
+.br .r2 .rl{padding-top:2cqw}
+.br .r2.shown{animation:ripple 1s var(--e-dec) both}
+@keyframes ripple{from{scale:.6;opacity:0}to{scale:1;opacity:1}}
+.bl{left:6.2cqw;top:19cqw;width:31cqw;display:flex;flex-direction:column;gap:1.6cqw}
+.bl .it{display:grid;grid-template-columns:3.2cqw 1fr;gap:1.2cqw;align-items:start}
+.bl .door{width:3.2cqw;height:3.2cqw;border-radius:.8cqw;display:grid;place-items:center;font-size:1.6cqw}
+.bl .d2{background:rgba(79,127,254,.2);border:.15cqw solid var(--blue)}
+.bl .d1{background:rgba(232,114,42,.15);border:.15cqw solid var(--orange)}
+.bl .d3{background:rgba(255,255,255,.06);border:.15cqw dashed rgba(255,255,255,.4)}
+.bl .t{font-size:1.65cqw;font-weight:500;letter-spacing:-.01em}
+.bl .d{font-size:1.2cqw;color:var(--ink-2);margin-top:.3cqw;line-height:1.35}
+.s-br .land{right:auto;max-width:44cqw;bottom:4cqw}
+
+/* ════ 20 · plausible vs good ═══════════════════════════════════════ */
+.pg{left:6.2cqw;top:13cqw;font-size:8cqw;font-weight:500;letter-spacing:-.045em;line-height:.95}
+.pg .p{color:rgba(255,255,255,.28)}
+.pg .arrow{color:var(--ink-3);font-weight:400;padding:0 .2em}
+.jobs{left:6.2cqw;right:6.2cqw;top:29cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw}
+.jobs .glass{padding:2cqw}
+.jobs .n{font-family:var(--mono);font-size:1.05cqw;color:var(--ink-3)}
+.jobs .t{font-size:2.4cqw;font-weight:500;letter-spacing:-.02em;margin:.6cqw 0 .4cqw}
+.jobs .d{font-size:1.4cqw;color:var(--ink-2);line-height:1.35}
+.jobs .glass:first-child{border-color:rgba(79,127,254,.45)}
+.jobs .glass:last-child{border-color:rgba(232,114,42,.45)}
+.oops{right:6.2cqw;top:8cqw;width:28cqw;padding:1.4cqw 1.6cqw;rotate:2deg}
+.oops .ad{font-size:1.8cqw;font-weight:700;letter-spacing:-.01em}
+.oops .ad span{color:var(--orange)}
+.oops .why{font-size:1.1cqw;color:var(--ink-3);margin-top:.6cqw}
+
+/* ════ 21 · hill climb + red team ═══════════════════════════════════ */
+.hill{left:6.2cqw;top:17cqw;width:40cqw;height:28cqw}
+.hill svg{width:100%;height:100%;overflow:visible}
+.hill .ax{stroke:rgba(255,255,255,.15);stroke-width:2;fill:none}
+.hill .st{fill:none;stroke:url(#gMagic);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.2s var(--e-dec)}
+.hill.shown .st{stroke-dashoffset:0}
+.hill text{font-family:var(--face);font-size:16px;fill:rgba(255,255,255,.5)}
+.goals{left:52cqw;right:6.2cqw;top:16cqw;display:flex;flex-direction:column;gap:1cqw}
+.goals .lab{margin-bottom:.4cqw}
+.goal{padding:1.2cqw 1.6cqw;display:flex;gap:1.2cqw;align-items:center;font-size:1.6cqw;font-weight:500}
+.goal i{font-style:normal;font-family:var(--mono);font-size:1cqw;color:var(--orange);border:1px solid rgba(232,114,42,.5);padding:.2cqw .6cqw;border-radius:.4cqw}
+.goals.shown .goal{animation:rise .7s var(--e-dec) both}
+.goals.shown .goal:nth-child(3){animation-delay:.12s}.goals.shown .goal:nth-child(4){animation-delay:.24s}.goals.shown .goal:nth-child(5){animation-delay:.36s}
+.sandbox{right:6.2cqw;bottom:3.6cqw;font-size:1.25cqw;color:var(--ink-2)}
+
+/* ════ 22 · the loop ════════════════════════════════════════════════ */
+.loop{left:6.2cqw;top:13.5cqw;width:38cqw;height:38cqw}
+.loop svg{width:100%;height:100%;overflow:visible}
+.loop .orbit{fill:none;stroke:rgba(255,255,255,.12);stroke-width:3}
+.loop .node circle{fill:#151A24;stroke:rgba(255,255,255,.25);stroke-width:2;transition:all .5s}
+.loop .node.shown circle{stroke:var(--c);fill:color-mix(in srgb,var(--c) 22%,#151A24)}
+.loop .node text{font-family:var(--face);font-size:22px;font-weight:500;fill:#fff;text-anchor:middle}
+.loop .node .sm{font-size:13px;fill:rgba(255,255,255,.55);font-weight:400}
+.loop .node{opacity:.35;transition:opacity .5s}
+.loop .node.shown{opacity:1}
+.loop .runner{offset-path:path("M300 60 A240 240 0 1 1 299.9 60");offset-rotate:0deg;animation:orbit 9s linear infinite}
+@keyframes orbit{to{offset-distance:100%}}
+.bucket{left:52cqw;right:6.2cqw;top:17cqw;display:flex;flex-direction:column;gap:1.2cqw}
+.bucket .glass{padding:1.8cqw}
+.bucket .t{font-size:1.9cqw;font-weight:500;letter-spacing:-.01em;margin-top:.4cqw}
+.bucket .one{opacity:.6}
+.bucket .one .t{text-decoration:line-through;text-decoration-color:rgba(232,114,42,.8)}
+.bucket .all{border-color:rgba(86,211,208,.5)}
+.judg{left:52cqw;right:6.2cqw;bottom:4cqw;font-size:1.6cqw;color:var(--ink-2)}
+.judg b{color:#fff;font-weight:500}
+
+/* ════ 23 · an agent made them ══════════════════════════════════════ */
+.made{left:6.2cqw;right:6.2cqw;top:19.5cqw;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw}
+.made img{width:100%;height:18cqw;object-fit:cover;border-radius:1cqw;display:block}
+.made .cur{position:absolute;inset:0}
+.byagent{left:6.2cqw;top:40.6cqw;display:flex;align-items:center;gap:1.2cqw;font-size:1.6cqw}
+.byagent .bot{width:3cqw;height:3cqw;border-radius:.8cqw;background:var(--magic);display:grid;place-items:center}
+.twou{left:52cqw;right:6.2cqw;top:39.6cqw;display:flex;align-items:center;gap:1.2cqw;justify-content:flex-end}
+.twou .u{padding:1cqw 1.6cqw;font-size:1.4cqw;font-weight:500}
+.twou .u.ag{border-color:rgba(86,211,208,.5)}
+.twou .p{font-size:1.4cqw;font-weight:500;padding:1cqw 1.6cqw;border-radius:1cqw;background:#fff;color:#0F1218}
+.twou .ar{color:var(--ink-3);font-size:1.6cqw}
+.s-made .h{max-width:84cqw}
+.s.on .made .scan{position:absolute}
+
+/* ════ 24 · toggles to just ask ═════════════════════════════════════ */
+.ed{left:6.2cqw;right:6.2cqw;top:17cqw;height:28cqw;display:grid;grid-template-columns:1fr 1fr;gap:4cqw}
+.panel{padding:1.6cqw;display:grid;grid-template-columns:1fr 1fr;gap:.9cqw 1.6cqw;align-content:start}
+.panel .lab{grid-column:1/-1;margin-bottom:.4cqw}
+.sl{display:flex;flex-direction:column;gap:.45cqw;font-size:1cqw;color:var(--ink-2)}
+.sl i{display:block;height:.35cqw;border-radius:1cqw;background:rgba(255,255,255,.15);position:relative}
+.sl i::after{content:"";position:absolute;top:50%;left:var(--v);width:1cqw;height:1cqw;translate:-50% -50%;border-radius:50%;background:#fff}
+.justask{display:flex;flex-direction:column;justify-content:center;gap:1.4cqw;align-items:flex-start}
+.justask .lab{margin-bottom:.4cqw}
+.bub{padding:1.4cqw 2cqw;border-radius:1.6cqw 1.6cqw 1.6cqw .3cqw;font-size:2.4cqw;font-weight:500;letter-spacing:-.015em;
+  background:rgba(79,127,254,.22);border:1px solid rgba(143,176,255,.4)}
+.bub:nth-of-type(3){align-self:flex-start;margin-left:3cqw}
+.edspec{left:6.2cqw;right:6.2cqw;bottom:4cqw;height:5cqw}
+.edspec .track{position:absolute;left:0;right:0;top:1.4cqw;height:.4cqw;border-radius:1cqw;background:linear-gradient(90deg,rgba(255,255,255,.2),var(--blue),var(--cyan))}
+.edspec span{position:absolute;top:2.6cqw;font-size:1.2cqw;color:var(--ink-2)}
+.edspec span.r{right:0}
+.edspec .knob{top:1.6cqw;left:12%;transition:left 1.8s var(--e-big)}
+.lean.shown~.edspec .knob{left:86%}
+.lean{width:0;height:0}
+.ten{left:39cqw;top:6cqw;padding:.8cqw 1.4cqw;font-size:1.2cqw;color:var(--ink-2)}
+.ten b{color:#fff;font-weight:500}
+
+/* ════ 25 · close ═══════════════════════════════════════════════════ */
+.s-close .ring{right:6cqw;top:8cqw;width:36cqw;height:36cqw}
+.tk{left:6.2cqw;top:15cqw;width:46cqw;display:flex;flex-direction:column;gap:2cqw}
+.tk .it{display:grid;grid-template-columns:4cqw 1fr;gap:1cqw}
+.tk .n{font-family:var(--mono);font-size:1.3cqw;color:var(--ink-3);padding-top:.5cqw}
+.tk .t{font-size:2.6cqw;font-weight:500;letter-spacing:-.02em;line-height:1.1}
+.tk .d{font-size:1.35cqw;color:var(--ink-2);margin-top:.4cqw;line-height:1.35}
+.bye{left:6.2cqw;right:6.2cqw;bottom:4cqw;display:flex;justify-content:space-between;align-items:flex-end}
+.bye .t{font-size:3.4cqw;font-weight:500;letter-spacing:-.03em}
+.bye .who{text-align:right;font-size:1.3cqw;color:var(--ink-2);line-height:1.5}
+.bye .who b{color:#fff;font-weight:500}
+
+/* ── chrome (the kit's, recoloured) ──────────────────────────────── */
 .hud{position:fixed;right:1.1rem;bottom:1.1rem;z-index:9;display:flex;align-items:center;gap:.45rem;
   font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:rgba(255,255,255,.5)}
 .nav{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);
@@ -97,7 +562,7 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);
 .hud,.bar{transition:opacity .45s var(--e-micro)}
 .hud.away,.bar.away{opacity:0;pointer-events:none}
 .bar{position:fixed;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08);z-index:9}
-.bar span{display:block;height:100%;background:var(--grad);transition:width .7s var(--e-big)}
+.bar span{display:block;height:100%;background:var(--aura);transition:width .7s var(--e-big)}
 .pips{display:flex;gap:.28rem;align-items:center;margin-right:.15rem}
 .pips i{width:.34rem;height:.34rem;border-radius:100px;background:rgba(255,255,255,.22)}
 .pips i.on{background:var(--blue)}
@@ -126,7 +591,7 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);
 .np-next{color:rgba(255,255,255,.5);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em}
 .np-hint{color:rgba(255,255,255,.32)}
 .np-body{padding:1rem 1.5rem 1.4rem;overflow-y:auto;font-family:var(--face);font-size:var(--ns,1.15rem);line-height:1.5}
-.np-body b.hl{font-weight:700;color:#fff}
+.np-body b.hl{font-weight:700;color:#fff;background:none;-webkit-text-fill-color:#fff}
 .np-body p{margin:0 0 .85rem;max-width:60em}
 .np-land{border-left:3px solid #E8722A;padding-left:.9rem;font-weight:500}
 .np-land b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
@@ -134,7 +599,7 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);
 .np-dir{color:rgba(255,255,255,.55);font-style:italic;font-size:1rem}
 .np-go{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 0;color:rgba(255,255,255,.55);font-size:.9rem}
 .np-go .ck{margin:0}
-.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;border-radius:1em;background:#E8722A;color:#fff;
+.np-body .ck,.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;border-radius:1em;background:#E8722A;color:#fff;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-style:normal;
   font-weight:700;white-space:nowrap;translate:0 -.1em}
 .np-body .ck.next{background:#4F7FFE;animation:ckp 1.3s ease-in-out infinite}
@@ -147,225 +612,494 @@ body.has-notes .bar{bottom:42vh}
 body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
 .toast{position:fixed;left:50%;bottom:2.2rem;translate:-50% 0;z-index:20;background:#1B1F27;color:#F2F3F5;
   padding:.75rem 1.1rem;border-radius:10px;font-size:.9rem;max-width:34rem;box-shadow:0 1rem 2rem -1rem rgba(0,0,0,.6)}
+
+/* close: the ring draws itself as the slide lands */
+.s.on.s-close .ring .arc{animation:draw 1.4s var(--e-big) both}
+.s.on.s-close .ring .arc:nth-of-type(2){animation-delay:.5s}
+.s.on.s-close .ring .arc:nth-of-type(3){animation-delay:1s}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.loopc small{transition:opacity .4s}
+
+/* screenshot mode (?steps=N): everything lands instantly */
+body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!important;transition-delay:0s!important;animation-duration:0s!important;animation-delay:0s!important}
+
+.tree .hk{width:1.5cqw;height:1.5cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.18);
+  box-shadow:0 0 1.4cqw rgba(86,211,208,.6);margin-left:-.6cqw}
+.tree .hk.shown{animation:stamp .5s var(--e-spring) both}
 </style>
 </head>
-<body>
+<body data-aura="none">
+<div class="amb" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
 <div class="deck" id="deck">
-<section class="s s-title"><div class="frame">
+<!-- 01 · cover -->
+<section class="s s-cover" data-aura="none"><div class="frame">
   <svg class="aura" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-  <defs>
-    <filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
-    <filter id="b2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="48"/></filter>
-    <filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
-    <linearGradient id="gBody" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#1B2A63"/><stop offset=".28" stop-color="#4B86F7"/>
-      <stop offset=".62" stop-color="#4F7FFE"/><stop offset="1" stop-color="#3D5FD0"/>
-    </linearGradient>
-    <linearGradient id="gWarm" gradientUnits="userSpaceOnUse" x1="1380" y1="0" x2="1620" y2="0">
-      <stop offset="0" stop-color="#5FB98A"/><stop offset=".35" stop-color="#E3BE2E"/>
-      <stop offset=".7" stop-color="#E8722A"/><stop offset="1" stop-color="#B8322A"/>
-    </linearGradient>
-  </defs>
-  <path filter="url(#b1)" fill="url(#gBody)"
-        d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
-  <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16"
-        d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
-  <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
-  <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46"
-        d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
-  <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10"
-        d="M620 900C780 800 980 760 1180 776"/>
-  <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110"
-        d="M1440 960C1470 840 1530 720 1660 610"/>
-</svg>
-  <p class="gfs">Google for Startups</p>
-  <div class="sftw" role="img" aria-label="SF Tech Week"><span class="w-sf">SF</span><span class="w-tech">TECH</span><span class="w-week">WEEK</span></div>
-  <h1 class="tt">Lessons from<br>Launching:</h1>
-  <p class="tt-sub">Deploying Agentic Workflows at Scale</p>
-  <div class="tt-photo" role="img" aria-label="Jaclyn Konzelmann"></div>
-  <div class="tt-name"><b>Jaclyn Konzelmann</b><span>Product Director</span><span>Google Labs</span></div>
+    <defs>
+      <filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
+      <filter id="b2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="48"/></filter>
+      <filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+      <linearGradient id="gBody" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="#1B2A63"/><stop offset=".28" stop-color="#4B86F7"/>
+        <stop offset=".62" stop-color="#4F7FFE"/><stop offset="1" stop-color="#3D5FD0"/>
+      </linearGradient>
+      <linearGradient id="gWarm" gradientUnits="userSpaceOnUse" x1="1380" y1="0" x2="1620" y2="0">
+        <stop offset="0" stop-color="#5FB98A"/><stop offset=".35" stop-color="#E3BE2E"/>
+        <stop offset=".7" stop-color="#E8722A"/><stop offset="1" stop-color="#B8322A"/>
+      </linearGradient>
+    </defs>
+    <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
+    <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
+    <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
+    <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
+    <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
+  </svg>
+  <p class="gfs" data-in>Google for Startups</p>
+  <div class="sftw" role="img" aria-label="SF Tech Week" data-in style="--d:.1s"><span class="w-sf">SF</span><span class="w-tech">TECH</span><span class="w-week">WEEK</span></div>
+  <h1 class="tt" data-in style="--d:.25s">Lessons from<br>Launching:</h1>
+  <p class="tt-sub" data-in style="--d:.4s">Deploying Agentic Workflows at Scale</p>
+  <div class="tt-photo" role="img" aria-label="Jaclyn Konzelmann" data-in style="--d:.3s"></div>
+  <div class="tt-name" data-in style="--d:.5s"><b>Jaclyn Konzelmann</b><span>Product Director</span><span>Google Labs</span></div>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">The AI Conference - last week</span>
-    <h2>Strip the guardrails as the models earn it.</h2>
-    
+
+<!-- 02 · strip the guardrails -->
+<section class="s s-strip" data-aura="left"><div class="frame">
+  <div class="attr" data-in><span class="pill">The AI Conference</span><span class="lab">Last week &middot; my advice to the room</span></div>
+  <p class="quote" data-in style="--d:.12s">Strip the guardrails <span class="hl">as the models earn it.</span></p>
+  <i class="strip" data-step="1"></i>
+  <div class="rails" aria-hidden="true">
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Today's prompt</span>
-    <h2>How to build the guardrails.</h2>
-    
+
+<!-- 03 · how to build them -->
+<section class="s s-build" data-aura="right"><div class="frame">
+  <div class="attr" data-in><span class="pill on">SF Tech Week</span><span class="lab">Today&rsquo;s prompt</span></div>
+  <p class="quote" data-in style="--d:.12s">How to <span class="hl">build</span> the guardrails.</p>
+  <div class="rails" aria-hidden="true">
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Full circle</span>
-    <h2>You can't strip what you never built.</h2>
-    <p class="sub">And you can't loosen them until you know the model has earned it.</p>
+
+<!-- 04 · full circle -->
+<section class="s s-fc" data-aura="right"><div class="frame">
+  <span class="k" data-in>Full circle</span>
+  <h2 class="h fc-h" data-in style="--d:.08s">You can&rsquo;t strip what you <span class="hl">never built.</span></h2>
+  <p class="fc-sub" data-in style="--d:.18s">And you can&rsquo;t loosen them until you know the model has earned it.</p>
+  <div class="ring" aria-hidden="true"><svg viewBox="0 0 600 600">
+    <circle class="base" cx="300" cy="300" r="230"/>
+    <g data-step="1">
+      <path class="arc" pathLength="1" stroke="#4F7FFE" d="M300 70A230 230 0 0 1 499 415"/>
+      <path class="arc" pathLength="1" stroke="#56D3D0" style="transition-delay:.5s" d="M499 415A230 230 0 0 1 101 415"/>
+      <path class="arc" pathLength="1" stroke="#E8722A" style="transition-delay:1s" d="M101 415A230 230 0 0 1 300 70"/>
+    </g>
+    <g class="node"><circle cx="300" cy="70" r="58"/><text x="300" y="66">Build</text><text class="sm" x="300" y="88">TODAY</text></g>
+    <g class="node"><circle cx="499" cy="415" r="58"/><text x="499" y="411">Validate</text><text class="sm" x="499" y="433">AT SCALE</text></g>
+    <g class="node"><circle cx="101" cy="415" r="58"/><text x="101" y="411">Strip</text><text class="sm" x="101" y="433">AS EARNED</text></g>
+  </svg></div>
+  <div class="agenda" data-step="2">
+    <div><b>01</b><span>Why agents break</span></div>
+    <div><b>02</b><span>Building the guardrails</span></div>
+    <div><b>03</b><span>Earning autonomy</span></div>
+    <div><b>&#8635;</b><span>What we&rsquo;re stripping now</span></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">The spectrum</span>
-    <h2>Do It With Me  -  Do It For Me</h2>
-    <p class="sub">“Please take care of this for me.”</p>
+
+<!-- 05 · the spectrum -->
+<section class="s s-spec" data-aura="low"><div class="frame">
+  <span class="k" data-in>The spectrum</span>
+  <h2 class="h" data-in style="--d:.08s">From <span class="hm">Do It With Me</span> to <span class="hr">Do It For Me</span>.</h2>
+  <div class="ask glass" data-step="1">&ldquo;Please take care of this for me.&rdquo;</div>
+  <i class="go-right" data-step="1"></i>
+  <div class="spec" data-in style="--d:.2s">
+    <div class="track"></div><div class="knob"></div>
+    <div class="end">Do It With Me<small>The user drives. The AI helps.</small></div>
+    <div class="end r">Do It For Me<small>The user hands the whole thing over.</small></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">The catch</span>
-    <h2>The magic and the risk come from the same place.</h2>
-    
+
+<!-- 06 · magic and risk -->
+<section class="s s-mr" data-aura="low"><div class="frame">
+  <span class="k" data-in>The catch</span>
+  <h2 class="h" data-in style="--d:.08s">The <span class="hm">magic</span> and the <span class="hr">risk</span> come from the same place.</h2>
+  <div class="readout ix" data-in style="--d:.3s">
+    <div><span class="lab">Magic</span><b id="rdM" class="hm">-</b></div>
+    <div><span class="lab">Risk</span><b id="rdR" class="hr">-</b></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Pomelli</span>
-    <h2>One product, more than one point on the spectrum</h2>
-    <p class="sub">Photoshoot  -  Pomelli Agent</p>
+  <div class="mr" style="top:18.5cqw;height:19.4cqw" aria-hidden="true"><svg viewBox="0 0 1000 220" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="gM" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
+      <linearGradient id="gR" x1="0" x2="1"><stop offset="0" stop-color="#F2C230"/><stop offset=".6" stop-color="#E8722A"/><stop offset="1" stop-color="#E0533F"/></linearGradient>
+      <linearGradient id="gMf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F7FFE" stop-opacity=".28"/><stop offset="1" stop-color="#4F7FFE" stop-opacity="0"/></linearGradient>
+      <linearGradient id="gRf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8722A" stop-opacity=".26"/><stop offset="1" stop-color="#E8722A" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g data-step="1"><path class="f" fill="url(#gMf)" d="M0 214C150 110 450 40 1000 22L1000 220L0 220Z"/>
+      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" vector-effect="non-scaling-stroke" d="M0 214C150 110 450 40 1000 22"/></g>
+    <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 218C500 214 800 150 1000 14L1000 220L0 220Z"/>
+      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" vector-effect="non-scaling-stroke" d="M0 218C500 214 800 150 1000 14"/></g>
+  </svg></div>
+  <div class="vline ix" id="vline" style="left:calc(6.2cqw + .35 * 87.6cqw);top:18.5cqw;height:21.6cqw;width:0;border-left:.15cqw dashed rgba(255,255,255,.4)"></div>
+  <div class="spec">
+    <div class="track"></div>
+    <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <div class="here ix"><input id="here" type="range" min="0" max="100" value="35" aria-label="Where you sit on the spectrum"></div>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">01 - Why agents break</span>
-    <h2>Five ways agentic workflows break in production</h2>
-    
+
+<!-- 07 · pomelli on the spectrum -->
+<section class="s s-pspec" data-aura="low"><div class="frame">
+  <span class="k" data-in>Pomelli</span>
+  <h2 class="h w" data-in style="--d:.08s">One product. <span class="hl">More than one point on the spectrum.</span></h2>
+  <div class="pm mark" data-step="1" style="left:calc(6.2cqw + .3 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+    <div class="card glass"><img src="media/shoot-context.jpg" alt="">
+      <div><div class="t">Photoshoot</div><div class="d">A product photo in. An on-brand shoot out.</div><div class="tag"><span class="pill">Narrow</span></div></div></div>
+    <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">01 - No guaranteed output</span>
-    <h2>You don't get a guaranteed output.</h2>
-    <p class="sub">It loops. It does a mediocre job. Or it hands back something you never agreed on.</p>
+  <div class="pm mark" data-step="2" style="left:calc(6.2cqw + .72 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+    <div class="card glass"><div class="chat"><i></i><i class="me"></i><i></i><i class="me"></i><i></i></div>
+      <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill dna">Open-ended</span></div></div></div>
+    <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">02 - Errors compound</span>
-    <h2>Errors compound.</h2>
-    <p class="sub">95% right at every step. Ten steps. About 60% right at the end.</p>
+  <div class="spec" data-in style="--d:.2s">
+    <div class="track"></div>
+    <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">03 - Out of distribution</span>
-    <h2>Your users will find the case you didn't plan for.</h2>
-    
+
+<!-- 08 · five ways -->
+<section class="s s-five" data-aura="warm"><div class="frame">
+  <span class="k" data-in>01 &middot; Why agents break</span>
+  <h2 class="h" data-in style="--d:.08s">Five ways agentic workflows <span class="hr">break in production.</span></h2>
+  <div class="five">
+    <div class="glass" data-step="1"><span class="n">01</span>
+      <svg class="ic" viewBox="0 0 60 60"><rect x="8" y="8" width="44" height="44" rx="10" stroke-dasharray="6 6"/><path class="a" d="M23 24a7 7 0 1 1 9 6.7c-1.3.5-2 1.6-2 3V36"/><circle class="a" cx="30" cy="43" r="1"/></svg>
+      <div class="t">No guaranteed output</div></div>
+    <div class="glass" data-step="2"><span class="n">02</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="10" cy="44" r="5"/><circle cx="28" cy="32" r="5"/><circle class="o" cx="48" cy="14" r="6"/><path d="M14 41l10-6M32 29l11-11"/></svg>
+      <div class="t">Errors compound</div></div>
+    <div class="glass" data-step="3"><span class="n">03</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="24" cy="20" r="9"/><path d="M8 52c2-10 8-15 16-15s14 5 16 15"/><path class="o" d="M44 14a5 5 0 1 1 6 5c-1 .4-1.5 1.2-1.5 2.4V24"/><circle class="o" cx="48.5" cy="30" r=".8"/></svg>
+      <div class="t">Users you didn&rsquo;t plan for</div></div>
+    <div class="glass" data-step="4"><span class="n">04</span>
+      <svg class="ic" viewBox="0 0 60 60"><ellipse cx="30" cy="16" rx="16" ry="6"/><path d="M14 16v10c0 3.3 7.2 6 16 6s16-2.7 16-6V16"/><path class="o" d="M14 26v10c0 3.3 7.2 6 16 6s16-2.7 16-6V26M14 36v10c0 3.3 7.2 6 16 6s16-2.7 16-6V36"/></svg>
+      <div class="t">Cost gets away from you</div></div>
+    <div class="glass" data-step="5"><span class="n">05</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="30" cy="30" r="6"/><circle class="a" cx="30" cy="30" r="15" stroke-dasharray="4 5"/><circle class="o" cx="30" cy="30" r="25" stroke-dasharray="3 6"/></svg>
+      <div class="t">The more open, the harder</div></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <div class="worse" data-step="6"><div class="wbar"></div><span>Do It With Me</span><span class="r">All five get worse as you move toward Do It For Me</span></div>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">04 + 05 - Cost and scope</span>
-    <h2>Cost and scope get away from you.</h2>
-    <p class="sub">Photoshoot is narrow. “Build me a game and keep improving it” is not.</p>
+
+<!-- 09 · no guaranteed output -->
+<section class="s s-out" data-aura="warm"><div class="frame">
+  <span class="k" data-in>01 &middot; No guaranteed output</span>
+  <h2 class="h" data-in style="--d:.08s">You don&rsquo;t get a <span class="hr">guaranteed output.</span></h2>
+  <div class="contract glass" data-in style="--d:.2s">
+    <span class="lab">What done looks like &middot; Business DNA</span>
+    <div style="height:1cqw"></div>
+    <div class="row"><span>Fonts</span><em>2 families</em></div>
+    <div class="row"><span>Colors</span><span class="sw"><i style="background:#2E5E4E"></i><i style="background:#9BC9A8"></i><i style="background:#F3EFE6"></i><i style="background:#111"></i></span></div>
+    <div class="row"><span>Values</span><em>3 to 5</em></div>
+    <div class="row"><span>Imagery</span><em>on-brand refs</em></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Pomelli</span>
-    <h2>Five questions to answer before launch</h2>
-    <p class="sub">Done  -  Upstream  -  Users  -  Cost  -  Scope</p>
+  <div class="outs">
+    <div class="glass" data-step="1"><span class="lab">What can come back</span><div class="spin"></div><div class="loopc" id="loopc">0<small>LOOP CAP HIT</small></div><div class="t">It loops.</div></div>
+    <div class="glass" data-step="2"><span class="lab">&nbsp;</span><div class="meh"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="d">Done. Technically. Not something you can use.</div><div class="t">A mediocre job.</div></div>
+    <div class="glass" data-step="3"><span class="lab">&nbsp;</span><p class="para">&ldquo;This brand radiates a timeless, effortless elegance that feels at once refined and&hellip;&rdquo;</p><div class="t">Not what you agreed on.</div></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <p class="land" data-in style="--d:.4s">If you don&rsquo;t define what done looks like, <span class="hr">the agent will decide for you.</span></p>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">02 - Building the guardrails</span>
-    <h2>Start with what it should do. Not the prompt.</h2>
-    <p class="sub">Features first. Then the wireframes and IA. Then the prompts.</p>
+
+<!-- 10 · errors compound -->
+<section class="s s-chain" data-aura="warm"><div class="frame">
+  <span class="k" data-in>02 &middot; Errors compound</span>
+  <h2 class="h" data-in style="--d:.08s">Errors <span class="hr">compound.</span></h2>
+  <div class="big" data-in style="--d:.2s"><div class="v" id="cpV">95%</div><div class="l" id="cpL">right at every step</div></div>
+  <i class="collapse" data-step="2"></i>
+  <div class="chain" id="chain" data-in style="--d:.25s"></div>
+  <div class="agentnode" data-step="2"><span style="margin:0;color:#fff;font-weight:500;font-size:1.6cqw">One agent node</span><span>The hand-offs are still there. You just can&rsquo;t see them.</span></div>
+  <i data-step="1" id="cpGo" style="width:0;height:0"></i>
+  <div class="sliders ix" data-in style="--d:.4s">
+    <label>Each step right <input id="cpA" type="range" min="80" max="99.5" step=".5" value="95"><b id="cpAv">95%</b></label>
+    <label>Steps <input id="cpN" type="range" min="1" max="20" value="10"><b id="cpNv">10</b></label>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Contracts and exits</span>
-    <h2>Every step gets a contract. Every agent gets an exit.</h2>
-    <p class="sub">Schema in, schema out. Loop caps, time and cost budgets, and a fallback.</p>
+
+<!-- 11 · users -->
+<section class="s s-users" data-aura="left"><div class="frame">
+  <span class="k" data-in>03 &middot; Out of distribution</span>
+  <h2 class="h" data-in style="--d:.08s">Your users will find the case <span class="hr">you didn&rsquo;t plan for.</span></h2>
+  <div class="ups">
+    <div class="up" data-in style="--d:.2s"><img src="media/shoot-flatlay.jpg" alt=""><span class="ok pill on">Expected</span><div class="cap">A product photo</div></div>
+    <div class="up" data-step="1" style="--d:.0s"><svg class="ic" viewBox="0 0 60 60"><path d="M8 24h44M10 24l4-12h32l4 12"/><rect x="12" y="24" width="36" height="26"/><rect class="o" x="26" y="34" width="8" height="16"/><path d="M16 30h7M37 30h7"/></svg><div class="cap">Their storefront</div></div>
+    <div class="up" data-step="1" style="transition-delay:.12s"><img src="media/pomelli-landing.jpg" alt="" style="opacity:.7"><div class="cap">A screenshot of their website</div></div>
+    <div class="up" data-step="1" style="transition-delay:.24s"><svg class="ic" viewBox="0 0 60 60"><g><circle cx="12" cy="18" r="5"/><circle cx="30" cy="18" r="5"/><circle cx="48" cy="18" r="5"/><circle class="o" cx="12" cy="40" r="5"/><circle class="o" cx="30" cy="40" r="5"/><circle class="o" cx="48" cy="40" r="5"/></g></svg><div class="cap">Six products, one photo</div></div>
+    <div class="up" data-step="1" style="transition-delay:.36s"><svg class="ic" viewBox="0 0 60 60"><circle class="o" cx="30" cy="30" r="20"/><path class="o" d="M16 16l28 28"/></svg><div class="cap">Something you can&rsquo;t put in an ad</div></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <div class="ood" data-step="2">Out of distribution</div>
+  <div class="improv" data-step="2"><span>A normal app with an unexpected input throws an error.</span><span>An agent <span class="hr">improvises.</span></span></div>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Check between steps</span>
-    <h2>Check every black box before it feeds the next one.</h2>
-    <p class="sub">Hard rules  -  semantic checks</p>
+
+<!-- 12 · cost and scope -->
+<section class="s s-cost" data-aura="warm"><div class="frame">
+  <span class="k" data-in>04 + 05 &middot; Cost and scope</span>
+  <h2 class="h" data-in style="--d:.08s">Cost and scope <span class="hr">get away from you.</span></h2>
+  <div class="ppt" data-step="1">
+    <span class="lab">Price per successful task</span><div style="height:1.6cqw"></div>
+    <div class="row cheap"><div class="top"><b>Cheaper model</b><span class="mono" style="color:var(--orange)">3 tries</span></div><div class="bars"><i></i><i></i><i></i></div></div>
+    <div class="row good"><div class="top"><b>Stronger model</b><span class="mono" style="color:var(--cyan)">1 try</span></div><div class="bars"><i></i></div></div>
+    <p class="note">Not price per token. A cheap model that needs three retries costs more than a good one that gets it right the first time.</p>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Pomelli Photoshoot</span>
-    <h2>Photoshoot, under the hood</h2>
-    <p class="sub">Business DNA  -  pick templates  -  apply in context  -  generate</p>
+  <div class="scope">
+    <div class="c c1" data-in style="--d:.3s">Photoshoot</div>
+    <div class="c c2" data-step="2">&ldquo;Build me a game and keep improving it.&rdquo;</div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Blast radius</span>
-    <h2>Contain the blast radius.</h2>
-    <p class="sub">Imagine the worst thing it could do. Split read from write. Sandbox the rest.</p>
+
+<!-- 13 · five lenses -->
+<section class="s s-lens" data-aura="right"><div class="frame">
+  <span class="k" data-in>Pomelli &middot; Before launch</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.6cqw">Five questions to answer <span class="hl">before you launch.</span></h2>
+  <div class="lens" style="top:15cqw">
+    <div class="r" data-step="1"><b>01</b><span class="q">What does done look like?</span><span class="a">A <em>Business DNA</em> with real fonts, colors and imagery. Images that are actually your product.</span></div>
+    <div class="r" data-step="2"><b>02</b><span class="q">Where do errors compound?</span><span class="a"><em>Business DNA.</em> It&rsquo;s upstream of every photoshoot, campaign and website.</span></div>
+    <div class="r" data-step="3"><b>03</b><span class="q">What will users throw at it?</span><span class="a">Every kind of photo, every kind of business, every kind of website.</span></div>
+    <div class="r" data-step="4"><b>04</b><span class="q">What does a run cost?</span><span class="a">Every photoshoot is several generations. Cost scales with every click.</span></div>
+    <div class="r" data-step="5"><b>05</b><span class="q">How open is it?</span><span class="a">Photoshoot is narrow. The Pomelli Agent is a conversation.</span></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <p class="land" data-step="6">Those five answers are <span class="hl">the spec for your guardrails.</span></p>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">03 - Earning autonomy</span>
-    <h2>An agent will happily build you something plausible.</h2>
-    <p class="sub">Validation is how you get from plausible to good.</p>
+
+<!-- 14 · start with what it should do -->
+<section class="s s-tiers" data-aura="left"><div class="frame">
+  <span class="k" data-in>02 &middot; Building the guardrails</span>
+  <h2 class="h" data-in style="--d:.08s">Start with what it should do. <span class="hl">Not the prompt.</span></h2>
+  <div class="tiers">
+    <div class="tier t1 glass" data-step="1"><span class="n">01</span><span class="t">Features</span>
+      <ul><li>Refine itself from what it learns?</li><li>Run in the background, on cues?</li><li>Act, or only suggest?</li></ul></div>
+    <div class="tier t2 glass" data-step="2"><span class="n">02</span><span class="t">Wireframes &amp; IA</span>
+      <ul><li>Where do I see what happened?</li><li>Where can I step in?</li><li>Where can I undo?</li></ul></div>
+    <div class="tier t3 glass" data-step="3"><span class="n">03</span><span class="t">Prompts</span></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <p class="land" data-step="4"><span style="color:var(--ink-3)">Clever prompting gets you a demo.</span> <span class="hl">Product-grade engineering gets you a launch.</span></p>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Two jobs</span>
-    <h2>Hill climb on quality. Then let people break it.</h2>
-    
+
+<!-- 15 · contracts and exits -->
+<section class="s s-ce" data-aura="right"><div class="frame">
+  <span class="k" data-in>Contracts and exits</span>
+  <h2 class="h" data-in style="--d:.08s">Every step gets a <span class="hm">contract.</span> Every agent gets an <span class="hr">exit.</span></h2>
+  <div class="ce" data-step="1" style="right:auto;width:40cqw"><svg viewBox="0 0 640 352">
+    <rect class="box" x="170" y="96" width="300" height="160" rx="22"/>
+    <text class="t" x="320" y="168" text-anchor="middle">A step</text>
+    <text class="s2" x="320" y="196" text-anchor="middle">model, tools, prompt</text>
+    <path d="M10 176H164" stroke="#56D3D0" stroke-width="4" stroke-linecap="round"/><path d="M150 164l14 12-14 12" fill="none" stroke="#56D3D0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M476 176H630" stroke="#56D3D0" stroke-width="4" stroke-linecap="round"/><path d="M616 164l14 12-14 12" fill="none" stroke="#56D3D0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="port" x="10" y="150">SCHEMA IN</text><text class="port" x="630" y="150" text-anchor="end">SCHEMA OUT</text>
+    <text class="s2" x="10" y="214">what goes in</text><text class="s2" x="630" y="214" text-anchor="end">what comes out,</text><text class="s2" x="630" y="236" text-anchor="end">in what shape</text>
+  </svg></div>
+  <div class="exits" data-step="2">
+    <div class="glass"><span class="lab">Loop cap</span><div class="v">15</div><div class="gauge"><i style="--w:100%"></i></div></div>
+    <div class="glass"><span class="lab">Time budget</span><div class="v">90s</div><div class="gauge"><i style="--w:62%"></i></div></div>
+    <div class="glass"><span class="lab">Cost budget</span><div class="v">$</div><div class="gauge"><i style="--w:44%"></i></div></div>
+    <div class="glass"><span class="lab">Fallback</span><div class="l" style="font-size:1.35cqw;color:#fff;margin-top:.6cqw">Retry. Go simpler. Or hand back something honest.</div></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <p class="land" data-step="3">An agent with no exit strategy doesn&rsquo;t fail. <span class="hr">It just keeps going.</span></p>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">The loop</span>
-    <h2>Break it. Bucket it. Guard it. Re-check it.</h2>
-    <p class="sub">Repeat until good enough. Good enough is a judgment call.</p>
+
+<!-- 16 · check between steps -->
+<section class="s s-check" data-aura="left"><div class="frame">
+  <span class="k" data-in>Check between steps</span>
+  <h2 class="h" data-in style="--d:.08s">Check every black box <span class="hm">before it feeds the next one.</span></h2>
+  <div class="pipe" id="pipe" data-in style="--d:.2s;left:10.7cqw;right:10.7cqw"></div>
+  <div class="kinds" data-step="1" style="top:31cqw"><span class="pill">Hard rules &middot; fields, types, limits</span><span class="pill dna">Semantic &middot; does this look right?</span></div>
+  <div class="dna glass" data-step="2" style="left:6.2cqw;right:auto;width:62cqw;top:36cqw">
+    <span class="lab">Example &middot; Business DNA from a website</span>
+    <span class="m">HARD RULE</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
+    <span class="m sem">SEMANTIC</span><span class="q">Did we pick up the brand, <b>or the cookie banner?</b></span>
   </div>
-  <span class="draft-tag">Draft layout</span>
-</div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    <span class="kick">Full circle</span>
-    <h2>What we're stripping now</h2>
-    
+  <div class="dial ix" data-step="3">
+    <div class="seg" id="seg"><button class="on" data-every="1">Check every step</button><button data-every="3">Every third step</button></div>
+    <div class="meters"><span><b id="mChecks">5</b>checks</span><span><b id="mLat">+5</b>judge calls of latency</span><span><b id="mRisk">low</b>risk of a silent miss</span></div>
   </div>
-  <span class="draft-tag">Draft layout</span>
 </div></section>
-<section class="s s-lead s-draft"><div class="frame">
-  <div class="inner">
-    
-    <h2>Build them. Validate them. Strip them as the model earns it.</h2>
-    <p class="sub">Thank you.</p>
+
+<!-- 17 · photoshoot, a real run -->
+<section class="s s-walk" data-aura="right"><div class="frame">
+  <span class="k" data-in>Pomelli &middot; Photoshoot &middot; a real run</span>
+  <h2 class="h" data-in style="--d:.08s">One product photo. <span class="hl">A few clicks.</span></h2>
+  <div class="bw" data-in style="--d:.2s;width:52cqw;top:17.5cqw">
+    <div class="bwbar"><i></i><i></i><i></i><span>labs.google.com/pomelli</span></div>
+    <video id="walk" src="media/pomelli-walkthrough.mp4" poster="media/walk-poster.jpg" muted loop playsinline preload="auto" aria-label="Pomelli Photoshoot walkthrough"></video>
   </div>
-  <span class="draft-tag">Draft layout</span>
+  <div class="vsteps" style="left:63cqw;top:18cqw">
+    <div class="vt" data-vt="0-3.3"><span class="num">1</span><div><div class="vh">Your website</div><div class="vs">Pomelli builds your Business DNA: colors, fonts, tone, aesthetic.</div></div></div>
+    <div class="vt" data-vt="3.3-5.1"><span class="num">2</span><div><div class="vh">Pick a product</div><div class="vs">Straight from your site&rsquo;s catalog, or upload one.</div></div></div>
+    <div class="vt" data-vt="5.1-7.2"><span class="num">3</span><div><div class="vh">Templates, suggested</div><div class="vs">Picked for this photo. Override anything.</div></div></div>
+    <div class="vt" data-vt="7.2-99"><span class="num">4</span><div><div class="vh">Generate</div><div class="vs">One more click.</div></div></div>
+  </div>
+  <p class="src">Recorded in Pomelli &middot; opulize.com, a London eyewear brand</p>
 </div></section>
+
+<!-- 18 · decisions underneath -->
+<section class="s s-under" data-aura="low"><div class="frame">
+  <span class="k" data-in>What came back</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.5cqw">One click on top. <span class="hl">A lot of decisions underneath.</span></h2>
+  <i class="dim" data-step="1"></i>
+  <div class="gal" style="top:16cqw">
+    <figure data-in style="--d:.15s"><img src="media/shoot-ice.jpg" alt="Sunglasses frozen in ice with lime slices"><figcaption>On ice</figcaption></figure>
+    <figure data-in style="--d:.22s"><img src="media/shoot-floral.jpg" alt="Sunglasses on a table with flowers"><figcaption>Floral whimsy</figcaption></figure>
+    <figure data-in style="--d:.29s"><img src="media/shoot-flatlay.jpg" alt="Flat lay of the sunglasses"><figcaption>Flat lay</figcaption></figure>
+    <figure data-in style="--d:.36s"><img src="media/shoot-tryon.jpg" alt="Model wearing the sunglasses"><figcaption>Model try-on</figcaption></figure>
+    <figure class="ctx" data-in style="--d:.43s"><img src="media/shoot-context.jpg" alt="Man wearing the sunglasses on a sunny terrace"><figcaption>In context</figcaption></figure>
+    <figure data-in style="--d:.5s"><img src="media/shoot-seasonal.jpg" alt="Seasonal shot with the sunglasses"><figcaption>Seasonal</figcaption></figure>
+  </div>
+  <div class="tree" data-step="1" style="top:37cqw">
+    <span class="pill on">In context</span><span class="arr">&rarr;</span><i class="hk" data-step="3"></i><span class="pill dna">Your Business DNA</span><span class="arr">&rarr;</span><i class="hk" data-step="3"></i>
+    <div class="fork">
+      <div class="fr"><span class="gl">Makeup brand</span><span class="pill">In a purse</span><span class="pill">On a counter</span><span class="pill">&hellip;</span></div>
+      <div class="fr"><span class="gl">Sunglasses</span><span class="pill">On a face</span><span class="pill">Pushed up on a head</span><span class="pill">&hellip;</span></div>
+    </div>
+  </div>
+  <div class="sixty" data-step="2"><span class="lab">60+ contexts we never show as settings</span><span class="t">We say &ldquo;in context.&rdquo; <span class="hl">We handle the rest.</span></span></div>
+  <div class="handoff glass" data-step="3" style="top:3.6cqw"><i></i>Every hand-off is a place to check</div>
+</div></section>
+
+<!-- 19 · blast radius -->
+<section class="s s-br" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Blast radius</span>
+  <h2 class="h" data-in style="--d:.08s;max-width:34cqw;font-size:4.6cqw">Contain the <span class="hr">blast radius.</span></h2>
+  <div class="bl">
+    <div class="it" data-step="1"><span class="door d2">&#8644;</span><div><div class="t">Generate an image</div><div class="d">Two-way door. Don&rsquo;t like it? Generate another.</div></div></div>
+    <div class="it" data-step="2"><span class="door d1">&#8594;</span><div><div class="t">Share to Instagram or Google Ads</div><div class="d">One-way door. Today, the person initiates it. Not the agent.</div></div></div>
+    <div class="it" data-step="3"><span class="door d3">&#8599;</span><div><div class="t">An agent that handles all of it</div><div class="d">Where we need to get to. Earned, step by step, toward Do It For Me.</div></div></div>
+  </div>
+  <div class="br" style="left:45cqw" aria-hidden="true">
+    <div class="rg r3" data-step="3"><div class="rl"><b style="color:var(--ink-2)">Earned over time</b><span>trust and autonomy</span></div></div>
+    <div class="rg r2" data-step="2"><div class="rl"><b>Publish</b><span>person confirms</span></div></div>
+    <div class="rg r1" data-step="1"><div class="rl"><b>Generate</b><span>agent acts</span></div></div>
+  </div>
+  <p class="land" data-step="4" style="max-width:36cqw;font-size:1.9cqw">A prompt telling your agent not to do something isn&rsquo;t a guardrail. <span class="hr">It&rsquo;s a wish.</span></p>
+</div></section>
+
+<!-- 20 · plausible vs good -->
+<section class="s s-pg" data-aura="center"><div class="frame">
+  <span class="k" data-in>03 &middot; Earning autonomy</span>
+  <h2 class="h" data-in style="--d:.08s;font-size:2.2cqw;font-weight:400;color:var(--ink-2);top:9cqw;max-width:80cqw">An agent will happily build you something plausible. The difference is on you.</h2>
+  <div class="pg" data-in style="--d:.2s;top:13.5cqw"><span class="p">Plausible</span><span class="arrow">&rarr;</span><span class="hl">good.</span></div>
+  <div class="jobs" data-step="1" style="top:27cqw">
+    <div class="glass"><span class="n">JOB 01</span><div class="t">Quality, in distribution</div><div class="d">What I expect it to do, it does.</div></div>
+    <div class="glass"><span class="n">JOB 02</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, the damage stays inside the blast radius.</div></div>
+  </div>
+  <div class="oops glass" data-step="2" style="left:6.2cqw;right:6.2cqw;bottom:3.6cqw;top:auto;width:auto;rotate:0deg;display:flex;align-items:center;gap:2cqw">
+    <span class="lab">Skip job 02</span><span class="ad">FLASH SALE &middot; <span>50% off everything</span></span><span class="why" style="margin:0">A sale the business never offered. Or a product shot that quietly changes the product.</span>
+  </div>
+</div></section>
+
+<!-- 21 · hill climb + red team -->
+<section class="s s-hill" data-aura="left"><div class="frame">
+  <span class="k" data-in>Two jobs, two tools</span>
+  <h2 class="h" data-in style="--d:.08s">Hill climb on quality. <span class="hr">Then let people break it.</span></h2>
+  <div class="hill" style="top:18.5cqw;height:28cqw" data-step="1"><svg viewBox="0 0 600 420">
+    <defs><linearGradient id="gMagic" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient></defs>
+    <path class="ax" d="M20 20V400H590"/>
+    <path class="st" pathLength="1" d="M20 380H110V336H200V306H290V250H380V214H470V160H560V128"/>
+    <circle cx="560" cy="128" r="8" fill="#56D3D0"/>
+    <text x="30" y="40">quality vs. your examples of good</text><text x="590" y="390" text-anchor="end">measure &middot; improve &middot; repeat</text>
+  </svg></div>
+  <div class="goals" data-step="2" style="top:18cqw">
+    <span class="lab">Red team goals &middot; sandboxed, no script</span>
+    <div class="goal glass"><i>GOAL</i>Make it write something off-brand.</div>
+    <div class="goal glass"><i>GOAL</i>Make a claim the business never made.</div>
+    <div class="goal glass"><i>GOAL</i>Put someone else&rsquo;s logo in the shot.</div>
+    <div class="goal glass"><i>GOAL</i>Ignore its instructions.</div>
+  </div>
+</div></section>
+
+<!-- 22 · the loop -->
+<section class="s s-loop" data-aura="right"><div class="frame">
+  <span class="k" data-in>The loop</span>
+  <h2 class="h" data-in style="--d:.08s">Break it. Bucket it. <span class="hl">Guard it. Re-check it.</span></h2>
+  <div class="loop" style="top:17.5cqw;width:34cqw;height:34cqw"><svg viewBox="0 0 600 600">
+    <circle class="orbit" cx="300" cy="300" r="240"/>
+    <circle r="9" fill="#fff"><animateMotion dur="9s" repeatCount="indefinite" path="M300 60A240 240 0 1 1 299.9 60"/></circle>
+    <g class="node" data-step="1" style="--c:#E8722A"><circle cx="300" cy="60" r="62"/><text x="300" y="58">Break</text><text class="sm" x="300" y="80">trajectories</text></g>
+    <g class="node" data-step="2" style="--c:#F2C230"><circle cx="540" cy="300" r="62"/><text x="540" y="298">Bucket</text><text class="sm" x="540" y="320">behaviors</text></g>
+    <g class="node" data-step="3" style="--c:#56D3D0"><circle cx="300" cy="540" r="62"/><text x="300" y="538">Guard</text><text class="sm" x="300" y="560">safeguards</text></g>
+    <g class="node" data-step="4" style="--c:#4F7FFE"><circle cx="60" cy="300" r="62"/><text x="60" y="298">Re-check</text><text class="sm" x="60" y="320">quality evals</text></g>
+  </svg></div>
+  <div class="bucket" data-step="5" style="top:18.5cqw">
+    <div class="glass one"><span class="lab">The one-off fix</span><div class="t">Block the phrase &ldquo;50% off&rdquo;</div></div>
+    <div class="glass all"><span class="lab" style="color:#BFF2F0">The bucket</span><div class="t">The agent invents offers the business never made.</div></div>
+  </div>
+  <p class="judg" data-in style="--d:.3s">Repeat until good enough. <b>Good enough is a judgment call.</b></p>
+</div></section>
+
+<!-- 23 · an agent made them -->
+<section class="s s-made" data-aura="center"><div class="frame">
+  <span class="k" data-in>Full circle &middot; What we&rsquo;re stripping now</span>
+  <h2 class="h w" data-in style="--d:.08s">Remember those photos? <span class="hl">An agent made them.</span></h2>
+  <div class="made">
+    <img src="media/shoot-ice.jpg" alt="" data-in style="--d:.15s"><img src="media/shoot-floral.jpg" alt="" data-in style="--d:.2s">
+    <img src="media/shoot-flatlay.jpg" alt="" data-in style="--d:.25s"><img src="media/shoot-tryon.jpg" alt="" data-in style="--d:.3s">
+    <img src="media/shoot-context.jpg" alt="" data-in style="--d:.35s"><img src="media/shoot-seasonal.jpg" alt="" data-in style="--d:.4s">
+  </div>
+  <div class="byagent" data-step="1"><span class="bot"><svg viewBox="0 0 24 24" width="60%" height="60%"><rect x="4" y="7" width="16" height="12" rx="3" fill="none" stroke="#fff" stroke-width="2"/><circle cx="9.5" cy="13" r="1.5" fill="#fff"/><circle cx="14.5" cy="13" r="1.5" fill="#fff"/><path d="M12 7V4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span>My <b style="font-weight:500">Muse agent</b> navigated Pomelli on its own, and made every one.</span></div>
+  <div class="twou" data-step="2"><span class="u glass">The person</span><span class="u glass ag">An agent</span><span class="ar">&rarr;</span><span class="p">Pomelli</span></div>
+</div></section>
+
+<!-- 24 · toggles to just ask -->
+<section class="s s-edit" data-aura="right"><div class="frame">
+  <span class="k" data-in>The editing debate</span>
+  <h2 class="h" data-in style="--d:.08s">From a toggle for everything <span class="hl">to just ask.</span></h2>
+  <div class="ten glass" data-in style="--d:.2s;left:auto;right:6.2cqw;top:6cqw">People who care want control of <b>the last 10%</b></div>
+  <div class="ed">
+    <div class="panel glass" data-step="1"><span class="lab">A toggle for everything</span>
+      <div class="sl">Background<i style="--v:30%"></i></div><div class="sl">Brightness<i style="--v:55%"></i></div>
+      <div class="sl">Contrast<i style="--v:48%"></i></div><div class="sl">Saturation<i style="--v:62%"></i></div>
+      <div class="sl">Shadows<i style="--v:22%"></i></div><div class="sl">Highlights<i style="--v:70%"></i></div>
+      <div class="sl">Expression<i style="--v:40%"></i></div><div class="sl">Crop<i style="--v:80%"></i></div>
+      <div class="sl">Text size<i style="--v:35%"></i></div><div class="sl">Logo position<i style="--v:66%"></i></div>
+      <div class="sl">Grain<i style="--v:12%"></i></div><div class="sl">Color temp<i style="--v:52%"></i></div>
+    </div>
+    <div class="justask" data-step="2"><span class="lab">Just ask</span>
+      <div class="bub">Swap out the background.</div>
+      <div class="bub">Make him look happier.</div>
+    </div>
+  </div>
+  <i class="lean" data-step="3"></i>
+  <div class="edspec"><div class="track"></div><div class="knob"></div><span>Fine-grained controls</span><span class="r">Lean on the model, as image models earn it</span></div>
+</div></section>
+
+<!-- 25 · close -->
+<section class="s s-close" data-aura="low"><div class="frame">
+  <span class="k" data-in>Three things to take with you</span>
+  <div class="tk">
+    <div class="it" data-step="1"><span class="n">01</span><div><div class="t">Choose your spot on the spectrum, <span class="hm">on purpose.</span></div><div class="d">More autonomy means more magic, and more risk.</div></div></div>
+    <div class="it" data-step="2"><span class="n">02</span><div><div class="t">Design for <span class="hr">failure.</span></div><div class="d">Contracts and exits. Checks between the steps. A contained blast radius.</div></div></div>
+    <div class="it" data-step="3"><span class="n">03</span><div><div class="t">Earn autonomy through <span class="hl">validation.</span></div><div class="d">The loop tells you when it&rsquo;s time to move right.</div></div></div>
+  </div>
+  <div class="ring" aria-hidden="true"><svg viewBox="0 0 600 600">
+    <circle class="base" cx="300" cy="300" r="230"/>
+    <path class="arc" pathLength="1" stroke="#4F7FFE" d="M300 70A230 230 0 0 1 499 415"/>
+    <path class="arc" pathLength="1" stroke="#56D3D0" d="M499 415A230 230 0 0 1 101 415"/>
+    <path class="arc" pathLength="1" stroke="#E8722A" d="M101 415A230 230 0 0 1 300 70"/>
+    <g class="node"><circle cx="300" cy="70" r="58"/><text x="300" y="76">Build</text></g>
+    <g class="node"><circle cx="499" cy="415" r="58"/><text x="499" y="421">Validate</text></g>
+    <g class="node"><circle cx="101" cy="415" r="58"/><text x="101" y="421">Strip</text></g>
+  </svg></div>
+  <div class="bye" data-step="4"><span class="t">Thank you.</span><span class="who"><b>Jaclyn Konzelmann</b><br>Product Director &middot; Google Labs &middot; @jacalulu</span></div>
+</div></section>
+
 </div>
 <div class="hud" id="hud">
   <button class="nav prev" aria-label="Previous slide">&#8249;</button>
   <span class="pips" id="pips"></span>
-  <span class="count"><span id="cur">1</span> / 23</span>
+  <span class="count"><span id="cur">1</span> / 25</span>
   <button class="nav next" aria-label="Next slide">&#8250;</button>
   <button class="nav fs" id="fs" aria-label="Full screen" title="Full screen (F)">&#9974;</button>
 </div>
@@ -390,11 +1124,9 @@ body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
   let i=0;
   const cur=document.getElementById('cur'), fill=document.getElementById('fill');
   const pips=document.getElementById('pips');
-  const TONE=["title", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark"];
-  // One ground for the whole deck - the Google for Startups dark. Kept as a
-  // function so a light slide can be added later without touching show().
-  const GROUND={title:'#0F1218',dark:'#0F1218'};
-  function paint(n){ document.body.style.backgroundColor=GROUND[TONE[n]]||'#0F1218'; }
+  const TONE=["dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark"];
+  // The ground never changes; the ambient aura drifts to each slide's mood.
+  function paint(n){ document.body.dataset.aura = slides[n].dataset.aura || 'low'; }
   function show(n){
     i=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach((s,k)=>s.classList.toggle('on',k===i));
@@ -435,6 +1167,7 @@ body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
       e.classList.toggle('shown', +e.dataset.step<=st);
     });
     runCounts();
+    document.dispatchEvent(new CustomEvent('deckstep',{detail:{i,st}}));
     const t=steps(slides[i]);
     pips.innerHTML = t ? Array.from({length:t},(_,k)=>
       `<i class="${k<st?'on':''}"></i>`).join('') : '';
@@ -506,7 +1239,7 @@ body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
   document.querySelector('.next').onclick=()=>go(1);
   document.querySelector('.prev').onclick=()=>go(-1);
   deck.addEventListener('click',e=>{
-    if(e.target.closest('.hud,.jump'))return;
+    if(e.target.closest('.hud,.jump,.ix'))return;
     if(!deckJump.panel.hidden){deckJump.close();return;}   // a click outside just dismisses the jump panel
     go(e.clientX > innerWidth*0.5 ? 1 : -1);
   });
@@ -602,7 +1335,7 @@ body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
   // ── presenter notes ───────────────────────────────────────────────
   // The full narrative per slide, straight from the script. Hidden until N,
   // so the deck is still a deck; the clock is for practice runs.
-  const NOTES=[{"cue": "Open · 0:00", "paras": [">> Up while people settle and the host introduces you. Nothing spoken on this slide."]}, {"cue": "Open · 0:00", "paras": ["Hi everyone. I'm really excited to be here, and to share some real-world lessons from launching **Pomelli**.", "It's a little funny. Last week I gave a talk at The AI Conference. It was all about how to build products now that agents can actually do things.", "And one of the core pieces of advice I left that room with was this.", "LAND: Strip the guardrails as the models earn it."]}, {"cue": "Open · 0:45", "paras": ["And today, the prompt I was given for this talk is...", ">> Beat. Let the room catch up.", "...how to **build** the guardrails.", "I actually think that's the perfect place to start."]}, {"cue": "Open · 1:15", "paras": ["Because it's a full circle.", "LAND: You can't strip what you never built. And you can't loosen them until you know the model has earned it.", "So here's the plan. First, why agentic workflows break when they hit real users. Then, how we built the guardrails for Pomelli. Then, how you validate them at scale.", "And I'll end with what we're actively taking apart right now, because this next generation of models is earning more autonomy."]}, {"cue": "The spectrum · 2:30", "paras": ["Let me start with a framework I use a lot.", "When I design an AI-native product, I think about a spectrum. On one end, **Do It With Me**. The user drives, and the AI helps. On the other end, **Do It For Me**. The user hands the whole thing over.", "And the extreme version of Do It For Me is a sentence I hear all the time: please take care of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:15", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions, more freedom. That's what makes it feel magical.", "It's also exactly what makes it less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side of this spectrum. The job is to **choose where you sit on it, on purpose**, and build the guardrails that make that spot safe."]}, {"cue": "The spectrum · 4:15", "paras": ["Pomelli is a good example, because it lives at more than one point on this spectrum.", "Quick context if you haven't seen it. Pomelli is a Google Labs experiment that helps small businesses create on-brand marketing. It starts by learning your business. We call that your **Business DNA**.", "**Photoshoot** sits toward the narrow end. You give it a product photo, it gives you back professional studio and lifestyle shots. Clear input, clear output.", "Then at I/O in May, we launched the **Pomelli Agent**. You can chat with it, upload docs and photos, and it builds your Business DNA with you. That's much more open-ended.", "Same product, same users, same Business DNA underneath. But one is a narrow pipeline, and one is a conversation that can go almost anywhere.", "And as you'd expect, the two needed very different guardrails.", ">> Screenshots: Photoshoot result grid on the left, Pomelli Agent chat on the right."]}, {"cue": "01 Why agents break · 5:30", "paras": ["So let's start with why agentic workflows break when they hit production. No hype, just the structural stuff.", "These are the five I see over and over.", "One, there's no guaranteed output. Two, errors compound. Three, your users do things you never planned for. Four, cost gets away from you. And five, the more open-ended the agent, the harder all of it gets.", "Notice that every one of these gets worse as you move toward Do It For Me."]}, {"cue": "01 Why agents break · 6:30", "paras": ["First, the output. When you delegate, you have to assume you won't get a deterministic answer back.", "Sometimes the agent loops. It tries, checks, tries again, and churns. Which is why almost every agent has some kind of hard stop, like no more than fifteen loops.", "Sometimes it finishes, but it does a mediocre job, and hands you something you can't really work with.", "And sometimes it returns something that just isn't what you agreed on. You asked for five structured fields. You got a lovely paragraph.", "In Pomelli, done has a shape. A Business DNA has fonts, colors, values and imagery. A photoshoot is a set of on-brand images of your product. Anything else isn't done, however good it sounds.", "None of these are bugs in the usual sense. Nothing crashed. There's no stack trace. The agent did its best, and its best wasn't what you needed. That's what makes them so hard to catch.", "LAND: If you don't define what done looks like, the agent will decide for you."]}, {"cue": "01 Why agents break · 7:45", "paras": ["Second, errors compound. This is a classic control loop problem.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates a little, step three builds on it, and step four builds on that.", "Even without a hallucination, one flaky step can knock the whole run off the rails. The agent kind of loses its mind. And it's very confident while it does it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, a ten step chain is right about **60 percent** of the time.", ">> 0.95 to the tenth is 0.599. Say about sixty percent.", "Last week I talked about Opal, where we went from wiring up a chain of steps to one agent node that figures out the steps itself. Notice what that trade gives up. With a chain, you can see and check every hand-off. With one agent, the hand-offs are still there. You just can't see them anymore.", "The more you do in a single run, the more magic. And the more risk."]}, {"cue": "01 Why agents break · 9:00", "paras": ["Third, your users. You will forget to account for some user state. It's not a question of if.", "There's an old line in security that attackers are always one step ahead of defenders. The same is true in user land.", "Real users upload the photo you didn't expect, type the request you didn't imagine, and combine features in ways nobody on the team thought of.", "Take Photoshoot. Something as simple as a product photo. What happens when someone uploads a photo of their storefront instead? Or a screenshot of their website? Or one photo with six products in it? Or a photo of a product you are absolutely not allowed to put in an ad?", "That's **out of distribution**. Your agent was never tested there, and it will still try its best. Which is sometimes exactly the problem.", "And this is where agents differ from normal software. A normal app with an unexpected input throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:00", "paras": ["Fourth, cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "It can be slow, it can be expensive, and every so often it goes haywire. Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's **price per successful task**. A cheap model that needs three retries costs more than a good one that gets it right the first time.", "And fifth, scope. The more open-ended your agent, the harder it is to make it reliable. Photoshoot is narrow. Go build me a game and keep improving it is very, very broad.", "Part of the work is finding the point on the spectrum where you can **tame the beast**."]}, {"cue": "01 Why agents break · 11:00", "paras": ["So what does that mean for Pomelli? Each of those five turns into a question you have to answer before you launch.", "What does done look like? A Business DNA with real fonts, colors and imagery. A set of images that are actually your product.", "Where do errors compound? Business DNA. It's upstream of everything. If it gets your brand wrong, every photoshoot, campaign and website built on top of it inherits the mistake.", "What will users throw at it? Every kind of photo, every kind of business, every kind of website.", "What does a run cost? Every photoshoot is several generations, so cost scales with every click.", "And how open is it? Photoshoot is narrow. The agent is a conversation.", "LAND: Those five answers are the spec for your guardrails."]}, {"cue": "02 Building the guardrails · 12:30", "paras": ["So how do you build for that? It doesn't start with the prompt. It starts with the features.", "What do you actually want this system to do? Do I want it to refine itself from what it learns? Do I want it running in the background, triggered by cues? Do I want it to act, or only suggest?", "Then you design the wireframes and the information architecture around it. Where does the user see what happened? Where can they step in? Where can they undo?", "This sounds obvious, but it changes what you build. If the answer is it runs in the background, now you need a way to tell the user what it did while they were gone. If the answer is it acts, now you need undo. Those aren't prompt problems. They're product problems.", "Only then do you get to the prompts.", "LAND: Clever prompting gets you a demo. Product-grade engineering gets you a launch."]}, {"cue": "02 Building the guardrails · 13:45", "paras": ["Next, **contracts and exits**.", "Every agent, and every step inside it, needs a contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an exit strategy. A loop cap. A time budget. A cost budget. And a defined fallback for when it hits one. Retry, drop to something simpler, or hand back to the user with something honest.", "The fallback is the part teams skip, because it isn't fun to design. But it's the part your users will actually see on a bad day. A graceful we couldn't do that one, here's what we can do, beats a spinner that never ends.", "LAND: An agent with no exit strategy doesn't fail. It just keeps going."]}, {"cue": "02 Building the guardrails · 14:45", "paras": ["Then, **check between the steps**. Every time a black box finishes its job, check the output before you feed it to the next black box.", "Checks come in two flavors. Hard rules: does it have the fields, is it the right type, is it within limits. And semantic checks: does this look like what I'd expect?", "Take Business DNA. Say one step reads a business's website and pulls out its brand. A hard rule might be: did we get colors, fonts and a logo? A semantic check might be: does this actually look like this business? Did we pick up the brand, or the cookie banner? Catch it there, before every creative downstream builds on top of it.", "Hard rules are cheap. Semantic checks usually mean another model call, a model acting as a judge. That costs time and money.", "And this is where latency and cost come back. You can check after every step, or every third step. That's a dial, and you set it by how much a mistake at that step costs you."]}, {"cue": "02 Building the guardrails · 16:15", "paras": ["Here's what that looks like in Photoshoot. Simplified.", "You start with your Business DNA. You pick a product photo. Behind the scenes, we pick the best templates for that product. Then we work out how to apply each one for your brand.", "If you sell makeup, in context might mean in a purse, or on a counter. If you sell sunglasses, it might mean on someone's face. Then we generate the images.", ">> FILL: where the real checks sit. Two or three is plenty. For example: a check on the input photo, a check that the product is preserved before results are shown, and the fallback when generation fails.", "Notice what the user doesn't see. Sixty-plus options, and a chain of decisions, each with a check. That's a narrow agent with a guardrail at every hand-off."]}, {"cue": "02 Building the guardrails · 17:30", "paras": ["Last piece of the architecture: **contain the blast radius**. Start by imagining the worst thing your agent could do, and protect for that.", "For code execution you want a tightly closed, isolated box. Then manage the information it can see, and split read from write. Reading an inbox is one risk level. Sending from it is a very different one. Bucket the risk, and contain each bucket.", "Borrowing a test from last week: one-way door or two-way door? In Pomelli, generating an image is a two-way door. Don't like it? Generate another one. Sharing it to a business's Instagram, or into a live Google Ads campaign, is a one-way door. That's where a person, not the agent, should be the one who confirms.", ">> Confirm how sharing to connected apps works in Pomelli today before saying the last line as fact.", "LAND: Telling your agent not to do something in a prompt isn't a guardrail. It's a wish."]}, {"cue": "03 Earning autonomy · 19:00", "paras": ["So you've built it. How do you know it's ready?", "Last week I said an agent will happily build you something plausible. The difference between plausible and good is on you.", "Validation is how you close that gap, and it has two jobs. One: **quality in distribution**. What I expect it to do, it does. Two: **misuse out of distribution**. When someone tries something weird, the damage stays inside the blast radius.", "For a marketing product, skipping that second job looks like an ad promising a sale the business never offered. Or a product shot that quietly changes the product."]}, {"cue": "03 Earning autonomy · 20:15", "paras": ["For the first job, you **hill climb on quality**. Build a set of examples of what good looks like, measure against it, improve, repeat.", "For the second, you **red team**. That can be people on your team, or contractors who do this for a living.", "Give them a sandboxed version of the agent, and let them break it in an unconstrained way. Don't hand them a script. The whole point is to find the things you didn't think of.", "What you can hand them is goals. Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Get it to ignore its instructions. Then step back.", "And sandbox it for real. If your red team can break it, so can the internet, and you want that to happen somewhere it doesn't matter."]}, {"cue": "03 Earning autonomy · 21:15", "paras": ["Then you run the loop.", "As people break your agent, collect the **trajectories**, the full record of what it did. Generalize them into **buckets** of behavior. Not one-off fixes. Buckets. Add a **safeguard** for each bucket.", "The bucket matters more than the fix. If one person got the agent to write a fake discount, the one-off fix is to block that phrase. The bucket is: the agent invents offers the business never made. That's the safeguard you want.", "Then, and this is the step people skip, re-run your quality evals. Make sure the safeguard didn't quietly break the thing that was working.", "Repeat until you're happy. And happy is a judgment call. No score tells you it's ready to launch. At some point you decide what good enough means for your users, and you own it."]}, {"cue": "Close · 22:30", "paras": ["Which brings me back to where I started.", "We launched Pomelli with a lot of these guardrails. Contracts, checks, narrow steps, a tight blast radius. They were right for the models we had.", "But the models keep earning more autonomy. So right now, we're actively going back through what we built and asking: which of these guardrails should we strip?", ">> FILL: one or two specifics. For example, steps you're collapsing into one agent, checks that no longer catch anything, or decisions moving from fixed templates to the agent.", "And the only reason we can answer that with confidence is that we built the guardrails, and the validation loop, in the first place. **That loop is what tells you when the model has earned it.**"]}, {"cue": "Close · 24:00", "paras": ["So, three things to take with you.", "One. Choose your spot on the spectrum, on purpose. More autonomy means more magic and more risk, so pick the point where you can actually tame it.", "Two. Design for failure. Contracts and exits, checks between the steps, and a contained blast radius. Assume it will go wrong, and decide ahead of time what happens when it does.", "Three. Earn autonomy through validation. Hill climb, red team, run the loop. That loop is how you'll know when it's time to move to the right on the spectrum.", "LAND: Build the guardrails. Validate them. Then strip them as the model earns it.", "Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Do It With Me / Do It For Me", "Magic and risk", "Pomelli on the spectrum", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost and scope", "Pomelli through the five lenses", "Start from what it should do", "Contracts and exits", "Check between steps", "Photoshoot, under the hood", "Contain the blast radius", "Plausible vs good", "Hill climb, then red team", "The loop", "What we're stripping now", "Thank you"];
+  const NOTES=[{"cue": "Open · 0:00", "paras": [">> Up while people settle and the host introduces you. Nothing spoken on this slide."]}, {"cue": "Open · 0:00", "paras": ["Hi everyone. I'm really excited to be here, and to share some real-world lessons from launching **Pomelli**.", "It's a little funny. Last week I gave a talk at The AI Conference. It was all about how to build products now that agents can actually do things.", "And one of the core pieces of advice I left that room with was this.", "LAND: [[CLICK]] Strip the guardrails as the models earn it."]}, {"cue": "Open · 0:45", "paras": ["And today, the prompt I was given for this talk is...", ">> Beat. Let the room catch up.", "...how to **build** the guardrails.", "I actually think that's the perfect place to start."]}, {"cue": "Open · 1:15", "paras": ["Because it's a [[CLICK]] full circle.", "LAND: You can't strip what you never built. And you can't loosen them until you know the model has earned it.", "So here's the [[CLICK]] plan. First, why agentic workflows break when they hit real users. Then, how we built the guardrails for Pomelli. Then, how you validate them at scale.", "And I'll end with what we're actively taking apart right now, because this next generation of models is earning more autonomy."]}, {"cue": "The spectrum · 2:30", "paras": ["Let me start with a framework I use a lot.", "When I design an AI-native product, I think about a spectrum. On one end, **Do It With Me**. The user drives, and the AI helps. On the other end, **Do It For Me**. The user hands the whole thing over.", "And the extreme version of Do It For Me is a sentence I hear [[CLICK]] all the time: please take care of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:15", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions, more freedom. That's what makes it feel [[CLICK]] magical.", "It's also exactly what makes it [[CLICK]] less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side of this spectrum. The job is to **choose where you sit on it, on purpose**, and build the guardrails that make that spot safe.", ">> The handle under the curves is draggable if you want to show it live."]}, {"cue": "The spectrum · 4:15", "paras": ["Pomelli is a good example, because it lives at more than one point on this spectrum.", "Quick context if you haven't seen it. Pomelli is a Google Labs experiment that helps small businesses create on-brand marketing. It starts by learning your business. We call that your **Business DNA**.", "[[CLICK]] **Photoshoot** sits toward the narrow end. You give it a product photo, it gives you back professional studio and lifestyle shots. Clear input, clear output.", "Then at I/O in May, we launched the [[CLICK]] **Pomelli Agent**. You can chat with it, upload docs and photos, and it builds your Business DNA with you. That's much more open-ended.", "Same product, same users, same Business DNA underneath. But one is a narrow pipeline, and one is a conversation that can go almost anywhere. And as you'd expect, the two needed very different guardrails."]}, {"cue": "01 Why agents break · 5:30", "paras": ["So let's start with why agentic workflows break when they hit production. No hype, just the structural stuff. These are the five I see over and over.", "One, [[CLICK]] there's no guaranteed output. Two, [[CLICK]] errors compound. Three, [[CLICK]] your users do things you never planned for. Four, [[CLICK]] cost gets away from you. And five, [[CLICK]] the more open-ended the agent, the harder all of it gets.", "Notice that every one of these gets [[CLICK]] worse as you move toward Do It For Me."]}, {"cue": "01 Why agents break · 6:30", "paras": ["First, the output. When you delegate, you have to assume you won't get a deterministic answer back.", "In Pomelli, done has a shape. A Business DNA has fonts, colors, values and imagery. Anything else isn't done, however good it sounds.", "Sometimes the agent [[CLICK]] loops. It tries, checks, tries again, and churns. Which is why almost every agent has a hard stop, like no more than fifteen loops.", "Sometimes it finishes, but it [[CLICK]] does a mediocre job, and hands you something you can't really work with.", "And sometimes it returns something that [[CLICK]] just isn't what you agreed on. You asked for structured fields. You got a lovely paragraph.", "None of these crash. There's no stack trace. That's what makes them so hard to catch.", "LAND: If you don't define what done looks like, the agent will decide for you."]}, {"cue": "01 Why agents break · 7:45", "paras": ["Second, errors compound. This is a classic control loop problem.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates a little, step three builds on it, and step four builds on that. And it's very confident while it does it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, [[CLICK]] a ten step chain is right about **60 percent** of the time.", ">> 0.95 to the tenth is 0.599. The sliders are live if anyone asks what 99 percent buys you.", "Last week I talked about Opal, where we went from wiring up a chain of steps to [[CLICK]] one agent node that figures out the steps itself. With a chain, you can see and check every hand-off. With one agent, the hand-offs are still there. You just can't see them anymore.", "The more you do in a single run, the more magic. And the more risk."]}, {"cue": "01 Why agents break · 9:00", "paras": ["Third, your users. You will forget to account for some user state. It's not a question of if.", "There's an old line in security that attackers are always one step ahead of defenders. The same is true in user land.", "Take Photoshoot. Something as simple as a [[CLICK]] product photo. What happens when someone uploads a photo of their storefront instead? A screenshot of their website? One photo with six products in it? A product you're not allowed to put in an ad?", "That's [[CLICK]] **out of distribution**. Your agent was never tested there, and it will still try its best. A normal app with an unexpected input throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:00", "paras": ["Fourth, cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's [[CLICK]] **price per successful task**. A cheap model that needs three retries costs more than a good one that gets it right the first time.", "And fifth, scope. The more open-ended your agent, the harder it is to make it reliable. [[CLICK]] Photoshoot is narrow. Go build me a game and keep improving it is very, very broad.", "Part of the work is finding the point on the spectrum where you can **tame the beast**."]}, {"cue": "01 Why agents break · 11:00", "paras": ["So what does that mean for Pomelli? Each of those five turns into a question you have to answer before you launch.", "[[CLICK]] What does done look like? A Business DNA with real fonts, colors and imagery. A set of images that are actually your product.", "[[CLICK]] Where do errors compound? Business DNA. It's upstream of everything. If it gets your brand wrong, every photoshoot, campaign and website built on top of it inherits the mistake.", "[[CLICK]] What will users throw at it? Every kind of photo, every kind of business, every kind of website.", "[[CLICK]] What does a run cost? Every photoshoot is several generations, so cost scales with every click.", "[[CLICK]] And how open is it? Photoshoot is narrow. The agent is a conversation.", "LAND: [[CLICK]] Those five answers are the spec for your guardrails."]}, {"cue": "02 Building the guardrails · 12:30", "paras": ["So how do you build for that? It doesn't start with the prompt. It starts with the [[CLICK]] features.", "What do you actually want this system to do? Do I want it to refine itself from what it learns? Run in the background, triggered by cues? Act, or only suggest?", "Then you design the [[CLICK]] wireframes and the information architecture around it. Where does the user see what happened? Where can they step in? Where can they undo?", "If it runs in the background, you need a way to tell people what it did while they were gone. If it acts, you need undo. Those aren't prompt problems. They're product problems.", "Only then do you get to the [[CLICK]] prompts.", "LAND: [[CLICK]] Clever prompting gets you a demo. Product-grade engineering gets you a launch."]}, {"cue": "02 Building the guardrails · 13:45", "paras": ["Next, contracts and exits.", "Every agent, and every step inside it, needs a [[CLICK]] contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an [[CLICK]] exit strategy. A loop cap. A time budget. A cost budget. And a defined fallback for when it hits one. Retry, drop to something simpler, or hand back to the user with something honest.", "The fallback is the part teams skip, because it isn't fun to design. But it's the part your users will actually see on a bad day.", "LAND: [[CLICK]] An agent with no exit strategy doesn't fail. It just keeps going."]}, {"cue": "02 Building the guardrails · 14:45", "paras": ["Then, check between the steps. Every time a black box finishes its job, [[CLICK]] check the output before you feed it to the next black box.", "Checks come in two flavors. Hard rules: does it have the fields, is it the right type, is it within limits. And semantic checks: does this look like what I'd expect?", "Take [[CLICK]] Business DNA. Say one step reads a business's website and pulls out its brand. A hard rule might be: did we get colors, fonts and a logo? A semantic check might be: does this actually look like this business? Did we pick up the brand, or the cookie banner?", "Hard rules are cheap. Semantic checks usually mean another model call, a model acting as a judge. That costs time and money.", "So you can check after every step, or [[CLICK]] every third step. That's a dial, and you set it by how much a mistake at that step costs you.", ">> The dial is clickable live."]}, {"cue": "02 Building the guardrails · 16:00", "paras": ["Here's what that looks like in Photoshoot. This is a real run, on a London eyewear brand.", "You start with the website, and Pomelli builds the Business DNA. You pick a product. Behind the scenes, we pick the templates that fit that product. Then one more click, and it generates.", ">> The clip runs about ten seconds and loops. Let it play once through."]}, {"cue": "02 Building the guardrails · 16:45", "paras": ["And this is what came back.", "Look at [[CLICK]] in context. We use your Business DNA to work out what in context means for you. If you sell makeup, it might mean in a purse, or on a counter. If you sell sunglasses, it might mean on someone's face.", "The alternative was [[CLICK]] sixty-plus options in the interface. We didn't want that.", "So there's a chain of decisions under one click. [[CLICK]] And every hand-off in that chain is a place to check.", ">> FILL: one or two real checks in the Photoshoot pipeline, if you can share them. Otherwise keep it at the framework level."]}, {"cue": "02 Building the guardrails · 17:45", "paras": ["Last piece of the architecture: contain the blast radius. Start by imagining the worst thing your agent could do, and protect for that. For code execution you want a tightly closed, isolated box. Then split read from write, bucket the risk, and contain each bucket.", "Borrowing a test from last week: one-way door or two-way door? In Pomelli, [[CLICK]] generating an image is a two-way door. Don't like it? Generate another one.", "Sharing it to a business's [[CLICK]] Instagram, or into a Google Ads campaign, is a one-way door. Today, that's something the person initiates. Not the agent.", "Over time, you'll really want an agent that just handles all of that. And I think we need to get there. But [[CLICK]] that's earned. It's trust and autonomy, moving step by step toward Do It For Me. It's okay to launch, and keep iterating toward it.", "LAND: [[CLICK]] Telling your agent not to do something in a prompt isn't a guardrail. It's a wish."]}, {"cue": "03 Earning autonomy · 19:00", "paras": ["So you've built it. How do you know it's ready?", "Last week I said an agent will happily build you something plausible. The difference between plausible and good is on you.", "Validation is how you close that gap, and it has [[CLICK]] two jobs. One: **quality in distribution**. What I expect it to do, it does. Two: **misuse out of distribution**. When someone tries something weird, the damage stays inside the blast radius.", "For a marketing product, skipping that second job [[CLICK]] looks like an ad promising a sale the business never offered. Or a product shot that quietly changes the product."]}, {"cue": "03 Earning autonomy · 20:00", "paras": ["For the first job, you [[CLICK]] **hill climb on quality**. Build a set of examples of what good looks like, measure against it, improve, repeat.", "For the second, you [[CLICK]] **red team**. That can be people on your team, or contractors who do this for a living. Give them a sandboxed version and let them break it in an unconstrained way. Don't hand them a script.", "What you can hand them is goals. Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Then step back.", "And sandbox it for real. If your red team can break it, so can the internet."]}, {"cue": "03 Earning autonomy · 21:00", "paras": ["Then you run the loop.", "As people [[CLICK]] break your agent, collect the trajectories, the full record of what it did. Generalize them into [[CLICK]] buckets of behavior. Not one-off fixes. Buckets. Add a [[CLICK]] safeguard for each bucket.", "Then, and this is the step people skip, [[CLICK]] re-run your quality evals. Make sure the safeguard didn't quietly break the thing that was working.", "The [[CLICK]] bucket matters more than the fix. If someone got the agent to write a fake discount, the one-off fix is to block that phrase. The bucket is: the agent invents offers the business never made.", "Repeat until you're happy. And happy is a judgment call. At some point you decide what good enough means for your users, and you own it."]}, {"cue": "Full circle · 22:15", "paras": ["Which brings me back to where I started. We launched Pomelli with a lot of these guardrails. They were right for the models we had. But the models keep earning more autonomy, so we're actively asking which ones to strip.", "Here's a fun one. Remember those photoshoot images? [[CLICK]] I didn't make them. I sent my Muse agent to navigate Pomelli for me, and it made them. Autonomously. It worked.", "It's obviously not the most efficient way for an agent to use Pomelli. So we're doing a rethink from an agent-first perspective. Every product has [[CLICK]] two users now, the person and an agent. What's the right way for an agent to use Pomelli? And what's the right way for us to build a better Pomelli agent?"]}, {"cue": "Full circle · 23:15", "paras": ["The other guardrail we keep coming back to is editing. Since the early days of Pomelli, we've debated how much editing to build into the product, and how much to leave to the model.", "We built some in, because no matter how good the output is, the people who really care want control to close that last ten percent.", "But there are different ways to build editing. One extreme is [[CLICK]] a toggle for literally everything. Every element, every setting, its own control.", "The other extreme is where things feel like they're headed. You just [[CLICK]] ask. Swap out the background. Make him look happier.", "And as the image models get better, [[CLICK]] the more I lean on the model figuring it out, instead of fine-grained controls for everything."]}, {"cue": "Full circle · 24:15", "paras": ["So, three things to take with you.", "[[CLICK]] Choose your spot on the spectrum, on purpose. More autonomy means more magic and more risk.", "[[CLICK]] Design for failure. Contracts and exits, checks between the steps, and a contained blast radius.", "[[CLICK]] Earn autonomy through validation. That loop is how you'll know when it's time to move to the right.", "LAND: [[CLICK]] Build the guardrails. Validate them. Then strip them as the model earns it. Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Do It With Me / Do It For Me", "Magic and risk", "Pomelli on the spectrum", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost and scope", "Pomelli through the five lenses", "Start from what it should do", "Contracts and exits", "Check between steps", "Photoshoot, a real run", "Decisions underneath", "Contain the blast radius", "Plausible vs good", "Hill climb, then red team", "The loop", "An agent made them", "From toggles to just ask", "Thank you"];
   const np=document.getElementById('np'), npb=document.getElementById('npbody'),
         npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
         npk=document.getElementById('npclock');
@@ -680,6 +1413,131 @@ body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
   const start=parseInt(location.hash.slice(1),10);
   show(Number.isFinite(start)&&start>0?start-1:0);
   st=0; paintSteps();
+})();
+</script>
+<script>/* Slide behaviours that go beyond show/hide. The kit engine fires a `deckstep`
+   event on every slide change and build; everything here keys off the slide
+   that is on and its step. Interactive controls carry .ix so a click on them
+   never advances the deck. */
+(function(){
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const cur=()=>$('.s.on');
+
+  // keep sliders from stealing the arrow keys after a drag
+  document.addEventListener('pointerup',e=>{ if(e.target.matches('input[type=range]')) e.target.blur(); });
+  $$('.ix').forEach(el=>{ ['click','pointerdown','touchstart'].forEach(ev=>el.addEventListener(ev,e=>e.stopPropagation(),{passive:true})); });
+
+  // ── 06 · magic and risk: a handle you can drag along the spectrum ──────
+  const here=$('#here'), vline=$('#vline');
+  function yAt(path,x){ // sample the bezier for the y at a given x (viewBox units)
+    const L=path.getTotalLength(); let lo=0,hi=L;
+    for(let k=0;k<24;k++){ const m=(lo+hi)/2; (path.getPointAtLength(m).x<x?lo=m:hi=m); }
+    return path.getPointAtLength(lo).y;
+  }
+  function paintHere(){
+    if(!here) return;
+    const v=+here.value, x=v*10;
+    const m=Math.round((220-yAt($('#cM'),x))/2.06), r=Math.round((220-yAt($('#cR'),x))/2.06);
+    $('#rdM').textContent=Math.max(0,m)+'%'; $('#rdR').textContent=Math.max(0,r)+'%';
+    vline.style.left=`calc(6.2cqw + ${v/100} * 87.6cqw)`;
+  }
+  here&&here.addEventListener('input',paintHere);
+
+  // ── 09 · the loop counter runs to the cap ──────────────────────────────
+  let loopT=null;
+  function runLoop(on){
+    const el=$('#loopc'); if(!el) return; clearInterval(loopT);
+    const cap=el.querySelector('small');
+    if(!on){ el.firstChild.nodeValue='0'; cap.style.opacity=0; return; }
+    let n=0; cap.style.opacity=0;
+    loopT=setInterval(()=>{ n++; el.firstChild.nodeValue=String(n);
+      if(n>=15){ clearInterval(loopT); cap.style.opacity=1; } },95);
+  }
+
+  // ── 10 · errors compound: a live chain ──────────────────────────────────
+  const chain=$('#chain'), cpA=$('#cpA'), cpN=$('#cpN');
+  let lit=false, litT=[];
+  function drawChain(){
+    if(!chain) return;
+    const n=+cpN.value, a=+cpA.value/100;
+    $('#cpAv').textContent=(+cpA.value)+'%'; $('#cpNv').textContent=n;
+    let h='';
+    for(let k=0;k<n;k++){
+      const x=n===1?50:(k/(n-1))*100;
+      if(k<n-1){ const x2=((k+1)/(n-1))*100; h+=`<span class="ln" style="left:${x}%;width:${x2-x}%"></span>`; }
+      h+=`<span class="n" style="left:${x}%">${k+1}</span>`;
+      if(n<=12) h+=`<span class="pc" style="left:${x}%">${(Math.pow(a,k+1)*100).toFixed(0)}%</span>`;
+    }
+    chain.innerHTML=h;
+    if(lit){ $$('.n',chain).forEach((el,k)=>{ el.classList.add('lit'); if(k===n-1) el.classList.add('bad'); }); setBig(Math.pow(a,n), n, a); }
+    else setBig(a,1,a);
+  }
+  function setBig(p,n,a){
+    $('#cpV').textContent=Math.round(p*100)+'%';
+    $('#cpL').textContent = n===1 ? 'right at every step' : `chance the whole ${n}-step chain is right, at ${(a*100).toFixed(a*100%1?1:0)}% per step`;
+  }
+  function lightChain(){
+    litT.forEach(clearTimeout); litT=[];
+    const n=+cpN.value, a=+cpA.value/100, nodes=$$('.n',chain);
+    nodes.forEach((el,k)=>litT.push(setTimeout(()=>{
+      el.classList.add('lit'); if(k===n-1) el.classList.add('bad');
+      setBig(Math.pow(a,k+1), k+1, a);
+    }, 160*k+150)));
+    litT.push(setTimeout(()=>{lit=true;}, 160*n+200));
+  }
+  cpA&&cpA.addEventListener('input',drawChain); cpN&&cpN.addEventListener('input',drawChain);
+
+  // ── 16 · checkpoints and the every-step / every-third dial ─────────────
+  const pipe=$('#pipe'); let every=1;
+  function drawPipe(){
+    if(!pipe) return;
+    const B=6; let h='';
+    for(let k=0;k<B;k++){
+      const x=(k/(B-1))*100;
+      if(k<B-1){ const x2=((k+1)/(B-1))*100; h+=`<span class="ar" style="left:${x}%;width:${x2-x}%"></span>`; }
+      h+=`<span class="bx" style="left:${x}%">step ${k+1}</span>`;
+      if(k<B-1){ const on=((k+1)%every===0); h+=`<span class="ck${on?'':' off'}" data-step="1" style="left:${(x+((k+1)/(B-1))*100)/2}%"><span>&#10003;</span></span>`; }
+    }
+    pipe.innerHTML=h;
+    const checks=Math.floor((B-1)/every);
+    $('#mChecks').textContent=checks; $('#mLat').textContent='+'+checks; $('#mRisk').textContent= every===1?'low':'higher';
+  }
+  $$('#seg button').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation(); every=+b.dataset.every;
+    $$('#seg button').forEach(x=>x.classList.toggle('on',x===b));
+    drawPipe(); syncPipe();
+  }));
+  function syncPipe(){ const s=cur(); const st=s?+(s.dataset.st||0):0;
+    $$('.ck',pipe).forEach(el=>el.classList.toggle('shown', st>=1)); }
+
+  // ── 17 · walkthrough steps follow the video ────────────────────────────
+  const walk=$('#walk');
+  walk&&walk.addEventListener('timeupdate',()=>{
+    const t=walk.currentTime;
+    $$('.s-walk .vt').forEach(el=>{ const [a,b]=el.dataset.vt.split('-').map(Number); el.classList.toggle('cur', t>=a && t<b); });
+  });
+
+  // ── step dispatcher ────────────────────────────────────────────────────
+  let lastSlide=null;
+  document.addEventListener('deckstep',e=>{
+    const {i,st}=e.detail, s=cur(); if(!s) return;
+    s.dataset.st=st;
+    const fresh = s!==lastSlide; lastSlide=s;
+    if(s.classList.contains('s-mr') && fresh) paintHere();
+    if(s.classList.contains('s-out')) runLoop(st>=1);
+    if(s.classList.contains('s-chain')){
+      if(fresh){ litT.forEach(clearTimeout); litT=[]; lit=false; drawChain(); }
+      if(st>=1 && !lit && !litT.length) lightChain();
+      if(st===0){ litT.forEach(clearTimeout); litT=[]; lit=false; drawChain(); }
+    }
+    if(s.classList.contains('s-check')){ if(fresh) drawPipe(); syncPipe(); }
+  });
+  drawChain(); drawPipe(); paintHere();
+
+  // ── debug: ?steps=N fires N forward presses after load (for screenshots) ─
+  const q=new URLSearchParams(location.search), n=+q.get('steps');
+  if(q.has('steps')) document.body.classList.add('snap');
+  if(n>0) setTimeout(()=>{ for(let k=0;k<n;k++) document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight'})); },300);
 })();
 </script>
 </body>
