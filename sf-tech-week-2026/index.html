@@ -335,7 +335,7 @@ svg [data-step]{translate:none}
 .tier li::before{content:"";position:absolute;left:0;top:.55em;width:.6cqw;height:.6cqw;border-radius:50%;background:var(--cyan)}
 .tier.t1{height:22cqw;border-color:rgba(79,127,254,.45)}
 .tier.t2{height:18cqw}
-.tier.t3{height:11cqw;opacity:.85}
+.tier.t3{height:11cqw}
 
 /* ════ 15 · contracts and exits ═════════════════════════════════════ */
 .ce{left:6.2cqw;right:6.2cqw;top:19cqw;height:22cqw}
@@ -731,6 +731,8 @@ body.clean .hud,body.clean .bar,body.clean .keys{display:none!important}
 .ppt.shown .cheap i:nth-child(6){transition-delay:0.90s}
 .ppt.shown .cheap i:nth-child(7){transition-delay:1.08s}
 .ppt.shown .cheap i:nth-child(8){transition-delay:1.26s}
+
+.s-tiers .tiers{align-items:stretch}
 </style>
 </head>
 <body data-aura="none">
@@ -1060,7 +1062,7 @@ body.clean .hud,body.clean .bar,body.clean .keys{display:none!important}
       <ul><li>What it does. And what it doesn&rsquo;t.</li><li>Photoshoot: a product photo and a set of templates</li><li>Narrow on purpose, before a single model call</li></ul></div>
     <div class="tier t2 glass" data-step="2" style="height:21cqw"><span class="n">02</span><span class="t">The interface</span>
       <ul><li>Where do I see what happened?</li><li>Where can I step in? How do I undo?</li><li>Every image can be regenerated or edited</li></ul></div>
-    <div class="tier t3 glass" data-step="3" style="height:21cqw;opacity:1;border-color:rgba(232,114,42,.45)"><span class="n">03</span><span class="t">The system</span>
+    <div class="tier t3 glass" data-step="3" style="height:21cqw;border-color:rgba(232,114,42,.45)"><span class="n">03</span><span class="t">The system</span>
       <ul><li>Contracts and exits</li><li>Checks between steps</li><li>A contained blast radius</li></ul><span class="lab" style="margin-top:auto;color:#F6A673">Next &rarr;</span></div>
   </div>
   <p class="land" data-step="4"><span style="color:var(--ink-3)">Clever prompting gets you a demo.</span> <span class="hl">Product-grade engineering gets you a launch.</span></p>
