@@ -687,6 +687,32 @@ body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!import
 @keyframes stretch{from{width:24%}to{width:100%}}
 .xbar i{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#0F1218;border:.25cqw solid #fff;box-shadow:0 0 1.4cqw rgba(255,255,255,.4)}
 .xrow .sz{font-size:4.4cqw;font-weight:500;letter-spacing:-.03em;text-align:right;color:var(--ink-2)}
+
+/* ── grid view ─────────────────────────────────────────────────── */
+.grid-ov{position:fixed;inset:0;z-index:40;display:none;overflow-y:auto;padding:2.4rem 3vw 3rem;
+  background:rgba(10,12,16,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.grid-ov.on{display:block}
+.grid-ov .gh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 1.4rem;font-size:1.3rem;font-weight:500}
+.grid-ov .gh .lab{font-size:.7rem}
+.grid-ov .gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.gtile{appearance:none;border:0;padding:0;font:inherit;text-align:left;color:inherit;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+  background:#0F1218;cursor:pointer;outline:2px solid rgba(255,255,255,.08);outline-offset:3px;transition:outline-color .15s,transform .15s}
+.gtile:hover,.gtile.sel{outline-color:rgba(255,255,255,.6);transform:translateY(-2px)}
+.gtile.cur{outline-color:#4F7FFE}
+.gtile .gs{position:absolute;inset:0;overflow:hidden;isolation:isolate;pointer-events:none}
+.gtile .frame{width:100%;height:100%;left:0;top:0;translate:none}
+.gtile *,.gtile *::before,.gtile *::after{animation:none!important;transition:none!important}
+.gtile [data-step]{opacity:1!important;translate:none!important}
+.gtile .ring .arc,.gtile .mr path.c,.gtile .hill .st{stroke-dashoffset:0}
+.gtile .mr path.f{opacity:1}
+.gtile .ppt .cheap i{width:9cqw}.gtile .ppt .good i{width:16cqw}
+.gtile .exits .gauge i{width:var(--w)}
+.gtile .loop .node{opacity:1}
+.gtile .vposter{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gtile .bw .vposter{position:static;display:block;aspect-ratio:16/10;height:auto}
+.gtile .gnum{position:absolute;left:8px;bottom:7px;z-index:5;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;background:rgba(0,0,0,.65);color:#fff}
+.gtile.cur .gnum{background:#4F7FFE}
+.nav.gridb{font-size:.9rem}
 </style>
 </head>
 <body data-aura="none">
@@ -1217,10 +1243,11 @@ body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!import
   <span class="pips" id="pips"></span>
   <span class="count"><span id="cur">1</span> / 28</span>
   <button class="nav next" aria-label="Next slide">&#8250;</button>
+  <button class="nav gridb" id="gridbtn" aria-label="Grid view" title="Grid view (O)">&#9638;</button>
   <button class="nav fs" id="fs" aria-label="Full screen" title="Full screen (F)">&#9974;</button>
 </div>
 <div class="bar"><span id="fill"></span></div>
-<div class="keys" id="keys">&#8592; &#8594; slides &middot; N speaker notes</div>
+<div class="keys" id="keys">&#8592; &#8594; slides &middot; O grid &middot; N speaker notes</div>
 <div class="jump" id="jump" hidden>
   <div class="jump-bar"><input id="jumpn" type="number" min="1" inputmode="numeric" placeholder="Slide #"><span class="jump-hint">Enter to go &middot; Esc to close</span></div>
   <div class="jump-list" id="jumplist"></div>
@@ -1524,6 +1551,7 @@ body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!import
     doc.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!panel.hidden) close(); if((e.key==='g'||e.key==='G')&&doc.activeElement!==inp){ e.preventDefault(); panel.hidden?open():close(); } });
     return {open,close,panel};
   }
+  window.__goSlide=goSlide; window.__curSlide=()=>i;
   const deckJump=wireJump(document);
   document.querySelector('.count').addEventListener('click',e=>{ e.stopPropagation(); deckJump.panel.hidden?deckJump.open():deckJump.close(); });
   const start=parseInt(location.hash.slice(1),10);
@@ -1654,6 +1682,53 @@ body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!import
   const q=new URLSearchParams(location.search), n=+q.get('steps');
   if(q.has('steps')) document.body.classList.add('snap');
   if(n>0) setTimeout(()=>{ for(let k=0;k<n;k++) document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight'})); },300);
+
+  // ── grid view: every slide as a live thumbnail, fully built ────────────
+  // Thumbnails are clones of the real sections, so they always match the deck.
+  // The clone drops the class "s" (the engine counts every .s as a slide) and
+  // every id (so nothing here steals a getElementById from the real slide).
+  const ov=document.createElement('div'); ov.className='grid-ov'; ov.setAttribute('aria-hidden','true');
+  ov.innerHTML='<div class="gh"><span>All slides</span><span class="lab">Click a slide &middot; arrows + Enter &middot; Esc to close</span></div><div class="gg"></div>';
+  document.body.appendChild(ov);
+  const gg=ov.querySelector('.gg'); let gsel=0;
+  const real=()=>[...document.querySelectorAll('#deck > section.s')];
+  function openGrid(){
+    const secs=real(), cur=window.__curSlide?window.__curSlide():0; gsel=cur;
+    gg.innerHTML='';
+    secs.forEach((sec,k)=>{
+      const t=document.createElement('button'); t.className='gtile'+(k===cur?' cur':''); t.type='button';
+      const c=sec.cloneNode(true);
+      c.classList.remove('s','on'); c.classList.add('gs'); c.removeAttribute('data-st');
+      c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      c.querySelectorAll('video').forEach(v=>{ const im=document.createElement('img'); im.src=v.getAttribute('poster')||''; im.className='vposter'; v.replaceWith(im); });
+      c.querySelectorAll('input').forEach(e=>e.remove());
+      t.appendChild(c);
+      const n=document.createElement('span'); n.className='gnum'; n.textContent=k+1; t.appendChild(n);
+      t.addEventListener('click',e=>{ e.stopPropagation(); closeGrid(); window.__goSlide(k); });
+      gg.appendChild(t);
+    });
+    ov.classList.add('on'); ov.setAttribute('aria-hidden','false');
+    const c=gg.children[cur]; c&&c.scrollIntoView({block:'center'});
+  }
+  function closeGrid(){ ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); gg.innerHTML=''; }
+  function mark(){ [...gg.children].forEach((t,k)=>t.classList.toggle('sel',k===gsel)); gg.children[gsel]&&gg.children[gsel].scrollIntoView({block:'nearest'}); }
+  document.addEventListener('keydown',e=>{
+    const on=ov.classList.contains('on');
+    if(!on && (e.key==='o'||e.key==='O') && !e.target.matches('input,textarea')){ e.preventDefault(); e.stopImmediatePropagation(); openGrid(); return; }
+    if(!on) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    const cols=Math.max(1,Math.round(gg.clientWidth/(gg.children[0]?gg.children[0].offsetWidth+22:300)));
+    if(e.key==='Escape'||e.key==='o'||e.key==='O') closeGrid();
+    else if(e.key==='ArrowRight'){ gsel=Math.min(gg.children.length-1,gsel+1); mark(); }
+    else if(e.key==='ArrowLeft'){ gsel=Math.max(0,gsel-1); mark(); }
+    else if(e.key==='ArrowDown'){ gsel=Math.min(gg.children.length-1,gsel+cols); mark(); }
+    else if(e.key==='ArrowUp'){ gsel=Math.max(0,gsel-cols); mark(); }
+    else if(e.key==='Enter'){ const k=gsel; closeGrid(); window.__goSlide(k); }
+  },true);
+  const gb=document.getElementById('gridbtn');
+  gb&&gb.addEventListener('click',e=>{ e.stopPropagation(); ov.classList.contains('on')?closeGrid():openGrid(); });
+  ov.addEventListener('click',e=>{ if(e.target===ov) closeGrid(); });
+  if(q.has('grid')) setTimeout(openGrid,400);
 })();
 </script>
 </body>
