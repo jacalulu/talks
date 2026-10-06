@@ -1389,6 +1389,11 @@ html.vtx .s,html.vtx .s.on{transition:none}
 .s-users .up .cap{position:static;padding:1cqw 0 0;background:none!important;font-size:1.5cqw;line-height:1.3}
 .s-users .up .ok{position:absolute;right:1cqw;top:1cqw;z-index:2}
 .ood{top:37.6cqw!important}
+
+/* notes drawer: bold words pop in gold (a bold word inside a land line stays inline); pills only change colour */
+.np-body b.hl{color:#FFD25E!important;-webkit-text-fill-color:#FFD25E!important}
+.np-land b.hl{display:inline;font:inherit;font-weight:700;letter-spacing:normal;text-transform:none;margin:0}
+.np-body .ck.nx{background:#4F7FFE;animation:ckp 1.3s ease-in-out infinite}
 </style>
 </head>
 <body data-aura="none">
@@ -2155,7 +2160,7 @@ html.vtx .s,html.vtx .s.on{transition:none}
     d.getElementById('body').innerHTML=renderNote(n,'');
     d.getElementById('next').innerHTML = (i+1<HEADS.length && HEADS[i+1])
       ? '<b>Next</b>'+esc(HEADS[i+1]) : '<b>Next</b>-';
-    d.getElementById('body').scrollTop=0;
+    if(pres.__lastI!==i){ d.getElementById('body').scrollTop=0; pres.__lastI=i; }
     presClock();
   }
   function presClock(){
@@ -2258,7 +2263,7 @@ html.vtx .s,html.vtx .s.on{transition:none}
     let k=0;
     const bold=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>');
     const mark=t=>bold(t).replace(/\[\[CLICK\]\]/g,()=>{
-      k++; const c=k<=st?'ck done':(k===st+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
+      k++; const c=k<=st?'ck done':(k===st+1?'ck nx':'ck'); return '<i class="'+c+'">click</i>';
     });
     const body=n.paras.map(p=>{
       if(p.startsWith('LAND: '))
@@ -2268,8 +2273,8 @@ html.vtx .s,html.vtx .s.on{transition:none}
       return '<p>'+mark(p)+'</p>';
     }).join('');
     const pending = st < Math.min(k, steps(slides[i]));
-    const what = pending ? null : (i+1<slides.length ? 'next slide' : null);
-    return body + (what ? '<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>' : '');
+    const what = i+1<slides.length ? 'next slide' : null;
+    return body + (what ? '<p class="'+P+'go"><i class="ck'+(pending?'':' nx')+'">click</i><span>'+what+'</span></p>' : '');
   }
   applyNotesSize();
   // ── jump to a slide ───────────────────────────────────────────────
@@ -2562,7 +2567,7 @@ html.vtx .s,html.vtx .s.on{transition:none}
   const PV=`:host{display:block;position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#0F1218;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .pvs{position:absolute;inset:0;overflow:hidden;isolation:isolate;color:#fff;font-family:var(--face)}
 .pvs .frame{width:100%!important;height:100%!important;left:0!important;top:0!important;translate:none!important}
-.pvs *,.pvs *::before,.pvs *::after{animation:none!important;transition:none!important}
+.pvs *,.pvs *::before,.pvs *::after{transition-duration:0s!important;transition-delay:0s!important;animation-duration:0s!important;animation-delay:0s!important}
 .pvs [data-in]{opacity:1!important;translate:none!important;filter:none!important}
 .pvs .kin .w{opacity:1!important;filter:none!important;translate:none!important}
 .pvs .ring .arc{stroke-dashoffset:0!important}
@@ -2580,7 +2585,9 @@ html.vtx .s,html.vtx .s.on{transition:none}
 .pvlab{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,230,.45)}
 .pvbox{margin-bottom:1rem}
 #pvNext{opacity:.86}
-.land b.hl{display:inline;font:inherit;font-weight:700;letter-spacing:normal;text-transform:none;color:#fff;margin:0}`;
+.land b.hl{display:inline;font:inherit;font-weight:700;letter-spacing:normal;text-transform:none;margin:0}
+main b.hl,.land b.hl{color:#FFD25E}
+.ck.nx{background:#5E9BFF;animation:ckp 1.3s ease-in-out infinite}`;
     d.head.appendChild(st);
     const main=d.getElementById('body'), wrap=d.createElement('div'); wrap.id='pvwrap';
     main.parentNode.insertBefore(wrap,main); wrap.appendChild(main);
