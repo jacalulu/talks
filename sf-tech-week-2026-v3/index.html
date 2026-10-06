@@ -995,14 +995,14 @@ body[data-aura="warm"] .a3{opacity:.38}body[data-aura="center"] .a1{opacity:.32}
 /* ══ v3 production pass ═══════════════════════════════════════════ */
 /* slides hand over through a view transition: the old slide eases back and
    blurs out while the new one settles in, and shared elements glide */
-html.vt .s,html.vt .s.on{transition:none}
+html.vtx .s,html.vtx .s.on{transition:none}
 ::view-transition-old(root){animation:vtOut .55s cubic-bezier(.4,0,.2,1) both}
 ::view-transition-new(root){animation:vtIn .75s cubic-bezier(.2,0,0,1) both}
 @keyframes vtOut{to{opacity:0;scale:.985;filter:blur(8px)}}
 @keyframes vtIn{from{opacity:0;scale:1.012;filter:blur(8px)}}
 ::view-transition-group(*){animation-duration:.95s;animation-timing-function:cubic-bezier(.65,0,.35,1)}
 ::view-transition-group(root){animation-duration:.75s}
-.s.on [data-vt][data-in]{animation:none}
+.s.on [data-share][data-in]{animation:none}
 /* kinetic type: words settle in from a soft blur, one after another */
 .kin .w{display:inline-block;opacity:0;filter:blur(.55cqw);translate:0 .22em;
   transition:opacity .55s var(--e-dec),filter .75s var(--e-dec),translate .75s var(--e-dec);
@@ -1335,8 +1335,8 @@ html.vt .s,html.vt .s.on{transition:none}
 
 <!-- 02 · strip the guardrails -->
 <section class="s s-strip" data-aura="right"><div class="frame">
-  <div class="attr" data-in data-vt="attr"><span class="pill">The AI Conference</span><span class="lab">Last week &middot; my advice to the room</span></div>
-  <p class="quote" data-in data-vt="quote" style="--d:.12s">Strip the guardrails <span class="hl">as the models earn it.</span></p>
+  <div class="attr" data-in data-share="attr"><span class="pill">The AI Conference</span><span class="lab">Last week &middot; my advice to the room</span></div>
+  <p class="quote" data-in data-share="quote" style="--d:.12s">Strip the guardrails <span class="hl">as the models earn it.</span></p>
   <i class="strip" data-step="1"></i>
   <div class="rails" aria-hidden="true">
     <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
@@ -1347,8 +1347,8 @@ html.vt .s,html.vt .s.on{transition:none}
 
 <!-- 03 · how to build them -->
 <section class="s s-build" data-aura="right"><div class="frame">
-  <div class="attr" data-in data-vt="attr"><span class="pill on">SF Tech Week</span><span class="lab">Today&rsquo;s prompt</span></div>
-  <p class="quote" data-in data-vt="quote" style="--d:.12s">How to <span class="hl">build</span> the guardrails.</p>
+  <div class="attr" data-in data-share="attr"><span class="pill on">SF Tech Week</span><span class="lab">Today&rsquo;s prompt</span></div>
+  <p class="quote" data-in data-share="quote" style="--d:.12s">How to <span class="hl">build</span> the guardrails.</p>
   <div class="rails" aria-hidden="true">
     <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
     <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
@@ -1403,7 +1403,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <h2 class="h" data-in style="--d:.08s">From <span class="hm">Do It With Me</span> to <span class="hs">Do It For Me</span>.</h2>
   <div class="ask glass" data-step="1">&ldquo;Please just take care of all of this for me.&rdquo;</div>
   <i class="go-right" data-step="1"></i>
-  <div class="spec" data-vt="spec" data-in style="--d:.2s">
+  <div class="spec" data-share="spec" data-in style="--d:.2s">
     <div class="track"></div><div class="knob"></div>
     <div class="end">Do It With Me<small>You drive. You spell out what you want.</small></div>
     <div class="end r">Do It For Me<small>You hand it over. It may even suggest what&rsquo;s next.</small></div>
@@ -1424,7 +1424,7 @@ html.vt .s,html.vt .s.on{transition:none}
   </div>
   <div class="gap" data-step="3"><span class="lab">Not clearly defined yet?</span>
     <span class="g">Keep them in the loop</span><span class="ar">&rarr;</span><span class="g">Fill in what&rsquo;s missing</span><span class="ar">&rarr;</span><span class="g">Build up context</span><span class="ar">&rarr;</span><span class="g">Fewer gaps over time</span></div>
-  <div class="spec" data-vt="spec">
+  <div class="spec" data-share="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
@@ -1446,7 +1446,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 220C500 220 800 150 1000 14L1000 220L0 220Z"/>
       <path class="c" id="cR" pathLength="1" stroke="url(#gR)" d="M0 220C500 220 800 150 1000 14"/></g>
   </svg></div>
-  <div class="spec" data-vt="spec">
+  <div class="spec" data-share="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
@@ -1463,7 +1463,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <div class="xr r1" data-step="1"><span class="lab">A few months ago</span><b class="sz">S</b><div class="xb xsm"><i></i><i></i><i></i><i></i></div></div>
     <div class="xr r2" data-step="2"><span class="lab" style="color:#fff">Today &middot; the same check-ins</span><b class="sz">XL</b><div class="xb xlg"><i></i><i></i><i></i><i></i></div></div>
   </div>
-  <div class="spec" data-vt="spec"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <div class="spec" data-share="spec"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
 </div></section>
 
 <!-- 07 · pomelli on the spectrum -->
@@ -1480,7 +1480,7 @@ html.vt .s,html.vt .s.on{transition:none}
       <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill pf">Open-ended</span></div></div></div>
     <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
-  <div class="spec" data-vt="spec">
+  <div class="spec" data-share="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
@@ -1538,7 +1538,7 @@ html.vt .s,html.vt .s.on{transition:none}
       <svg class="ic" viewBox="0 0 60 60"><circle cx="30" cy="30" r="6"/><circle class="a" cx="30" cy="30" r="15" stroke-dasharray="4 5"/><circle class="o" cx="30" cy="30" r="25" stroke-dasharray="3 6"/></svg>
       <div class="t">Open-ended gets trickier</div></div>
   </div>
-  <div class="spec" data-vt="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <div class="spec" data-share="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
 </div></section>
 
 <!-- 09 · no guaranteed output -->
@@ -1864,7 +1864,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <i class="go-right2" data-step="4"></i>
   <div class="striptest" data-step="4"><span class="lab">How you know it&rsquo;s earned</span>
     <span>Better model. Simpler prompt. Looser guardrail.</span><i>&rarr;</i><span>Re-run evals and red team</span><i>&rarr;</i><span>Failure stays gone? <b>Strip it.</b></span></div>
-  <div class="spec" data-vt="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <div class="spec" data-share="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
   <p class="finale" data-step="5">When the models get better, revisit your guardrails. <span class="hl">Some of them have done their job.</span></p>
 </div></section>
 
@@ -2422,16 +2422,23 @@ html.vt .s,html.vt .s.on{transition:none}
     });
   }
   document.querySelectorAll('#deck .h, #deck .land, #deck .quote, #deck .finale, #deck .dword, #deck .s-close .clp, #deck .fc-h').forEach(kin);
-  // view transitions: shared elements (data-vt) glide between consecutive slides
+  // view transitions: shared elements (data-share) glide between consecutive slides.
+  // The page class is 'vtx', never 'vt': .vt is the tour's chapter row (opacity .32),
+  // and putting that class on <html> once rendered the whole deck at a third opacity.
   if(document.startViewTransition && !snap && !calm){
-    document.documentElement.classList.add('vt');
-    const names=s=>new Set([...s.querySelectorAll('[data-vt]')].map(e=>e.dataset.vt));
-    const tag=(s,set,on)=>s.querySelectorAll('[data-vt]').forEach(e=>{ if(set.has(e.dataset.vt)) e.style.viewTransitionName=on?'vt-'+e.dataset.vt:''; });
+    document.documentElement.classList.add('vtx');
+    const names=s=>new Set([...s.querySelectorAll('[data-share]')].map(e=>e.dataset.share));
+    const tag=(s,set,on)=>s.querySelectorAll('[data-share]').forEach(e=>{ if(set.has(e.dataset.share)) e.style.viewTransitionName=on?'share-'+e.dataset.share:''; });
     window.__vtSwap=(a,b,flip)=>{
-      if(!a||a===b){ flip(); return; }
+      if(!a||a===b||document.visibilityState!=='visible'){ flip(); return; }
       const nb=names(b), shared=new Set([...names(a)].filter(x=>nb.has(x)));
       tag(a,shared,true);
-      const t=document.startViewTransition(()=>{ tag(a,shared,false); flip(); tag(b,shared,true); });
+      // the slide must change even if the browser never runs the transition:
+      // run() is idempotent, and a watchdog forces it after 400ms
+      let done=false, t=null;
+      const run=()=>{ if(done) return; done=true; tag(a,shared,false); flip(); tag(b,shared,true); };
+      try{ t=document.startViewTransition(run); }catch(e){ run(); return; }
+      setTimeout(()=>{ if(!done){ try{ t.skipTransition(); }catch(e){} run(); } },400);
       t.finished.finally(()=>tag(b,shared,false));
     };
   }
