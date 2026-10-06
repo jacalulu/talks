@@ -1037,6 +1037,10 @@ html.vt .s,html.vt .s.on{transition:none}
 .dv2 .dring .n-b,.dv3 .dring .n-v,.dv4 .dring .n-s{opacity:1}
 .dv2 .dring .n-b circle,.dv3 .dring .n-v circle,.dv4 .dring .n-s circle{filter:drop-shadow(0 0 1.6cqw currentColor)}
 @media (prefers-reduced-motion:reduce){.amb i,.grain,.s.on .aura path,.s.on .bw.tourbig,.photobg{animation:none!important}}
+
+/* grain removed: it read as a white haze on real displays */
+.grain{display:none!important}
+.vign{background:radial-gradient(130% 100% at 50% 45%,transparent 60%,rgba(0,0,0,.45) 100%)}
 </style>
 </head>
 <body data-aura="none">
@@ -2128,7 +2132,7 @@ html.vt .s,html.vt .s.on{transition:none}
   const snap=document.body.classList.contains('snap')||new URLSearchParams(location.search).has('steps');
   const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
   // grain and vignette sit over everything
-  ['grain','vign'].forEach(c=>{ const d=document.createElement('div'); d.className=c; d.setAttribute('aria-hidden','true'); document.body.appendChild(d); });
+  ['vign'].forEach(c=>{ const d=document.createElement('div'); d.className=c; d.setAttribute('aria-hidden','true'); document.body.appendChild(d); });
   // kinetic type: split the big lines into words. Gradient spans stay whole so
   // their background-clip keeps working; line breaks are kept.
   function kin(el){
