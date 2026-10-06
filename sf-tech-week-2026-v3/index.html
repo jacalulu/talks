@@ -1041,6 +1041,136 @@ html.vt .s,html.vt .s.on{transition:none}
 /* grain removed: it read as a white haze on real displays */
 .grain{display:none!important}
 .vign{background:radial-gradient(130% 100% at 50% 45%,transparent 60%,rgba(0,0,0,.45) 100%)}
+
+/* ════════════════════════════════════════════════════════════════════
+   THE SYSTEM (see DESIGN.md). Everything below overrides the per-slide
+   history above. If a slide needs to break a rule here, change DESIGN.md first.
+   ════════════════════════════════════════════════════════════════════ */
+/* grid: one headline size and position, one content line, one land zone */
+:is(.s,.gs) .frame>h2.h:not(.fc-h){top:6.6cqw;left:6.2cqw;font-size:4.2cqw;line-height:1.08;max-width:80cqw}
+:is(.s,.gs):not(.s-div) .k{display:none}
+:is(.s,.gs) .frame>p.land{left:6.2cqw;right:6.2cqw;bottom:4.4cqw;top:auto;max-width:none;font-size:2.1cqw;line-height:1.28;font-weight:500}
+.s-loop .frame>p.land{right:auto;max-width:48cqw}
+.brsub{top:12.4cqw}
+
+/* hairline vocabulary: ideas are type with a rule above, not boxes */
+.dwm>div,.five>div,.tiers>.tier,.jobs>div,.goal,.bucket>div,.moves>div,.dnaex{
+  background:none!important;border:0!important;border-top:.2cqw solid rgba(255,255,255,.22)!important;
+  border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* ── stage 2: the spectrum. One floor; only things on it move ── */
+:is(.s,.gs) .frame>.spec{top:40.6cqw;left:6.2cqw;right:6.2cqw}
+/* 6 */ .s-spec .ask{top:26.5cqw;right:6.2cqw}
+/* 7 */ .dwm{top:18.5cqw;gap:4cqw}
+.dwm>div{padding:1.4cqw 0 0!important}
+.dwm ul{margin-top:1cqw;gap:.55cqw}.dwm li{font-size:1.9cqw}.dwm .pt{margin-top:1cqw;font-size:1.4cqw}
+.dwm .stay{border-top-color:var(--cyan)!important}.dwm .hand{border-top-color:var(--orange)!important}
+.gap{top:36.4cqw;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;backdrop-filter:none!important}
+/* 8 */ .s-mr .mr{top:18.5cqw;height:24.6cqw}
+.dayone{top:44.8cqw;margin-left:-3.45cqw;translate:none!important}
+/* 9 */ .xl2{left:6.2cqw;right:6.2cqw;top:18.5cqw;height:22cqw}
+.xr{position:absolute;left:0;right:0;height:6cqw}
+.xr.r1{top:0}.xr.r2{top:11cqw}
+.xr .lab{position:absolute;left:0;top:.6cqw}
+.xr .sz{position:absolute;top:-.4cqw;font-size:3cqw;font-weight:500;letter-spacing:-.03em;line-height:1}
+.xr.r1 .sz{left:calc(24% - 2cqw);color:var(--ink-2)}.xr.r2 .sz{right:0}
+.xb{position:absolute;left:0;top:4.2cqw;height:1cqw;border-radius:1cqw;display:flex;justify-content:space-between;align-items:center}
+.xb.xsm{width:24%;background:rgba(255,255,255,.22)}
+.xb.xlg{width:100%;background:linear-gradient(90deg,#4F7FFE,#8FB0FF);box-shadow:0 0 2.4cqw rgba(79,127,254,.45);transform-origin:left}
+.xr.shown .xb.xlg{animation:stretch 1.6s var(--e-big) both}
+.xb i{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#0F1218;border:.25cqw solid #fff;box-shadow:0 0 1.4cqw rgba(255,255,255,.4)}
+/* 10 */ .s-pspec .pm.mark{top:18.5cqw;height:25.55cqw}
+/* 12 */ .five{top:18.5cqw}
+.five>div{display:flex;flex-direction:column;height:18.5cqw;padding:1.2cqw 0 0!important;transition:border-color .6s var(--e-micro)}
+.go-right.shown~.five>div{border-top-color:var(--orange)!important}
+.go-right.shown~.five svg{filter:drop-shadow(0 0 1.2cqw rgba(232,114,42,.7))}
+/* 29 */ .moves{top:18.5cqw}
+.moves>div{display:grid;grid-template-columns:1fr auto;align-items:center;row-gap:.3cqw;padding:1.2cqw 0 0!important;border-top-color:var(--orange)!important}
+.striptest{top:29.6cqw;background:none!important;border:0!important;border-top:.2cqw solid var(--cyan)!important;border-bottom:.2cqw solid var(--cyan)!important;
+  border-radius:0!important;padding:1.2cqw 0!important;box-shadow:none!important;backdrop-filter:none!important}
+.s-next .spec .knob{left:40%}
+.go-right2{left:0;top:0;width:0;height:0}
+.go-right2.shown~.spec .knob{left:72%;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 4cqw rgba(232,114,42,.9)}
+
+/* ── stage 3: the ring. One geometry on slide 4 and every divider ── */
+.s-fc .ring,.dring{right:6.2cqw!important;top:6.5cqw!important;width:34cqw!important;height:34cqw!important}
+.dv1 .dring .node{opacity:.28}
+/* dividers: one composition, tinted per section */
+.dnum{top:17.5cqw}
+.dword{top:21cqw;font-size:9cqw}
+.dv1 .dvs{transform:none;filter:grayscale(1) sepia(1) saturate(5) hue-rotate(-38deg) brightness(.92)}
+.dv1 .dword{color:#FFC4C4}
+.dv2 .dvs{transform:none;filter:none}
+.dv3 .dvs{transform:none;filter:hue-rotate(-40deg) saturate(1.1)}
+.dv4 .dvs{transform:none;filter:hue-rotate(165deg) saturate(1.3)}
+
+/* ── stage 1: the guardrails. The close mirrors slide 2 exactly ── */
+.clp.c1,.clp.c2{left:6.2cqw;margin:0;font-size:2.8cqw;font-weight:500;letter-spacing:-.02em;line-height:1.1;transition:color .6s var(--e-micro)}
+.clp.c1{top:5.6cqw}.clp.c2{top:9.4cqw}
+.dim2{left:0;top:0;width:0;height:0}
+.dim2.shown~.clp.c1,.dim2.shown~.clp.c2{color:var(--ink-3)}
+.s-close .bye{left:auto;right:6.2cqw;bottom:4.4cqw}
+
+/* ── content zone: everything starts at 18.5 ── */
+.twoq,.fails{top:18.5cqw}
+.s-chain .big{top:18.5cqw}
+.ups{top:18.5cqw}
+.ood{top:40.8cqw}
+.tolls{top:18.5cqw}
+.s-cost .ppt{left:auto;right:6.2cqw;width:40cqw;top:18.5cqw}
+.s-scope .scope2{top:18.5cqw;height:26cqw}
+.s-scope .scope2 .c2{width:27cqw;height:27cqw;top:-1cqw;right:2cqw;padding:4.5cqw}
+.s-scope .scope2 .c1{left:4cqw;top:4.5cqw;bottom:auto;width:16cqw;height:16cqw}
+.tiers{top:18.5cqw}
+.tiers>.tier{height:auto!important;padding:1.4cqw 0 0!important}
+.ce{top:18.5cqw;left:6.2cqw;right:auto;width:40cqw;height:auto}
+.ce .lab{display:block;margin-bottom:2.2cqw}
+.ce svg{height:auto;display:block}
+.exits2 .lab{margin-bottom:.6cqw}
+.exits2{top:18.5cqw}
+/* 21 · the pipe is slide 14's chain again, now with a check between the links */
+.s-check .pipe{top:18.5cqw;height:7cqw}
+.pipe .bx{top:1.5cqw;width:4cqw;height:4cqw;border-radius:1cqw;background:#151A24;border:.18cqw solid var(--blue-2);
+  box-shadow:0 0 2cqw rgba(79,127,254,.5);color:#fff;font-size:1cqw}
+.pipe .ar{top:3.5cqw;height:.18cqw;background:rgba(255,255,255,.2)}
+.pipe .ck{top:2cqw;width:3cqw;height:3cqw;border-radius:.5cqw}
+.pipe .ck span{font-size:1.2cqw}
+.kinds{top:28.6cqw}
+.dnaex{top:32.6cqw;left:6.2cqw;right:auto;width:62cqw;padding:1.2cqw 0 0!important}
+.dial{bottom:4.4cqw}
+.rowa{top:18.5cqw;height:9cqw}
+.rowa .pc{padding:.8cqw 1cqw}
+.rowa .pin{width:5.4cqw}
+.count61{top:18.5cqw}
+.shots6{top:29cqw}
+.shots6 img{height:7.8cqw}
+.shots6 figcaption{font-size:1cqw;margin-top:.4cqw}
+.s-under .tree{top:39.4cqw}
+.s-under .tree .fork{gap:.5cqw}
+.big3{top:18.5cqw;gap:1.4cqw}
+.big3 .bt{font-size:3cqw}
+.big3 .bs{font-size:1.5cqw}
+.jobs{top:18.5cqw}
+.jobs>div{padding:1.4cqw 0 0!important}
+.jobs>div:first-child{border-top-color:var(--blue)!important}.jobs>div:last-child{border-top-color:var(--orange)!important}
+.s-pg .oops{left:6.2cqw;right:6.2cqw;bottom:4.4cqw;top:auto;width:auto;rotate:0deg;display:flex;align-items:center;gap:2cqw}
+.hill{top:18.5cqw;height:25cqw}
+.goals{top:18.5cqw}
+.goal{padding:1.1cqw 0!important}
+.loop{left:auto;right:6.2cqw;top:16.5cqw;width:32cqw;height:32cqw}
+.bucket{left:6.2cqw;right:auto;width:46cqw;top:18.5cqw}
+.bucket>div{padding:1.2cqw 0 0!important}
+.bucket .all{border-top-color:var(--cyan)!important}
+
+/* the finale beat (19 and 29): one device - everything else fades, the line takes the frame over a blurred Pomelli shot */
+.s-tiers .frame>*:not(.finale):not(.dimall),.s-next .frame>*:not(.finale):not(.dimall){transition:opacity .6s var(--e-micro)}
+.dimall.shown~*:not(.finale):not(.photobg){opacity:0!important}
+.s-tiers .frame>.photobg,.s-next .frame>.photobg{opacity:0!important}
+.s-tiers .dimall.shown~.photobg,.s-next .dimall.shown~.photobg{opacity:1!important}
+.finale{left:6.2cqw;right:6.2cqw;top:19cqw;margin:0;font-size:5cqw;line-height:1.08;font-weight:500;letter-spacing:-.03em;text-wrap:balance;z-index:3}
+
+/* grid thumbnails are clones (class gs, not s): same system, no finale text over the content */
+.gtile .finale,.gtile .dimall{display:none!important}
 </style>
 </head>
 <body data-aura="none">
@@ -1159,16 +1289,16 @@ html.vt .s,html.vt .s.on{transition:none}
   <span class="k" data-in>The spectrum</span>
   <h2 class="h w" data-in style="--d:.08s">Not everything should be <span class="hr">Do It For Me.</span></h2>
   <div class="dwm">
-    <div class="glass stay" data-step="2"><span class="lab" style="color:#9BE7E5">Stay in it &middot; Do It With Me</span>
+    <div class="stay" data-step="2"><span class="lab" style="color:#9BE7E5">Stay in it &middot; Do It With Me</span>
       <ul><li>Your users enjoy doing it</li><li>They&rsquo;re learning and growing</li></ul>
       <p class="pt">AI should amplify them. Not replace them.</p></div>
-    <div class="glass hand" data-step="1"><span class="lab" style="color:#F6A673">Hand it over &middot; Do It For Me</span>
+    <div class="hand" data-step="1"><span class="lab" style="color:#F6A673">Hand it over &middot; Do It For Me</span>
       <ul><li>It&rsquo;s tedious</li><li>It&rsquo;s clearly defined</li><li>Nobody wanted to do it anyway</li></ul>
       <p class="pt">Set it and forget it.</p></div>
   </div>
-  <div class="gap glass" data-step="3" style="top:36cqw"><span class="lab">Not clearly defined yet?</span>
+  <div class="gap" data-step="3"><span class="lab">Not clearly defined yet?</span>
     <span class="g">Keep them in the loop</span><span class="ar">&rarr;</span><span class="g">Fill in what&rsquo;s missing</span><span class="ar">&rarr;</span><span class="g">Build up context</span><span class="ar">&rarr;</span><span class="g hl">Fewer gaps over time</span></div>
-  <div class="spec" data-vt="spec" data-in style="--d:.2s;top:45.5cqw">
+  <div class="spec" data-vt="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
@@ -1178,7 +1308,7 @@ html.vt .s,html.vt .s.on{transition:none}
 <section class="s s-mr" data-aura="low"><div class="frame">
   <span class="k" data-in>The catch</span>
   <h2 class="h" data-in style="--d:.08s">The <span class="hm">magic</span> and the <span class="hr">risk</span> come from the same place.</h2>
-  <div class="mr" style="top:18.5cqw;height:19.4cqw" aria-hidden="true"><svg viewBox="0 0 1000 220" preserveAspectRatio="none">
+  <div class="mr" aria-hidden="true"><svg viewBox="0 0 1000 220" preserveAspectRatio="none">
     <defs>
       <linearGradient id="gM" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
       <linearGradient id="gR" x1="0" x2="1"><stop offset="0" stop-color="#F2C230"/><stop offset=".6" stop-color="#E8722A"/><stop offset="1" stop-color="#E0533F"/></linearGradient>
@@ -1203,13 +1333,11 @@ html.vt .s,html.vt .s.on{transition:none}
 <section class="s s-xl" data-aura="right"><div class="frame">
   <span class="k" data-in>The spectrum, today</span>
   <h2 class="h w" data-in style="--d:.08s">Same check-ins. <span class="hl">A much bigger job.</span></h2>
-  <div class="xl">
-    <div class="xrow" data-step="1"><span class="lab">A few months ago</span>
-      <div class="xbar xs"><i></i><i></i><i></i><i></i></div><span class="sz">S</span></div>
-    <div class="xrow" data-step="2"><span class="lab" style="color:#fff">Today</span>
-      <div class="xbar l"><i></i><i></i><i></i><i></i></div><span class="sz hl">XL</span></div>
+  <div class="xl2">
+    <div class="xr r1" data-step="1"><span class="lab">A few months ago</span><b class="sz">S</b><div class="xb xsm"><i></i><i></i><i></i><i></i></div></div>
+    <div class="xr r2" data-step="2"><span class="lab" style="color:#fff">Today &middot; the same check-ins</span><b class="sz hl">XL</b><div class="xb xlg"><i></i><i></i><i></i><i></i></div></div>
   </div>
-  <div class="spec" data-vt="spec" style="top:42cqw"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <div class="spec" data-vt="spec"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
 </div></section>
 
 <!-- 07 · pomelli on the spectrum -->
@@ -1217,17 +1345,17 @@ html.vt .s,html.vt .s.on{transition:none}
   <div class="photobg pb3" style="background-image:url(media/shoot-tryon.jpg)"></div>
   <span class="k" data-in>Pomelli</span>
   <h2 class="h w" data-in style="--d:.08s">One product. <span class="hl">More than one point on the spectrum.</span></h2>
-  <div class="pm mark" data-step="1" style="left:calc(6.2cqw + .3 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+  <div class="pm mark" data-step="1" style="left:calc(6.2cqw + .3 * 87.6cqw)">
     <div class="card glass"><img src="media/shoot-context.jpg" alt="">
       <div><div class="t">Photoshoot</div><div class="d">A product photo in. An on-brand shoot out.</div><div class="tag"><span class="pill">Narrow</span></div></div></div>
     <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
-  <div class="pm mark" data-step="2" style="left:calc(6.2cqw + .72 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+  <div class="pm mark" data-step="2" style="left:calc(6.2cqw + .72 * 87.6cqw)">
     <div class="card glass"><div class="chat"><i></i><i class="me"></i><i></i><i class="me"></i><i></i></div>
       <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill dna">Open-ended</span></div></div></div>
     <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
-  <div class="spec" data-vt="spec" data-in style="--d:.2s">
+  <div class="spec" data-vt="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
   </div>
@@ -1245,36 +1373,51 @@ html.vt .s,html.vt .s.on{transition:none}
   </svg>
   <span class="dnum" data-in>01</span>
   <h2 class="dword" data-in style="--d:.12s">Why agents<br>break.</h2>
+  <div class="ring dring" aria-hidden="true"><svg viewBox="0 0 600 600">
+    <defs>
+      <linearGradient id="fcbv" gradientUnits="userSpaceOnUse" x1="300" y1="70" x2="499" y2="415"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
+      <linearGradient id="fcvs" gradientUnits="userSpaceOnUse" x1="499" y1="415" x2="101" y2="415"><stop offset="0" stop-color="#56D3D0"/><stop offset="1" stop-color="#E8722A"/></linearGradient>
+      <linearGradient id="fcsb" gradientUnits="userSpaceOnUse" x1="101" y1="415" x2="300" y2="70"><stop offset="0" stop-color="#E8722A"/><stop offset="1" stop-color="#4F7FFE"/></linearGradient>
+    </defs>
+    <circle class="base" cx="300" cy="300" r="230"/>
+    <path class="arc" pathLength="1" stroke="url(#fcbv)" d="M300 70A230 230 0 0 1 499 415"/>
+    <path class="arc" pathLength="1" stroke="url(#fcvs)" d="M499 415A230 230 0 0 1 101 415"/>
+    <path class="arc" pathLength="1" stroke="url(#fcsb)" d="M101 415A230 230 0 0 1 300 70"/>
+    <g class="node n-b"><circle cx="300" cy="70" r="58"/><text x="300" y="76">Build</text></g>
+    <g class="node n-v"><circle cx="499" cy="415" r="58"/><text x="499" y="421">Validate</text></g>
+    <g class="node n-s"><circle cx="101" cy="415" r="58"/><text x="101" y="421">Strip</text></g>
+  </svg></div>
 </div></section>
 
 <!-- 08 · five ways -->
 <section class="s s-five" data-aura="warm"><div class="frame">
   <span class="k" data-in>Why agents break</span>
   <h2 class="h" data-in style="--d:.08s">Five ways agentic workflows <span class="hr">break in production.</span></h2>
+  <i class="go-right" data-step="6"></i>
   <div class="five">
-    <div class="glass" data-step="1"><span class="n">01</span>
+    <div data-step="1"><span class="n">01</span>
       <svg class="ic" viewBox="0 0 60 60"><rect x="8" y="8" width="44" height="44" rx="10" stroke-dasharray="6 6"/><path class="a" d="M23 24a7 7 0 1 1 9 6.7c-1.3.5-2 1.6-2 3V36"/><circle class="a" cx="30" cy="43" r="1"/></svg>
       <div class="t">No guaranteed output</div></div>
-    <div class="glass" data-step="2"><span class="n">02</span>
+    <div data-step="2"><span class="n">02</span>
       <svg class="ic" viewBox="0 0 60 60"><circle cx="10" cy="44" r="5"/><circle cx="28" cy="32" r="5"/><circle class="o" cx="48" cy="14" r="6"/><path d="M14 41l10-6M32 29l11-11"/></svg>
       <div class="t">Errors compound</div></div>
-    <div class="glass" data-step="3"><span class="n">03</span>
+    <div data-step="3"><span class="n">03</span>
       <svg class="ic" viewBox="0 0 60 60"><circle cx="24" cy="20" r="9"/><path d="M8 52c2-10 8-15 16-15s14 5 16 15"/><path class="o" d="M44 14a5 5 0 1 1 6 5c-1 .4-1.5 1.2-1.5 2.4V24"/><circle class="o" cx="48.5" cy="30" r=".8"/></svg>
       <div class="t">Users you didn&rsquo;t plan for</div></div>
-    <div class="glass" data-step="4"><span class="n">04</span>
+    <div data-step="4"><span class="n">04</span>
       <svg class="ic" viewBox="0 0 60 60"><ellipse cx="30" cy="16" rx="16" ry="6"/><path d="M14 16v10c0 3.3 7.2 6 16 6s16-2.7 16-6V16"/><path class="o" d="M14 26v10c0 3.3 7.2 6 16 6s16-2.7 16-6V26M14 36v10c0 3.3 7.2 6 16 6s16-2.7 16-6V36"/></svg>
       <div class="t">Costs get away from you</div></div>
-    <div class="glass" data-step="5"><span class="n">05</span>
+    <div data-step="5"><span class="n">05</span>
       <svg class="ic" viewBox="0 0 60 60"><circle cx="30" cy="30" r="6"/><circle class="a" cx="30" cy="30" r="15" stroke-dasharray="4 5"/><circle class="o" cx="30" cy="30" r="25" stroke-dasharray="3 6"/></svg>
       <div class="t">Open-ended gets trickier</div></div>
   </div>
-  <div class="worse" data-step="6"><div class="wbar"></div><span>Do It With Me</span><span class="r">All five get worse as you move toward Do It For Me</span></div>
+  <div class="spec" data-vt="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
 </div></section>
 
 <!-- 09 · no guaranteed output -->
 <section class="s s-out2" data-aura="warm"><div class="frame">
   <span class="k" data-in>Why agents break &middot; 1 of 5</span>
-  <h2 class="h w" data-in style="--d:.08s;font-size:3.8cqw">You don&rsquo;t get a <span class="hr">guaranteed output.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">You don&rsquo;t get a <span class="hr">guaranteed output.</span></h2>
   <div class="twoq" data-in style="--d:.2s">
     <div><b>Is it complete?</b><span>Fonts, colors, values, imagery. All there?</span></div>
     <div><b class="hl">Is it good?</b><span>Does it actually feel like this business?</span></div>
@@ -1284,7 +1427,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <div data-step="2"><i class="tag">Not complete</i><b>The wrong shape.</b><span>You asked for fields. You got a paragraph.</span></div>
     <div data-step="3"><i class="tag g">Not good</i><b>Complete, but mediocre.</b><span>Every field filled in. Still thin.</span></div>
   </div>
-  <p class="land" data-step="4" style="bottom:3.4cqw">If you don&rsquo;t define done, the agent will.<br><span class="hr">And your users might disagree.</span></p>
+  <p class="land" data-step="4">If you don&rsquo;t define done, the agent will.<br><span class="hr">And your users might disagree.</span></p>
 </div></section>
 
 <!-- 10 · errors compound -->
@@ -1297,6 +1440,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <div class="agentnode" data-step="2"><b>One agent</b><span>The hand-offs are still there.</span></div>
   <i data-step="1" id="cpGo" style="width:0;height:0"></i>
   <input id="cpA" type="hidden" value="95"><input id="cpN" type="hidden" value="10"><span id="cpAv" hidden></span><span id="cpNv" hidden></span>
+  <p class="land" data-step="2">The hand-offs don&rsquo;t go away. <span class="hr">You just can&rsquo;t see them anymore.</span></p>
 </div></section>
 
 <!-- 11 · users -->
@@ -1323,12 +1467,12 @@ html.vt .s,html.vt .s.on{transition:none}
     <div><b>?</b><span>tools it decides to call</span></div>
     <div><b>?</b><span>how long it decides to think</span></div>
   </div>
-  <div class="ppt" data-step="1" style="left:auto;right:6.2cqw;top:17cqw;width:40cqw">
+  <div class="ppt" data-step="1">
     <span class="lab">Price per successful task</span><div style="height:1.6cqw"></div>
     <div class="row cheap"><div class="top"><b>Cheaper model</b><span class="mono" style="color:var(--orange)">8 tries</span></div><div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
     <div class="row good"><div class="top"><b>Stronger model</b><span class="mono" style="color:var(--cyan)">1 try</span></div><div class="bars"><i></i></div></div>
-    <p class="note">Not price per token. A cheap model that needs eight tries can cost more than a good one that gets it right the first time.</p>
   </div>
+  <p class="land" data-step="1">Not price per token. <span class="hl">Price per successful task.</span></p>
 </div></section>
 
 <!-- 13 · scope -->
@@ -1372,26 +1516,26 @@ html.vt .s,html.vt .s.on{transition:none}
 
 <!-- 14 · guardrails are product decisions -->
 <section class="s s-tiers" data-aura="left"><div class="frame">
-  <i class="clear" data-step="4"></i>
+  <i class="dimall" data-step="4"></i>
   <div class="photobg" style="background-image:url(media/shoot-context.jpg)"></div>
   <span class="k" data-in>Build</span>
-  <h2 class="h w" data-in style="--d:.08s;font-size:3.9cqw">Your first guardrails are <span class="hl">product decisions.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Your first guardrails are <span class="hl">product decisions.</span></h2>
   <div class="tiers" style="grid-template-columns:1fr 1fr 1fr">
-    <div class="tier t1 glass" data-step="1" style="height:21cqw"><span class="n">01</span><span class="t">Scope</span>
+    <div class="tier t1" data-step="1"><span class="n">01</span><span class="t">Scope</span>
       <ul><li>What it does. And what it doesn&rsquo;t.</li><li>Photoshoot: a product photo and a set of templates</li><li>Narrow on purpose, before a single model call</li></ul></div>
-    <div class="tier t2 glass" data-step="2" style="height:21cqw"><span class="n">02</span><span class="t">The interface</span>
+    <div class="tier t2" data-step="2"><span class="n">02</span><span class="t">The interface</span>
       <ul><li>Where do I see what happened?</li><li>Where can I step in? How do I undo?</li><li>Keep editing: let them finish the last 10%</li></ul></div>
-    <div class="tier t3 glass" data-step="3" style="height:21cqw"><span class="n">03</span><span class="t">The system</span>
+    <div class="tier t3" data-step="3"><span class="n">03</span><span class="t">The system</span>
       <ul><li>Contracts and exits</li><li>Checks between steps</li><li>A contained blast radius</li></ul></div>
   </div>
-  <p class="quote thesis" data-step="4">Clever prompting can get you a demo.<br><span class="hl">Product-grade engineering is what gets you to launch.</span></p>
+  <p class="finale" data-step="4">Clever prompting can get you a demo.<br><span class="hl">Product-grade engineering is what gets you to launch.</span></p>
 </div></section>
 
 <!-- 15 · contracts and exits -->
 <section class="s s-ce" data-aura="right"><div class="frame">
   <span class="k" data-in>Contracts and exits</span>
   <h2 class="h" data-in style="--d:.08s">Every step gets a <span class="hm">contract.</span> Every agent gets an <span class="hr">exit.</span></h2>
-  <div class="ce" data-step="1" style="right:auto;width:40cqw"><svg viewBox="0 0 640 352">
+  <div class="ce" data-step="1"><span class="lab">The contract</span><svg viewBox="0 92 640 168">
     <rect class="box" x="170" y="96" width="300" height="160" rx="22"/>
     <text class="t" x="320" y="168" text-anchor="middle">A step</text>
     <text class="s2" x="320" y="196" text-anchor="middle">model, tools, prompt</text>
@@ -1401,7 +1545,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <text class="s2" x="10" y="214">what goes in</text><text class="s2" x="630" y="214" text-anchor="end">what comes out,</text><text class="s2" x="630" y="236" text-anchor="end">in what shape</text>
   </svg></div>
   <div class="exits2" data-step="2">
-    <span class="lab">Every agent needs an exit</span>
+    <span class="lab">The exits</span>
     <div><b>Loop cap</b></div><div><b>Time budget</b></div><div><b>Cost budget</b></div>
     <div class="fb"><b>Fallback</b><span>Retry. Go simpler. Or ask the user.</span></div>
   </div>
@@ -1413,8 +1557,8 @@ html.vt .s,html.vt .s.on{transition:none}
   <span class="k" data-in>Check between steps</span>
   <h2 class="h" data-in style="--d:.08s">Check every black box <span class="hm">before it feeds the next one.</span></h2>
   <div class="pipe" id="pipe" data-in style="--d:.2s;left:10.7cqw;right:10.7cqw"></div>
-  <div class="kinds" data-step="1" style="top:31cqw"><span class="pill">Hard rules &middot; is it complete?</span><span class="pill dna">Semantic &middot; is it good?</span></div>
-  <div class="dnaex glass" data-step="2" style="left:6.2cqw;right:auto;width:62cqw;top:36cqw">
+  <div class="kinds" data-step="1"><span class="pill">Hard rules &middot; is it complete?</span><span class="pill dna">Semantic &middot; is it good?</span></div>
+  <div class="dnaex" data-step="2">
     <span class="lab">Example &middot; Business DNA from a website</span>
     <span class="m">HARD RULE</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
     <span class="m sem">SEMANTIC</span><span class="q">Can every value point back to <b>something the business actually gave us?</b></span>
@@ -1429,7 +1573,7 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- 18 · decisions underneath -->
 <section class="s s-under" data-aura="low"><div class="frame">
   <span class="k" data-in>Photoshoot &middot; under the hood</span>
-  <h2 class="h w" data-in style="--d:.08s;font-size:3.5cqw">One click on top. <span class="hl">A lot of decisions underneath.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">One click on top. <span class="hl">A lot of decisions underneath.</span></h2>
   <div class="rowa">
     <div class="pc glass ca" data-step="1"><span class="lab">1 &middot; Your photo</span><img class="pin" src="media/shoot-input.jpg" alt="The sunglasses product photo"></div>
     <div class="parr" data-step="2"><span>&rarr;</span><i class="hk" data-step="6"></i></div>
@@ -1446,7 +1590,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <figure class="ctx"><img src="media/shoot-context.jpg" alt=""><figcaption>In Use</figcaption></figure>
     <figure><img src="media/shoot-seasonal.jpg" alt=""><figcaption>Halloween</figcaption></figure>
   </div>
-  <div class="tree" data-step="4" style="top:41.6cqw">
+  <div class="tree" data-step="4">
     <span class="pill on">In Use</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i><span class="pill dna">Your Business DNA</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i>
     <div class="fork">
       <div class="fr"><span class="gl">Sunglasses</span><span class="pill sel">On a face</span><span class="pill">Pushed up on a head</span></div>
@@ -1454,19 +1598,19 @@ html.vt .s,html.vt .s.on{transition:none}
     </div>
   </div>
   <div class="count61" data-step="5"><b id="c61">60+</b><span id="c61l">options in the interface</span></div>
-  <p class="land" data-step="7" style="bottom:2.2cqw;font-size:1.8cqw;right:auto">Before you add a setting, <span class="hl">ask if your context already knows the answer.</span></p>
+  <p class="land" data-step="7">Before you add a setting, <span class="hl">ask if your context already knows the answer.</span></p>
 </div></section>
 
 <!-- 19 · blast radius -->
 <section class="s s-br2" data-aura="warm"><div class="frame">
   <span class="k" data-in>Blast radius</span>
-  <h2 class="h w" data-in style="--d:.08s;font-size:3.8cqw">Contain the <span class="hr">blast radius.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Contain the <span class="hr">blast radius.</span></h2>
   <div class="big3">
     <div data-step="1"><b class="n">01</b><div><b class="bt">Only what it needs.</b><span class="bs">In Pomelli: your Business DNA, and likely the context of the feature you&rsquo;re using.</span></div></div>
     <div data-step="2"><b class="n">02</b><div><b class="bt">Sandbox where it operates.</b><span class="bs">Creations stay in Pomelli until a person shares them.</span></div></div>
     <div data-step="3"><b class="n">03</b><div><b class="bt">Reads: <span class="hm">low risk.</span> Writes: <span class="hr">human in the loop.</span></b><span class="bs">The test: can the user undo it? Posting to Instagram or Google Ads, not easily.</span></div></div>
   </div>
-  <p class="land" data-step="4" style="bottom:3.6cqw">If it only lives in the prompt, it&rsquo;s not a guardrail. <span class="hr">It&rsquo;s wishful thinking.</span></p>
+  <p class="land" data-step="4">If it only lives in the prompt, it&rsquo;s not a guardrail. <span class="hr">It&rsquo;s wishful thinking.</span></p>
 </div></section>
 
 <!-- div · validate -->
@@ -1500,13 +1644,13 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- 20 · plausible vs good -->
 <section class="s s-pg" data-aura="center"><div class="frame">
   <span class="k" data-in>Validate</span>
-  <h2 class="h" data-in style="--d:.08s;font-size:4.6cqw">How do you know <span class="hl">it&rsquo;s ready?</span></h2>
-  <p class="brsub" data-in style="--d:.16s;top:15cqw">Validation has two jobs.</p>
-  <div class="jobs" style="top:22.5cqw">
-    <div class="glass" data-step="1"><span class="n">JOB 01 &middot; THE EXPECTED</span><div class="t">Quality, in distribution</div><div class="d">When people use it the way you designed it, does it do what you expect? And is it good?</div></div>
-    <div class="glass" data-step="2"><span class="n">JOB 02 &middot; THE UNEXPECTED</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, does the damage stay inside the blast radius?</div></div>
+  <h2 class="h" data-in style="--d:.08s">How do you know <span class="hl">it&rsquo;s ready?</span></h2>
+  <p class="brsub" data-in style="--d:.16s">Validation has two jobs.</p>
+  <div class="jobs">
+    <div data-step="1"><span class="n">JOB 01 &middot; THE EXPECTED</span><div class="t">Quality, in distribution</div><div class="d">When people use it the way you designed it, does it do what you expect? And is it good?</div></div>
+    <div data-step="2"><span class="n">JOB 02 &middot; THE UNEXPECTED</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, does the damage stay inside the blast radius?</div></div>
   </div>
-  <div class="oops glass" data-step="3" style="left:6.2cqw;right:6.2cqw;bottom:4cqw;top:auto;width:auto;rotate:0deg;display:flex;align-items:center;gap:2cqw">
+  <div class="oops glass" data-step="3">
     <span class="lab">Skip job 02</span><span class="ad">FLASH SALE &middot; <span>50% off everything</span></span><span class="why" style="margin:0">A sale the business never offered.</span>
   </div>
 </div></section>
@@ -1515,18 +1659,18 @@ html.vt .s,html.vt .s.on{transition:none}
 <section class="s s-hill" data-aura="left"><div class="frame">
   <span class="k" data-in>Two jobs, two tools</span>
   <h2 class="h" data-in style="--d:.08s">Hill climb the expected. <span class="hr">Red team the unexpected.</span></h2>
-  <div class="hill" style="top:18.5cqw;height:28cqw" data-step="1"><svg viewBox="0 0 600 420">
+  <div class="hill" data-step="1"><svg viewBox="0 0 600 420">
     <defs><linearGradient id="gMagic" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient></defs>
     <path class="ax" d="M20 20V400H590"/>
     <path class="st" pathLength="1" d="M20 380H110V336H200V306H290V250H380V214H470V160H560V128"/>
     <circle cx="560" cy="128" r="8" fill="#56D3D0"/>
     <text x="30" y="40">quality vs. your examples of good</text><text x="590" y="390" text-anchor="end">measure &middot; improve &middot; repeat</text>
   </svg></div>
-  <div class="goals" data-step="2" style="top:18cqw">
+  <div class="goals" data-step="2">
     <span class="lab">Red team goals &middot; sandboxed, no script</span>
-    <div class="goal glass"><i>GOAL</i>Make it write something off-brand.</div>
-    <div class="goal glass"><i>GOAL</i>Make a claim the business never made.</div>
-    <div class="goal glass"><i>GOAL</i>Put someone else&rsquo;s logo in the shot.</div>
+    <div class="goal"><i>GOAL</i>Make it write something off-brand.</div>
+    <div class="goal"><i>GOAL</i>Make a claim the business never made.</div>
+    <div class="goal"><i>GOAL</i>Put someone else&rsquo;s logo in the shot.</div>
   </div>
 </div></section>
 
@@ -1534,18 +1678,18 @@ html.vt .s,html.vt .s.on{transition:none}
 <section class="s s-loop" data-aura="right"><div class="frame">
   <span class="k" data-in>The loop</span>
   <h2 class="h" data-in style="--d:.08s">Break it. Bucket it. <span class="hl">Guard it. Re-check it.</span></h2>
-  <div class="loop" style="top:19cqw;width:32.5cqw;height:32.5cqw"><svg viewBox="0 0 600 600">
+  <div class="loop"><svg viewBox="0 0 600 600">
     <circle class="orbit" cx="300" cy="300" r="240"/>
     <g class="node" data-step="1" style="--c:#E8722A"><circle cx="300" cy="60" r="62"/><text x="300" y="58">Break</text><text class="sm" x="300" y="80">trajectories</text></g>
     <g class="node" data-step="2" style="--c:#F2C230"><circle cx="540" cy="300" r="62"/><text x="540" y="298">Bucket</text><text class="sm" x="540" y="320">behaviors</text></g>
     <g class="node" data-step="3" style="--c:#56D3D0"><circle cx="300" cy="540" r="62"/><text x="300" y="538">Guard</text><text class="sm" x="300" y="560">guardrails</text></g>
     <g class="node" data-step="4" style="--c:#4F7FFE"><circle cx="60" cy="300" r="62"/><text x="60" y="298">Re-check</text><text class="sm" x="60" y="320">quality evals</text></g>
   </svg></div>
-  <div class="bucket" data-step="5" style="top:18.5cqw">
-    <div class="glass one"><span class="lab">The point fix &middot; one symptom</span><div class="t">Block the phrase &ldquo;50% off&rdquo;</div></div>
-    <div class="glass all"><span class="lab" style="color:#BFF2F0">The bucket &middot; the root cause</span><div class="t">The agent invents offers the business never made.</div></div>
+  <div class="bucket" data-step="5">
+    <div class="one"><span class="lab">The point fix &middot; one symptom</span><div class="t">Block the phrase &ldquo;50% off&rdquo;</div></div>
+    <div class="all"><span class="lab" style="color:#BFF2F0">The bucket &middot; the root cause</span><div class="t">The agent invents offers the business never made.</div></div>
   </div>
-  <p class="judg" data-step="6" style="bottom:4cqw"><b>Fix the root cause, and you also fix the failures you haven&rsquo;t seen yet.</b></p>
+  <p class="land" data-step="6">Fix the root cause, <span class="hl">and you also fix the failures you haven&rsquo;t seen yet.</span></p>
 </div></section>
 
 <!-- div · strip -->
@@ -1581,25 +1725,25 @@ html.vt .s,html.vt .s.on{transition:none}
   <i class="dimall" data-step="5"></i>
   <div class="photobg pb2" style="background-image:url(media/shoot-floral.jpg)"></div>
   <span class="k" data-in>Strip</span>
-  <h2 class="h" data-in style="--d:.08s;font-size:4.6cqw">What we&rsquo;re <span class="hl">stripping now.</span></h2>
+  <h2 class="h" data-in style="--d:.08s">What we&rsquo;re <span class="hl">stripping now.</span></h2>
   <div class="moves">
-    <div class="glass" data-step="1"><span class="t">Pomelli Agent</span><span class="d">doing more</span><span class="ra">&rarr;</span></div>
-    <div class="glass" data-step="2"><span class="t">Websites</span><span class="d">beyond templates</span><span class="ra">&rarr;</span></div>
-    <div class="glass" data-step="3"><span class="t">Check-ins</span><span class="d">rethought</span><span class="ra">&rarr;</span></div>
+    <div data-step="1"><span class="t">Pomelli Agent</span><span class="d">doing more</span><span class="ra">&rarr;</span></div>
+    <div data-step="2"><span class="t">Websites</span><span class="d">beyond templates</span><span class="ra">&rarr;</span></div>
+    <div data-step="3"><span class="t">Check-ins</span><span class="d">rethought</span><span class="ra">&rarr;</span></div>
   </div>
-  <div class="striptest glass" data-step="4"><span class="lab">How you know it&rsquo;s earned</span>
+  <i class="go-right2" data-step="4"></i>
+  <div class="striptest" data-step="4"><span class="lab">How you know it&rsquo;s earned</span>
     <span>Better model. Simpler prompt. Looser guardrail.</span><i>&rarr;</i><span>Re-run evals and red team</span><i>&rarr;</i><span>Failure stays gone? <b>Strip it.</b></span></div>
-  <div class="spec" data-vt="spec" style="top:42cqw"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <div class="spec" data-vt="spec" data-in style="--d:.2s"><div class="track"></div><div class="knob"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
   <p class="finale" data-step="5">When the models get better, revisit your guardrails. <span class="hl">Some of them have done their job.</span></p>
 </div></section>
 
 <!-- 25 · close -->
 <section class="s s-close" data-aura="left"><div class="frame">
-  <div class="cl">
-    <p data-step="1">Build the guardrails.</p>
-    <p data-step="2">Validate them.</p>
-    <p data-step="3">Then strip them <span class="hl">as the models earn it.</span></p>
-  </div>
+  <i class="dim2" data-step="3"></i>
+  <p class="clp c1" data-step="1">Build the guardrails.</p>
+  <p class="clp c2" data-step="2">Validate them.</p>
+  <p class="quote clp c3" data-step="3">Then strip them <span class="hl">as the models earn it.</span></p>
   <i class="rin" data-step="1"></i><i class="rout" data-step="3"></i>
   <div class="rails" aria-hidden="true">
     <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
@@ -2014,7 +2158,7 @@ html.vt .s,html.vt .s.on{transition:none}
     for(let k=0;k<B;k++){
       const x=(k/(B-1))*100;
       if(k<B-1){ const x2=((k+1)/(B-1))*100; h+=`<span class="ar" style="left:${x}%;width:${x2-x}%"></span>`; }
-      h+=`<span class="bx" style="left:${x}%">step ${k+1}</span>`;
+      h+=`<span class="bx" style="left:${x}%">${k+1}</span>`;
       if(k<B-1){ const on=((k+1)%every===0); h+=`<span class="ck${on?'':' off'}" data-step="1" style="left:${(x+((k+1)/(B-1))*100)/2}%"><span>&#10003;</span></span>`; }
     }
     pipe.innerHTML=h;
@@ -2148,7 +2292,7 @@ html.vt .s,html.vt .s.on{transition:none}
       }
     });
   }
-  document.querySelectorAll('#deck .h, #deck .land, #deck .quote, #deck .finale, #deck .dword, #deck .s-close .cl p, #deck .fc-h').forEach(kin);
+  document.querySelectorAll('#deck .h, #deck .land, #deck .quote, #deck .finale, #deck .dword, #deck .s-close .clp, #deck .fc-h').forEach(kin);
   // view transitions: shared elements (data-vt) glide between consecutive slides
   if(document.startViewTransition && !snap && !calm){
     document.documentElement.classList.add('vt');
