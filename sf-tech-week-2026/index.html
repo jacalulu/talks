@@ -187,7 +187,7 @@ svg [data-step]{translate:none}
 /* magic vs risk */
 .mr{left:6.2cqw;right:6.2cqw;top:17cqw;height:21cqw}
 .mr svg{width:100%;height:100%;overflow:visible}
-.mr path.c{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s var(--e-big)}
+.mr path.c{fill:none;stroke-width:4.3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s var(--e-big)}
 .mr .shown path.c{stroke-dashoffset:0}
 .mr path.f{opacity:0;transition:opacity 1.2s var(--e-big) .4s}
 .mr .shown path.f{opacity:1}
@@ -365,12 +365,12 @@ svg [data-step]{translate:none}
 .pipe .ck.off{opacity:.12;scale:.6}
 .kinds{left:6.2cqw;top:32cqw;display:flex;gap:1.2cqw}
 .kinds .pill{font-size:1.2cqw}
-.dna{left:44cqw;right:6.2cqw;top:31.5cqw;padding:1.6cqw 2cqw;display:grid;grid-template-columns:auto 1fr;gap:.6cqw 1.6cqw;align-items:center}
-.dna .lab{grid-column:1/-1}
-.dna .q{font-size:1.45cqw}
-.dna .q b{font-weight:500}
-.dna .m{font-family:var(--mono);font-size:1.05cqw;color:var(--cyan);white-space:nowrap}
-.dna .m.sem{color:var(--gold)}
+.dnaex{left:44cqw;right:6.2cqw;top:31.5cqw;padding:1.6cqw 2cqw;display:grid;grid-template-columns:auto 1fr;gap:.6cqw 1.6cqw;align-items:center}
+.dnaex .lab{grid-column:1/-1}
+.dnaex .q{font-size:1.45cqw}
+.dnaex .q b{font-weight:500}
+.dnaex .m{font-family:var(--mono);font-size:1.05cqw;color:var(--cyan);white-space:nowrap}
+.dnaex .m.sem{color:var(--gold)}
 .dial{left:6.2cqw;bottom:3.6cqw;display:flex;align-items:center;gap:2.4cqw}
 .seg{display:flex;padding:.35cqw;border-radius:10cqw;background:rgba(255,255,255,.07);border:1px solid var(--line)}
 .seg button{appearance:none;border:0;background:none;color:var(--ink-2);font:inherit;font-size:1.2cqw;font-weight:500;
@@ -975,9 +975,9 @@ body.clean .hud,body.clean .bar,body.clean .keys{display:none!important}
       <linearGradient id="gRf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8722A" stop-opacity=".26"/><stop offset="1" stop-color="#E8722A" stop-opacity="0"/></linearGradient>
     </defs>
     <g data-step="1"><path class="f" fill="url(#gMf)" d="M0 214C150 110 450 40 1000 22L1000 220L0 220Z"/>
-      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" vector-effect="non-scaling-stroke" d="M0 214C150 110 450 40 1000 22"/></g>
+      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" d="M0 214C150 110 450 40 1000 22"/></g>
     <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 218C500 214 800 150 1000 14L1000 220L0 220Z"/>
-      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" vector-effect="non-scaling-stroke" d="M0 218C500 214 800 150 1000 14"/></g>
+      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" d="M0 218C500 214 800 150 1000 14"/></g>
   </svg></div>
   <div class="vline ix" id="vline" style="left:calc(6.2cqw + .35 * 87.6cqw);top:18.5cqw;height:21.6cqw;width:0;border-left:.15cqw dashed rgba(255,255,255,.4)"></div>
   <div class="spec">
@@ -1204,7 +1204,7 @@ body.clean .hud,body.clean .bar,body.clean .keys{display:none!important}
   <h2 class="h" data-in style="--d:.08s">Check every black box <span class="hm">before it feeds the next one.</span></h2>
   <div class="pipe" id="pipe" data-in style="--d:.2s;left:10.7cqw;right:10.7cqw"></div>
   <div class="kinds" data-step="1" style="top:31cqw"><span class="pill">Hard rules &middot; objective</span><span class="pill dna">Semantic &middot; subjective</span></div>
-  <div class="dna glass" data-step="2" style="left:6.2cqw;right:auto;width:62cqw;top:36cqw">
+  <div class="dnaex glass" data-step="2" style="left:6.2cqw;right:auto;width:62cqw;top:36cqw">
     <span class="lab">Example &middot; Business DNA from a website</span>
     <span class="m">HARD RULE</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
     <span class="m sem">SEMANTIC</span><span class="q">Do the values seem like something <b>a reasonable business would lean into?</b></span>
