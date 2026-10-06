@@ -1,0 +1,1915 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="SF Tech Week 2026 - Lessons from Launching: Deploying Agentic Workflows at Scale.">
+<meta property="og:title" content="Lessons from Launching · Jaclyn Konzelmann">
+<meta property="og:description" content="SF Tech Week 2026 - Deploying Agentic Workflows at Scale. Real-world lessons from launching Pomelli.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://talks.jaclynkonzelmann.com/sf-tech-week-2026-v2/">
+<meta property="og:image" content="https://talks.jaclynkonzelmann.com/sf-tech-week-2026-v2/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Lessons from Launching (v2) · Jaclyn Konzelmann</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;500&family=Antonio:wght@700&display=swap');
+/* ════════════════════════════════════════════════════════════════════
+   Lessons from Launching - SF Tech Week 2026
+   Google for Startups dark ground, Momentum Aura gradient, Google Sans.
+   Everything inside a slide is sized in cqw of the 16:9 .frame, so the
+   composition holds at any projector size.
+   ════════════════════════════════════════════════════════════════════ */
+:root{
+  --vh:100vh;
+  --ground:#0F1218;
+  --ink:#FFFFFF;
+  --ink-2:rgba(255,255,255,.72);
+  --ink-3:rgba(255,255,255,.46);
+  --line:rgba(255,255,255,.12);
+  --blue:#4F7FFE; --blue-2:#8FB0FF; --cyan:#56D3D0; --green:#5FB98A;
+  --gold:#F2C230; --orange:#E8722A; --red:#E0533F;
+  --magic:linear-gradient(90deg,#4F7FFE,#56D3D0);
+  --risk:linear-gradient(90deg,#F2C230,#E8722A,#E0533F);
+  --aura:linear-gradient(90deg,#4F7FFE 0%,#56D3D0 40%,#F2C230 72%,#E8722A 100%);
+  --face:"Google Sans","Google Sans Text",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Google Sans Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --e-big:cubic-bezier(.65,0,.35,1);
+  --e-dec:cubic-bezier(.2,0,0,1);
+  --e-micro:cubic-bezier(.4,0,.2,1);
+  --e-spring:cubic-bezier(.3,1.35,.5,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--face);font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ── stage ─────────────────────────────────────────────────────────── */
+.deck{position:fixed;inset:0;cursor:pointer;z-index:2}
+.s{position:absolute;inset:0;overflow:hidden;isolation:isolate;
+  opacity:0;visibility:hidden;transition:opacity .5s var(--e-micro),visibility 0s linear .5s}
+.s.on{opacity:1;visibility:visible;transition:opacity .7s var(--e-micro) .08s}
+.frame{position:absolute;left:50%;top:50%;translate:-50% -50%;
+  width:min(100vw, calc(var(--vh) * 1.7778));height:min(56.25vw, var(--vh));
+  container-type:inline-size}
+.frame>*{position:absolute}
+
+/* ── ambient aura: one persistent layer that drifts between slides ─── */
+.amb{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:1;transition:opacity 1.2s var(--e-micro)}
+.amb i{position:absolute;border-radius:50%;filter:blur(9vw);opacity:.0;
+  transition:left 1.6s var(--e-big),top 1.6s var(--e-big),width 1.6s var(--e-big),height 1.6s var(--e-big),opacity 1.4s var(--e-big)}
+.amb .a1{background:#3A63E8}.amb .a2{background:#2FB3B0}.amb .a3{background:#E0892A}
+body[data-aura="none"] .amb{opacity:0}
+body[data-aura="low"]   .a1{left:20vw;top:78vh;width:60vw;height:40vh;opacity:.38}
+body[data-aura="low"]   .a2{left:55vw;top:84vh;width:30vw;height:30vh;opacity:.22}
+body[data-aura="low"]   .a3{left:86vw;top:80vh;width:20vw;height:30vh;opacity:.22}
+body[data-aura="left"]  .a1{left:-14vw;top:30vh;width:38vw;height:60vh;opacity:.32}
+body[data-aura="left"]  .a2{left:-6vw;top:70vh;width:24vw;height:30vh;opacity:.2}
+body[data-aura="left"]  .a3{left:-10vw;top:-10vh;width:16vw;height:20vh;opacity:.0}
+body[data-aura="right"] .a1{left:78vw;top:-6vh;width:36vw;height:50vh;opacity:.3}
+body[data-aura="right"] .a2{left:84vw;top:50vh;width:26vw;height:40vh;opacity:.18}
+body[data-aura="right"] .a3{left:95vw;top:80vh;width:16vw;height:30vh;opacity:.2}
+body[data-aura="warm"]  .a1{left:60vw;top:76vh;width:40vw;height:40vh;opacity:.2}
+body[data-aura="warm"]  .a2{left:20vw;top:90vh;width:30vw;height:20vh;opacity:.12}
+body[data-aura="warm"]  .a3{left:76vw;top:-14vh;width:36vw;height:46vh;opacity:.26}
+body[data-aura="center"] .a1{left:30vw;top:30vh;width:40vw;height:40vh;opacity:.22}
+body[data-aura="center"] .a2{left:46vw;top:46vh;width:20vw;height:20vh;opacity:.18}
+body[data-aura="center"] .a3{left:60vw;top:60vh;width:10vw;height:10vh;opacity:.12}
+
+/* ── type ──────────────────────────────────────────────────────────── */
+.k{left:6.2cqw;top:5.6cqw;font-size:1.05cqw;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;align-items:center;gap:.9cqw;white-space:nowrap}
+.k::before{content:"";width:2.4cqw;height:.22cqw;border-radius:1cqw;background:var(--aura)}
+.h{left:6.2cqw;top:8.2cqw;margin:0;font-size:4.2cqw;line-height:1.06;font-weight:500;letter-spacing:-.028em;
+  max-width:62cqw;text-wrap:balance}
+.h.w{max-width:84cqw}
+.hl{background:var(--aura);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hm{background:var(--magic);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hr{background:var(--risk);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:var(--mono)}
+.lab{font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.land{left:6.2cqw;right:6.2cqw;bottom:4.6cqw;font-size:2.1cqw;font-weight:500;letter-spacing:-.012em;line-height:1.25}
+.land b{font-weight:500}
+
+/* ── surfaces ──────────────────────────────────────────────────────── */
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.12);border-radius:1.4cqw;
+  backdrop-filter:blur(1.2cqw);-webkit-backdrop-filter:blur(1.2cqw);
+  box-shadow:0 1.6cqw 4cqw -2cqw rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06)}
+.pill{display:inline-flex;align-items:center;gap:.6cqw;padding:.55cqw 1.2cqw;border-radius:10cqw;
+  font-size:1.15cqw;font-weight:500;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);white-space:nowrap}
+.pill.on{border-color:transparent;background:var(--blue);color:#fff}
+.pill.dna{border-color:rgba(86,211,208,.5);color:#BFF2F0;background:rgba(86,211,208,.1)}
+.pill.warn{border-color:rgba(232,114,42,.55);color:#FFC9A6;background:rgba(232,114,42,.12)}
+
+/* ── builds ────────────────────────────────────────────────────────── */
+[data-step]{opacity:0;translate:0 .9cqw;transition:opacity .6s var(--e-dec),translate .7s var(--e-dec)}
+[data-step].shown{opacity:1;translate:0 0}
+svg [data-step]{translate:none}
+.s.on [data-in]{animation:rise .8s var(--e-dec) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;translate:0 1.2cqw}to{opacity:1;translate:0 0}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .s.on [data-in]{animation:none}
+  [data-step]{transition:none}
+}
+
+/* ════ 01 · cover ═══════════════════════════════════════════════════ */
+.aura{inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.s.on .aura{animation:auraIn 2.4s var(--e-dec) both}
+@keyframes auraIn{from{opacity:0;translate:0 3cqw}to{opacity:1;translate:0 0}}
+.s-cover .frame>*:not(.aura){z-index:2;margin:0}
+.gfs{left:3.9%;top:6.3%;font-size:1.99cqw;font-weight:500;letter-spacing:-.005em;line-height:1;color:#E8EAED}
+.sftw{inset:0;font-family:Antonio,"Arial Narrow",sans-serif;font-weight:700;color:#fff;pointer-events:none}
+.sftw span{position:absolute;font-size:5.35cqw;line-height:1;letter-spacing:-.015em;transform:scaleX(.86);transform-origin:left top}
+.w-tech{left:7.15%;top:12.1%}.w-sf{left:3.75%;top:20.4%}.w-week{left:14.05%;top:20.4%}
+.tt{left:3.9%;top:58.6%;font-size:7.3cqw;line-height:.96;font-weight:400;letter-spacing:-.012em}
+.tt-sub{left:4%;top:86.9%;font-size:2.85cqw;line-height:1}
+.tt-photo{left:59.27%;top:9.26%;width:33.44%;height:61.3%;border-radius:2cqw;
+  background:#E9E9E9 url("portrait.webp") center 22%/cover no-repeat}
+.tt-name{left:60.3%;top:73.7%;width:31.4%;height:18.3%;border-radius:1.4cqw;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25cqw;
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.04));
+  border:.12cqw solid rgba(255,255,255,.42);
+  backdrop-filter:blur(.8cqw) saturate(1.15);-webkit-backdrop-filter:blur(.8cqw) saturate(1.15);
+  box-shadow:0 .6cqw 2.4cqw -1cqw rgba(0,0,0,.45)}
+.tt-name b{font-size:2.6cqw;font-weight:700;letter-spacing:-.005em;line-height:1.15}
+.tt-name span{font-size:1.81cqw;line-height:1.2}
+
+/* ════ 02/03 · the guardrails ═══════════════════════════════════════ */
+.quote{left:6.2cqw;right:6.2cqw;top:15cqw;margin:0;font-size:6.6cqw;line-height:1.02;font-weight:500;letter-spacing:-.035em;text-wrap:balance}
+.attr{left:6.2cqw;top:9.4cqw;display:flex;gap:1cqw;align-items:center}
+.rails{left:0;right:0;top:38cqw;height:12cqw}
+.rail{position:absolute;left:6.2cqw;right:6.2cqw;height:.32cqw;border-radius:1cqw;background:rgba(255,255,255,.22);
+  transition:translate 1.2s var(--e-big),opacity 1s var(--e-big),scale 1.2s var(--e-big)}
+.rail:nth-child(1){top:2cqw}.rail:nth-child(2){top:5.2cqw}.rail:nth-child(3){top:8.4cqw}
+.rail i{position:absolute;top:50%;width:.9cqw;height:3cqw;translate:0 -50%;border-radius:.4cqw;background:rgba(255,255,255,.22)}
+/* slide 2: the click strips them */
+/* slide 3: they come back and lock */
+.s-build .rail{background:var(--aura)}
+.s-build .rail i{background:#fff}
+.s.on.s-build .rail{animation:railIn 1.3s var(--e-dec) both}
+.s.on.s-build .rail:nth-child(2){animation-delay:.12s}.s.on.s-build .rail:nth-child(3){animation-delay:.24s}
+@keyframes railIn{from{translate:-100cqw 0;opacity:0}to{translate:0 0;opacity:1}}
+
+/* ════ 04 · full circle ring (also the close) ═══════════════════════ */
+.ring{right:6cqw;top:6.5cqw;width:38cqw;height:38cqw}
+.ring svg{width:100%;height:100%;overflow:visible}
+.ring .arc{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;
+  transition:stroke-dashoffset 1.2s var(--e-big)}
+.ring .shown .arc,.ring .arc.shown{stroke-dashoffset:0}
+.ring .node circle{fill:#151A24;stroke:rgba(255,255,255,.3);stroke-width:2}
+.ring .node text{fill:#fff;font-family:var(--face);font-size:22px;font-weight:500;text-anchor:middle}
+.ring .node .sm{fill:rgba(255,255,255,.5);font-size:13px;letter-spacing:.14em}
+.ring .base{fill:none;stroke:rgba(255,255,255,.08);stroke-width:2}
+.fc-h{top:15cqw;max-width:44cqw;font-size:5cqw}
+.fc-sub{left:6.2cqw;top:31cqw;max-width:40cqw;font-size:1.9cqw;line-height:1.4;color:var(--ink-2);margin:0}
+.agenda{left:6.2cqw;right:6.2cqw;bottom:4.4cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw}
+.agenda div{padding:1.4cqw 1.5cqw;border-top:.22cqw solid rgba(255,255,255,.18)}
+.agenda b{display:block;font-family:var(--mono);font-size:1cqw;font-weight:500;color:var(--ink-3);margin-bottom:.5cqw}
+.agenda span{font-size:1.6cqw;font-weight:500}
+
+/* ════ 05-07 · the spectrum ═════════════════════════════════════════ */
+.spec{left:6.2cqw;right:6.2cqw;top:38cqw;height:6cqw}
+.spec .track{position:absolute;left:0;right:0;top:2.4cqw;height:.5cqw;border-radius:1cqw;
+  background:linear-gradient(90deg,rgba(79,127,254,.5),rgba(86,211,208,.6) 45%,rgba(242,194,48,.7) 75%,rgba(232,114,42,.9))}
+.spec .end{position:absolute;top:4.6cqw;font-size:1.9cqw;font-weight:500;letter-spacing:-.01em}
+.spec .end small{display:block;font-size:1.05cqw;font-weight:400;color:var(--ink-3);letter-spacing:0;margin-top:.3cqw}
+.spec .end.r{right:0;text-align:right}
+.knob{position:absolute;top:2.65cqw;left:4%;width:2.6cqw;height:2.6cqw;translate:-50% -50%;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 3cqw rgba(143,176,255,.8);
+  transition:left 1.6s var(--e-big),box-shadow 1.6s}
+.go-right.shown~.spec .knob{left:96%;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 4cqw rgba(232,114,42,.9)}
+.go-right{width:0;height:0}
+.ask{right:6.2cqw;top:22cqw;max-width:40cqw;padding:1.6cqw 2.2cqw;font-size:2.6cqw;line-height:1.2;font-weight:500;
+  letter-spacing:-.015em;border-bottom-right-radius:.3cqw}
+.s-spec .h{font-size:5.2cqw;max-width:80cqw}
+.s-spec .h .vs{color:var(--ink-3);font-weight:400;padding:0 .4em}
+
+/* magic vs risk */
+.mr{left:6.2cqw;right:6.2cqw;top:17cqw;height:21cqw}
+.mr svg{width:100%;height:100%;overflow:visible}
+.mr path.c{fill:none;stroke-width:6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s var(--e-big)}
+.mr .shown path.c{stroke-dashoffset:0}
+.mr path.f{opacity:0;transition:opacity 1.2s var(--e-big) .4s}
+.mr .shown path.f{opacity:1}
+.mr .lbl{font-family:var(--face);font-size:24px;font-weight:500}
+.here{left:6.2cqw;right:6.2cqw;top:37.6cqw;height:3cqw;z-index:5}
+.here input{width:100%;margin:0;appearance:none;-webkit-appearance:none;background:transparent;height:3cqw;cursor:grab}
+.here input::-webkit-slider-runnable-track{height:3cqw;background:transparent}
+.here input::-webkit-slider-thumb{-webkit-appearance:none;width:2.6cqw;height:2.6cqw;margin-top:.2cqw;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 .5cqw rgba(255,255,255,.14),0 0 3cqw rgba(255,255,255,.6)}
+.here input::-moz-range-thumb{width:2.6cqw;height:2.6cqw;border:0;border-radius:50%;background:#fff}
+.readout{right:6.2cqw;top:8.6cqw;display:flex;gap:2.4cqw;text-align:right}
+.readout div b{display:block;font-size:3cqw;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.s-mr .h{max-width:56cqw}
+.s-mr .spec{top:38cqw}
+.s-mr .knob{display:none}
+
+/* pomelli on the spectrum */
+.mark{top:0;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:1cqw}
+.mark .stem{width:.18cqw;height:5cqw;background:rgba(255,255,255,.35)}
+.mark .dot{width:1.6cqw;height:1.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 2cqw rgba(255,255,255,.7)}
+.pm{top:15cqw;width:30cqw}
+.pm .card{padding:1.2cqw;width:100%;display:flex;gap:1.2cqw;align-items:center}
+.pm .card img{width:7.5cqw;height:10cqw;object-fit:cover;border-radius:.8cqw}
+.pm .card .t{font-size:2.2cqw;font-weight:500;letter-spacing:-.015em}
+.pm .card .d{font-size:1.2cqw;color:var(--ink-2);margin-top:.4cqw;line-height:1.35}
+.pm .card .tag{margin-top:.8cqw}
+.chat{display:flex;flex-direction:column;gap:.6cqw;width:12cqw}
+.chat i{display:block;height:1.4cqw;border-radius:.8cqw;background:rgba(255,255,255,.14)}
+.chat i.me{align-self:flex-end;width:70%;background:rgba(79,127,254,.6)}
+.chat i:nth-child(2){width:90%}.chat i:nth-child(4){width:60%}
+
+/* ════ 08 · five ways ═══════════════════════════════════════════════ */
+.five{left:6.2cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw}
+.five .glass{padding:1.8cqw 1.6cqw;height:19cqw;display:flex;flex-direction:column}
+.five .n{font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)}
+.five svg{width:5cqw;height:5cqw;margin:1.6cqw 0 auto;overflow:visible}
+.five .t{font-size:1.9cqw;font-weight:500;line-height:1.12;letter-spacing:-.015em}
+.worse{left:6.2cqw;right:6.2cqw;top:42cqw;height:4cqw}
+.worse .wbar{position:absolute;left:0;right:0;top:1.3cqw;height:.5cqw;border-radius:1cqw;background:var(--aura)}
+.worse .wbar::after{content:"";position:absolute;right:-.4cqw;top:50%;translate:0 -50%;border-left:1.4cqw solid var(--orange);
+  border-top:.9cqw solid transparent;border-bottom:.9cqw solid transparent}
+.worse span{position:absolute;top:2.8cqw;font-size:1.4cqw;color:var(--ink-2)}
+.worse span.r{right:0;color:#fff;font-weight:500}
+.ic{fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.ic .a{stroke:var(--cyan)}.ic .o{stroke:var(--orange)}
+
+/* ════ 09 · no guaranteed output ════════════════════════════════════ */
+.contract{left:6.2cqw;top:20cqw;width:30cqw;padding:2cqw}
+.contract .row{display:flex;justify-content:space-between;align-items:center;padding:.9cqw 0;border-top:1px solid var(--line);font-size:1.5cqw}
+.contract .row:first-of-type{border-top:0}
+.contract .row em{font-style:normal;font-family:var(--mono);font-size:1.15cqw;color:var(--cyan)}
+.contract .sw{display:flex;gap:.4cqw}.contract .sw i{width:1.3cqw;height:1.3cqw;border-radius:50%}
+.outs{left:40cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw}
+.outs .glass{height:23.5cqw;padding:1.6cqw;display:flex;flex-direction:column;gap:1cqw;overflow:hidden}
+.outs .glass .t{font-size:1.7cqw;font-weight:500;letter-spacing:-.01em;margin-top:auto}
+.outs .glass .d{font-size:1.15cqw;color:var(--ink-3);line-height:1.35}
+.loopc{font-family:var(--mono);font-size:5.4cqw;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.loopc small{font-size:1.2cqw;letter-spacing:.1em;color:var(--orange);display:block;margin-top:.6cqw}
+.spin{width:5cqw;height:5cqw;border-radius:50%;border:.4cqw solid rgba(255,255,255,.1);border-top-color:var(--orange)}
+.shown .spin{animation:sp 0.9s linear 0s 6}
+@keyframes sp{to{rotate:360deg}}
+.meh{display:grid;grid-template-columns:repeat(4,1fr);gap:.5cqw}
+.meh i{height:1.4cqw;border-radius:.3cqw;background:rgba(255,255,255,.14)}
+.meh i:nth-child(3n){background:rgba(255,255,255,.05)}
+.para{font-size:1.15cqw;line-height:1.45;color:var(--ink-2);font-style:italic}
+.s-out .land{bottom:3.6cqw}
+
+/* ════ 10 · errors compound ═════════════════════════════════════════ */
+.chain{left:6.2cqw;right:30cqw;top:24cqw;height:10cqw}
+.chain .n{position:absolute;top:3cqw;width:4cqw;height:4cqw;translate:-50% 0;border-radius:1cqw;
+  border:.18cqw solid rgba(255,255,255,.28);background:#151A24;display:grid;place-items:center;
+  font-family:var(--mono);font-size:1cqw;color:var(--ink-3);transition:all .4s var(--e-dec)}
+.chain .n.lit{border-color:var(--blue-2);color:#fff;box-shadow:0 0 2cqw rgba(79,127,254,.5)}
+.chain .n.bad{border-color:var(--orange);box-shadow:0 0 2cqw rgba(232,114,42,.5)}
+.chain .ln{position:absolute;top:5cqw;height:.18cqw;background:rgba(255,255,255,.2)}
+.chain .pc{position:absolute;top:8cqw;translate:-50% 0;font-family:var(--mono);font-size:.95cqw;color:var(--ink-3)}
+.big{right:6.2cqw;top:19cqw;width:22cqw;text-align:right}
+.big .v{font-size:11cqw;font-weight:500;letter-spacing:-.06em;line-height:.9;font-variant-numeric:tabular-nums}
+.big .l{font-size:1.25cqw;color:var(--ink-2);margin-top:1cqw;line-height:1.4}
+.agentnode{left:6.2cqw;right:30cqw;top:21cqw;height:16cqw;border-radius:2cqw;border:.2cqw solid var(--blue-2);
+  background:rgba(79,127,254,.08);display:flex;align-items:flex-end;padding:1.6cqw;font-size:1.6cqw;font-weight:500;
+  box-shadow:0 0 6cqw -1cqw rgba(79,127,254,.5)}
+.agentnode span{color:var(--ink-2);font-weight:400;font-size:1.3cqw;margin-left:1cqw}
+.collapse.shown~.chain .n{scale:.7;opacity:.35}
+.collapse.shown~.chain .ln,.collapse.shown~.chain .pc{opacity:.2}
+.collapse{width:0;height:0}
+.ix{cursor:auto}
+.sliders{left:6.2cqw;bottom:4cqw;display:flex;gap:3cqw;align-items:center;font-size:1.15cqw;color:var(--ink-2)}
+.sliders label{display:flex;align-items:center;gap:1cqw}
+.sliders b{color:#fff;font-weight:500;font-variant-numeric:tabular-nums;min-width:3.4cqw;display:inline-block}
+.sliders input{width:14cqw;accent-color:var(--blue)}
+
+/* ════ 11 · users ═══════════════════════════════════════════════════ */
+.ups{left:6.2cqw;right:6.2cqw;top:20cqw;display:grid;grid-template-columns:repeat(5,1fr);gap:1.2cqw}
+.up{height:20cqw;border-radius:1.2cqw;overflow:hidden;position:relative;border:1px solid var(--line);background:#151A24}
+.up img{width:100%;height:100%;object-fit:cover}
+.up .cap{position:absolute;left:0;right:0;bottom:0;padding:1.2cqw;font-size:1.25cqw;font-weight:500;
+  background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.up .ok{position:absolute;right:1cqw;top:1cqw}
+.up svg{position:absolute;left:50%;top:42%;translate:-50% -50%;width:9cqw;height:9cqw}
+.ups .up:not(:first-child){transition-delay:var(--d)}
+.ood{left:50%;top:22cqw;translate:-50% 0;rotate:-6deg;padding:1cqw 2.4cqw;border:.3cqw solid var(--orange);border-radius:1cqw;
+  font-size:3.6cqw;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--orange);background:rgba(15,18,24,.85);
+  box-shadow:0 0 6cqw rgba(232,114,42,.35)}
+.ood.shown{animation:stamp .5s var(--e-spring) both}
+@keyframes stamp{from{scale:1.8;opacity:0}to{scale:1;opacity:1}}
+.improv{left:6.2cqw;right:6.2cqw;bottom:4.6cqw;display:flex;justify-content:space-between;font-size:2cqw;font-weight:500}
+.improv span:first-child{color:var(--ink-3);font-weight:400}
+
+/* ════ 12 · cost and scope ══════════════════════════════════════════ */
+.ppt{left:6.2cqw;top:20cqw;width:42cqw}
+.ppt .row{margin-bottom:2.2cqw}
+.ppt .row .top{display:flex;justify-content:space-between;font-size:1.4cqw;margin-bottom:.8cqw}
+.ppt .row .top b{font-weight:500}
+.ppt .bars{display:flex;gap:.4cqw;height:3cqw}
+.ppt .bars i{height:100%;border-radius:.5cqw;width:0;transition:width .8s var(--e-dec)}
+.ppt .cheap i{background:linear-gradient(90deg,#F2C230,#E8722A)}
+.ppt .good i{background:var(--magic)}
+.ppt.shown .good i{width:16cqw;transition-delay:.2s}
+.ppt .note{font-size:1.25cqw;color:var(--ink-3);line-height:1.4}
+.scope{left:54cqw;right:6.2cqw;top:15cqw;height:34cqw}
+.scope .c{position:absolute;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:500;letter-spacing:-.01em}
+.scope .c1{left:2cqw;bottom:2cqw;width:9cqw;height:9cqw;background:rgba(79,127,254,.2);border:.2cqw solid var(--blue);font-size:1.3cqw}
+.scope .c2{right:0;top:0;width:30cqw;height:30cqw;background:radial-gradient(circle at 40% 40%,rgba(232,114,42,.22),rgba(224,83,63,.05));
+  border:.2cqw dashed rgba(232,114,42,.6);font-size:1.7cqw;padding:5cqw;line-height:1.25}
+.scope .c2.shown{animation:grow 1.4s var(--e-dec) both}
+@keyframes grow{from{scale:.2;opacity:0}to{scale:1;opacity:1}}
+
+/* ════ 13 · five lenses ═════════════════════════════════════════════ */
+.lens{left:6.2cqw;right:6.2cqw;top:16.6cqw}
+.lens .r{display:grid;grid-template-columns:4cqw 24cqw 1fr;align-items:baseline;padding:1.25cqw 0;border-top:1px solid var(--line)}
+.lens .r b{font-family:var(--mono);font-weight:500;font-size:1.1cqw;color:var(--ink-3)}
+.lens .q{font-size:1.9cqw;font-weight:500;letter-spacing:-.012em}
+.lens .a{font-size:1.65cqw;color:var(--ink-2);line-height:1.35}
+.lens .a em{font-style:normal;color:#BFF2F0}
+.s-lens .land{bottom:3.6cqw}
+
+/* ════ 14 · start with what it should do ════════════════════════════ */
+.tiers{left:6.2cqw;right:6.2cqw;top:19cqw;display:grid;grid-template-columns:1.25fr 1fr .62fr;gap:1.4cqw;align-items:end}
+.tier{padding:2cqw;display:flex;flex-direction:column;gap:1cqw}
+.tier .n{font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)}
+.tier .t{font-size:2.6cqw;font-weight:500;letter-spacing:-.02em}
+.tier ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7cqw}
+.tier li{font-size:1.35cqw;color:var(--ink-2);padding-left:1.4cqw;position:relative;line-height:1.3}
+.tier li::before{content:"";position:absolute;left:0;top:.55em;width:.6cqw;height:.6cqw;border-radius:50%;background:var(--cyan)}
+.tier.t1{height:22cqw;border-color:rgba(79,127,254,.45)}
+.tier.t2{height:18cqw}
+.tier.t3{height:11cqw}
+
+/* ════ 15 · contracts and exits ═════════════════════════════════════ */
+.ce{left:6.2cqw;right:6.2cqw;top:19cqw;height:22cqw}
+.ce svg{width:100%;height:100%;overflow:visible}
+.ce .box{fill:#151A24;stroke:rgba(255,255,255,.3);stroke-width:2}
+.ce .port{font-family:var(--mono);font-size:15px;fill:#BFF2F0}
+.ce .t{font-family:var(--face);font-size:26px;font-weight:500;fill:#fff}
+.ce .s2{font-family:var(--face);font-size:16px;fill:rgba(255,255,255,.6)}
+.exits{left:52cqw;right:6.2cqw;top:19cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw}
+.exits .glass{padding:1.6cqw}
+.exits .v{font-size:3cqw;font-weight:500;letter-spacing:-.03em}
+.exits .l{font-size:1.2cqw;color:var(--ink-2);margin-top:.3cqw}
+.gauge{height:.4cqw;border-radius:1cqw;background:rgba(255,255,255,.1);margin-top:1cqw;overflow:hidden}
+.gauge i{display:block;height:100%;width:0;background:var(--risk);transition:width 1.8s var(--e-dec) .3s}
+.exits.shown .gauge i{width:var(--w)}
+
+/* ════ 16 · check between steps ═════════════════════════════════════ */
+.pipe{left:6.2cqw;right:6.2cqw;top:19cqw;height:10cqw}
+.pipe .bx{position:absolute;top:1cqw;width:9cqw;height:8cqw;translate:-50% 0;border-radius:1cqw;background:#0A0C10;
+  border:.15cqw solid rgba(255,255,255,.22);box-shadow:inset 0 0 2cqw rgba(0,0,0,.8);display:grid;place-items:center;
+  font-family:var(--mono);font-size:1cqw;color:var(--ink-3)}
+.pipe .ar{position:absolute;top:5cqw;height:.15cqw;background:rgba(255,255,255,.25)}
+.pipe .ck{position:absolute;top:2.9cqw;width:4.2cqw;height:4.2cqw;translate:-50% 0;rotate:45deg;border-radius:.6cqw;
+  background:rgba(86,211,208,.14);border:.2cqw solid var(--cyan);display:grid;place-items:center;
+  transition:opacity .5s var(--e-dec),scale .5s var(--e-spring)}
+.pipe .ck span{rotate:-45deg;font-size:1.5cqw;color:#BFF2F0;font-weight:700}
+.pipe .ck.off{opacity:.12;scale:.6}
+.kinds{left:6.2cqw;top:32cqw;display:flex;gap:1.2cqw}
+.kinds .pill{font-size:1.2cqw}
+.dna{left:44cqw;right:6.2cqw;top:31.5cqw;padding:1.6cqw 2cqw;display:grid;grid-template-columns:auto 1fr;gap:.6cqw 1.6cqw;align-items:center}
+.dna .lab{grid-column:1/-1}
+.dna .q{font-size:1.45cqw}
+.dna .q b{font-weight:500}
+.dna .m{font-family:var(--mono);font-size:1.05cqw;color:var(--cyan);white-space:nowrap}
+.dna .m.sem{color:var(--gold)}
+.dial{left:6.2cqw;bottom:3.6cqw;display:flex;align-items:center;gap:2.4cqw}
+.seg{display:flex;padding:.35cqw;border-radius:10cqw;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{appearance:none;border:0;background:none;color:var(--ink-2);font:inherit;font-size:1.2cqw;font-weight:500;
+  padding:.7cqw 1.6cqw;border-radius:10cqw;cursor:pointer;transition:all .3s var(--e-micro)}
+.seg button.on{background:#fff;color:#0F1218}
+.meters{display:flex;gap:2.4cqw;font-size:1.15cqw;color:var(--ink-2)}
+.meters b{color:#fff;font-weight:500;font-size:1.5cqw;margin-right:.4cqw}
+
+/* ════ 17 · walkthrough ═════════════════════════════════════════════ */
+.bw{left:6.2cqw;top:15.5cqw;width:56cqw;border-radius:1.4cqw;overflow:hidden;background:#000;border:1px solid var(--line);
+  box-shadow:0 3cqw 6cqw -2cqw rgba(0,0,0,.8),0 0 8cqw -2cqw rgba(79,127,254,.35)}
+.bw .bwbar{height:2.4cqw;display:flex;align-items:center;gap:.5cqw;padding:0 1cqw;background:#1B1F27}
+.bw .bwbar i{width:.8cqw;height:.8cqw;border-radius:50%;background:rgba(255,255,255,.2)}
+.bw .bwbar span{margin-left:1.4cqw;font-size:.95cqw;color:var(--ink-3);font-family:var(--mono)}
+.bw video{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.vsteps{left:66cqw;right:6.2cqw;top:17cqw;display:flex;flex-direction:column;gap:2.2cqw}
+.vt{display:grid;grid-template-columns:3cqw 1fr;gap:1.2cqw;opacity:.32;transition:opacity .4s var(--e-micro)}
+.vt.cur{opacity:1}
+.vt .num{width:2.6cqw;height:2.6cqw;border-radius:50%;border:.15cqw solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:1.1cqw;font-weight:500}
+.vt.cur .num{background:#fff;color:#0F1218;border-color:#fff}
+.vt .vh{font-size:1.8cqw;font-weight:500;letter-spacing:-.01em}
+.vt .vs{font-size:1.15cqw;color:var(--ink-2);margin-top:.3cqw;line-height:1.35}
+.src{right:6.2cqw;bottom:3.4cqw;font-size:1cqw;color:var(--ink-3)}
+
+/* ════ 18 · decisions underneath ════════════════════════════════════ */
+.gal{left:6.2cqw;right:6.2cqw;top:15.8cqw;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw}
+.gal figure{margin:0;transition:opacity .6s var(--e-micro)}
+.gal img{width:100%;height:16cqw;object-fit:cover;border-radius:1cqw;display:block}
+.gal figcaption{font-size:1.05cqw;color:var(--ink-2);margin-top:.6cqw}
+.dim.shown~.gal figure.ctx img{outline:.25cqw solid var(--blue);outline-offset:.25cqw}
+.dim.shown~.gal figure:not(.ctx){opacity:.32}
+.dim{width:0;height:0}
+.tree{left:6.2cqw;right:6.2cqw;top:37.4cqw;display:flex;align-items:center;gap:1.4cqw}
+.tree .arr{color:var(--ink-3);font-size:2cqw}
+.tree .fork{display:flex;flex-direction:column;gap:.8cqw;padding-left:1.6cqw;border-left:.15cqw solid rgba(255,255,255,.2)}
+.tree .fr{display:flex;align-items:center;gap:.8cqw}
+.tree .gl{width:10cqw;font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.sixty{left:6.2cqw;right:6.2cqw;bottom:3.6cqw;display:flex;justify-content:space-between;align-items:baseline}
+.sixty .t{font-size:2.3cqw;font-weight:500;letter-spacing:-.015em}
+.handoff{right:6.2cqw;top:6cqw;padding:1cqw 1.6cqw;display:flex;gap:1cqw;align-items:center;font-size:1.3cqw}
+.handoff i{width:1.6cqw;height:1.6cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.15)}
+
+/* ════ 19 · blast radius ════════════════════════════════════════════ */
+.br{left:40cqw;top:5cqw;width:46cqw;height:46cqw}
+.br .rg{position:absolute;left:50%;top:50%;translate:-50% -50%;border-radius:50%;display:grid;place-items:start center}
+.br .r1{width:18cqw;height:18cqw;background:radial-gradient(circle,rgba(79,127,254,.45),rgba(79,127,254,.12));border:.2cqw solid var(--blue);place-items:center}
+.br .r2{width:34cqw;height:34cqw;border:.2cqw solid rgba(232,114,42,.65);background:radial-gradient(circle,transparent 52%,rgba(232,114,42,.1))}
+.br .r3{width:46cqw;height:46cqw;border:.18cqw dashed rgba(255,255,255,.2)}
+.br .rl{text-align:center;padding-top:1.4cqw}
+.br .rl b{display:block;font-size:1.6cqw;font-weight:500}
+.br .rl span{font-size:1.05cqw;color:var(--ink-2)}
+.br .r1 .rl{padding:0}
+.br .r2 .rl{padding-top:2cqw}
+.br .r2.shown{animation:ripple 1s var(--e-dec) both}
+@keyframes ripple{from{scale:.6;opacity:0}to{scale:1;opacity:1}}
+.bl{left:6.2cqw;top:19cqw;width:31cqw;display:flex;flex-direction:column;gap:1.6cqw}
+.bl .it{display:grid;grid-template-columns:3.2cqw 1fr;gap:1.2cqw;align-items:start}
+.bl .door{width:3.2cqw;height:3.2cqw;border-radius:.8cqw;display:grid;place-items:center;font-size:1.6cqw}
+.bl .d2{background:rgba(79,127,254,.2);border:.15cqw solid var(--blue)}
+.bl .d1{background:rgba(232,114,42,.15);border:.15cqw solid var(--orange)}
+.bl .d3{background:rgba(255,255,255,.06);border:.15cqw dashed rgba(255,255,255,.4)}
+.bl .t{font-size:1.65cqw;font-weight:500;letter-spacing:-.01em}
+.bl .d{font-size:1.2cqw;color:var(--ink-2);margin-top:.3cqw;line-height:1.35}
+.s-br .land{right:auto;max-width:44cqw;bottom:4cqw}
+
+/* ════ 20 · plausible vs good ═══════════════════════════════════════ */
+.pg{left:6.2cqw;top:13cqw;font-size:8cqw;font-weight:500;letter-spacing:-.045em;line-height:.95}
+.pg .p{color:rgba(255,255,255,.28)}
+.pg .arrow{color:var(--ink-3);font-weight:400;padding:0 .2em}
+.jobs{left:6.2cqw;right:6.2cqw;top:29cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw}
+.jobs .glass{padding:2cqw}
+.jobs .n{font-family:var(--mono);font-size:1.05cqw;color:var(--ink-3)}
+.jobs .t{font-size:2.4cqw;font-weight:500;letter-spacing:-.02em;margin:.6cqw 0 .4cqw}
+.jobs .d{font-size:1.4cqw;color:var(--ink-2);line-height:1.35}
+.jobs .glass:first-child{border-color:rgba(79,127,254,.45)}
+.jobs .glass:last-child{border-color:rgba(232,114,42,.45)}
+.oops{right:6.2cqw;top:8cqw;width:28cqw;padding:1.4cqw 1.6cqw;rotate:2deg}
+.oops .ad{font-size:1.8cqw;font-weight:700;letter-spacing:-.01em}
+.oops .ad span{color:var(--orange)}
+.oops .why{font-size:1.1cqw;color:var(--ink-3);margin-top:.6cqw}
+
+/* ════ 21 · hill climb + red team ═══════════════════════════════════ */
+.hill{left:6.2cqw;top:17cqw;width:40cqw;height:28cqw}
+.hill svg{width:100%;height:100%;overflow:visible}
+.hill .ax{stroke:rgba(255,255,255,.15);stroke-width:2;fill:none}
+.hill .st{fill:none;stroke:url(#gMagic);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.2s var(--e-dec)}
+.hill.shown .st{stroke-dashoffset:0}
+.hill text{font-family:var(--face);font-size:16px;fill:rgba(255,255,255,.5)}
+.goals{left:52cqw;right:6.2cqw;top:16cqw;display:flex;flex-direction:column;gap:1cqw}
+.goals .lab{margin-bottom:.4cqw}
+.goal{padding:1.2cqw 1.6cqw;display:flex;gap:1.2cqw;align-items:center;font-size:1.6cqw;font-weight:500}
+.goal i{font-style:normal;font-family:var(--mono);font-size:1cqw;color:var(--orange);border:1px solid rgba(232,114,42,.5);padding:.2cqw .6cqw;border-radius:.4cqw}
+.goals.shown .goal{animation:rise .7s var(--e-dec) both}
+.goals.shown .goal:nth-child(3){animation-delay:.12s}.goals.shown .goal:nth-child(4){animation-delay:.24s}.goals.shown .goal:nth-child(5){animation-delay:.36s}
+.sandbox{right:6.2cqw;bottom:3.6cqw;font-size:1.25cqw;color:var(--ink-2)}
+
+/* ════ 22 · the loop ════════════════════════════════════════════════ */
+.loop{left:6.2cqw;top:13.5cqw;width:38cqw;height:38cqw}
+.loop svg{width:100%;height:100%;overflow:visible}
+.loop .orbit{fill:none;stroke:rgba(255,255,255,.12);stroke-width:3}
+.loop .node circle{fill:#151A24;stroke:rgba(255,255,255,.25);stroke-width:2;transition:all .5s}
+.loop .node.shown circle{stroke:var(--c);fill:color-mix(in srgb,var(--c) 22%,#151A24)}
+.loop .node text{font-family:var(--face);font-size:22px;font-weight:500;fill:#fff;text-anchor:middle}
+.loop .node .sm{font-size:13px;fill:rgba(255,255,255,.55);font-weight:400}
+.loop .node{opacity:.35;transition:opacity .5s}
+.loop .node.shown{opacity:1}
+.loop .runner{offset-path:path("M300 60 A240 240 0 1 1 299.9 60");offset-rotate:0deg;animation:orbit 9s linear infinite}
+@keyframes orbit{to{offset-distance:100%}}
+.bucket{left:52cqw;right:6.2cqw;top:17cqw;display:flex;flex-direction:column;gap:1.2cqw}
+.bucket .glass{padding:1.8cqw}
+.bucket .t{font-size:1.9cqw;font-weight:500;letter-spacing:-.01em;margin-top:.4cqw}
+.bucket .one{opacity:.6}
+.bucket .one .t{text-decoration:line-through;text-decoration-color:rgba(232,114,42,.8)}
+.bucket .all{border-color:rgba(86,211,208,.5)}
+.judg{left:52cqw;right:6.2cqw;bottom:4cqw;font-size:1.6cqw;color:var(--ink-2)}
+.judg b{color:#fff;font-weight:500}
+
+/* ════ 23 · an agent made them ══════════════════════════════════════ */
+.made{left:6.2cqw;right:6.2cqw;top:19.5cqw;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw}
+.made img{width:100%;height:18cqw;object-fit:cover;border-radius:1cqw;display:block}
+.made .cur{position:absolute;inset:0}
+.byagent{left:6.2cqw;top:40.6cqw;display:flex;align-items:center;gap:1.2cqw;font-size:1.6cqw}
+.byagent .bot{width:3cqw;height:3cqw;border-radius:.8cqw;background:var(--magic);display:grid;place-items:center}
+.twou{left:52cqw;right:6.2cqw;top:39.6cqw;display:flex;align-items:center;gap:1.2cqw;justify-content:flex-end}
+.twou .u{padding:1cqw 1.6cqw;font-size:1.4cqw;font-weight:500}
+.twou .u.ag{border-color:rgba(86,211,208,.5)}
+.twou .p{font-size:1.4cqw;font-weight:500;padding:1cqw 1.6cqw;border-radius:1cqw;background:#fff;color:#0F1218}
+.twou .ar{color:var(--ink-3);font-size:1.6cqw}
+.s-made .h{max-width:84cqw}
+.s.on .made .scan{position:absolute}
+
+/* ════ 24 · toggles to just ask ═════════════════════════════════════ */
+.ed{left:6.2cqw;right:6.2cqw;top:17cqw;height:28cqw;display:grid;grid-template-columns:1fr 1fr;gap:4cqw}
+.panel{padding:1.6cqw;display:grid;grid-template-columns:1fr 1fr;gap:.9cqw 1.6cqw;align-content:start}
+.panel .lab{grid-column:1/-1;margin-bottom:.4cqw}
+.sl{display:flex;flex-direction:column;gap:.45cqw;font-size:1cqw;color:var(--ink-2)}
+.sl i{display:block;height:.35cqw;border-radius:1cqw;background:rgba(255,255,255,.15);position:relative}
+.sl i::after{content:"";position:absolute;top:50%;left:var(--v);width:1cqw;height:1cqw;translate:-50% -50%;border-radius:50%;background:#fff}
+.justask{display:flex;flex-direction:column;justify-content:center;gap:1.4cqw;align-items:flex-start}
+.justask .lab{margin-bottom:.4cqw}
+.bub{padding:1.4cqw 2cqw;border-radius:1.6cqw 1.6cqw 1.6cqw .3cqw;font-size:2.4cqw;font-weight:500;letter-spacing:-.015em;
+  background:rgba(79,127,254,.22);border:1px solid rgba(143,176,255,.4)}
+.bub:nth-of-type(3){align-self:flex-start;margin-left:3cqw}
+.edspec{left:6.2cqw;right:6.2cqw;bottom:4cqw;height:5cqw}
+.edspec .track{position:absolute;left:0;right:0;top:1.4cqw;height:.4cqw;border-radius:1cqw;background:linear-gradient(90deg,rgba(255,255,255,.2),var(--blue),var(--cyan))}
+.edspec span{position:absolute;top:2.6cqw;font-size:1.2cqw;color:var(--ink-2)}
+.edspec span.r{right:0}
+.edspec .knob{top:1.6cqw;left:12%;transition:left 1.8s var(--e-big)}
+.lean.shown~.edspec .knob{left:86%}
+.lean{width:0;height:0}
+.ten{left:39cqw;top:6cqw;padding:.8cqw 1.4cqw;font-size:1.2cqw;color:var(--ink-2)}
+.ten b{color:#fff;font-weight:500}
+
+/* ════ 25 · close ═══════════════════════════════════════════════════ */
+.s-close .ring{right:6cqw;top:8cqw;width:36cqw;height:36cqw}
+.tk{left:6.2cqw;top:15cqw;width:46cqw;display:flex;flex-direction:column;gap:2cqw}
+.tk .it{display:grid;grid-template-columns:4cqw 1fr;gap:1cqw}
+.tk .n{font-family:var(--mono);font-size:1.3cqw;color:var(--ink-3);padding-top:.5cqw}
+.tk .t{font-size:2.6cqw;font-weight:500;letter-spacing:-.02em;line-height:1.1}
+.tk .d{font-size:1.35cqw;color:var(--ink-2);margin-top:.4cqw;line-height:1.35}
+.bye{left:6.2cqw;right:6.2cqw;bottom:4cqw;display:flex;justify-content:space-between;align-items:flex-end}
+.bye .t{font-size:3.4cqw;font-weight:500;letter-spacing:-.03em}
+.bye .who{text-align:right;font-size:1.3cqw;color:var(--ink-2);line-height:1.5}
+.bye .who b{color:#fff;font-weight:500}
+
+/* ── chrome (the kit's, recoloured) ──────────────────────────────── */
+.hud{position:fixed;right:1.1rem;bottom:1.1rem;z-index:9;display:flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+.nav{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.75);width:1.9rem;height:1.9rem;border-radius:100px;font-size:1rem;line-height:1;
+  cursor:pointer;padding:0;transition:background .2s var(--e-micro)}
+.nav:hover{background:rgba(255,255,255,.16)}
+.nav:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.count{cursor:pointer;min-width:3.6rem;text-align:center;color:rgba(255,255,255,.5)}
+.fs{font-size:.82rem}
+.keys{position:fixed;left:1.2rem;bottom:1.2rem;z-index:9;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.1em;color:rgba(255,255,255,.4);transition:opacity .45s var(--e-micro)}
+.keys.away{opacity:0}
+@media (max-width:700px){.keys{display:none}}
+.hud,.bar{transition:opacity .45s var(--e-micro)}
+.hud.away,.bar.away{opacity:0;pointer-events:none}
+.bar{position:fixed;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08);z-index:9}
+.bar span{display:block;height:100%;background:var(--aura);transition:width .7s var(--e-big)}
+.pips{display:flex;gap:.28rem;align-items:center;margin-right:.15rem}
+.pips i{width:.34rem;height:.34rem;border-radius:100px;background:rgba(255,255,255,.22)}
+.pips i.on{background:var(--blue)}
+.jump[hidden]{display:none}
+.jump{position:fixed;right:1.2rem;bottom:4.4rem;z-index:20;width:min(26rem,calc(100vw - 2.4rem));max-height:62vh;
+  display:flex;flex-direction:column;background:#1B1F27;color:#F2F3F5;border-radius:14px;
+  box-shadow:0 1.4rem 3rem -1rem rgba(0,0,0,.6);overflow:hidden;font-family:var(--face)}
+.jump-bar{display:flex;gap:.8rem;align-items:center;padding:.8rem .9rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.jump-bar input{width:6.5rem;font:inherit;font-size:1.1rem;padding:.45rem .6rem;border-radius:8px;
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;outline:none}
+.jump-bar input:focus{border-color:var(--blue)}
+.jump-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.jump-list{overflow-y:auto;padding:.4rem}
+.jump-list .j{display:flex;gap:.8rem;align-items:baseline;width:100%;text-align:left;background:none;border:0;
+  color:inherit;font:inherit;font-size:.95rem;padding:.45rem .6rem;border-radius:8px;cursor:pointer}
+.jump-list .j:hover{background:rgba(255,255,255,.08)}
+.jump-list .j.on{background:rgba(79,127,254,.25)}
+.jump-list .j b{font-family:var(--mono);font-weight:400;font-size:.72rem;color:#8FB0FF;min-width:2.2ch;text-align:right}
+.np[hidden]{display:none}
+.np{position:fixed;left:0;right:0;bottom:0;z-index:12;height:42vh;display:flex;flex-direction:column;
+  background:#1B1F27;color:#F2F3F5;box-shadow:0 -1.4rem 3rem -1.4rem rgba(0,0,0,.6)}
+.np-bar{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap;padding:.75rem 1.5rem .55rem;
+  border-bottom:1px solid rgba(255,255,255,.12);font-family:var(--mono);font-size:.7rem;letter-spacing:.1em}
+.np-cue{text-transform:uppercase;color:#8FB0FF}
+.np-clock{font-size:1.1rem;letter-spacing:.04em;color:#fff;font-variant-numeric:tabular-nums}
+.np-next{color:rgba(255,255,255,.5);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em}
+.np-hint{color:rgba(255,255,255,.32)}
+.np-body{padding:1rem 1.5rem 1.4rem;overflow-y:auto;font-family:var(--face);font-size:var(--ns,1.15rem);line-height:1.5}
+.np-body b.hl{font-weight:700;color:#fff;background:none;-webkit-text-fill-color:#fff}
+.np-body p{margin:0 0 .85rem;max-width:60em}
+.np-land{border-left:3px solid #E8722A;padding-left:.9rem;font-weight:500}
+.np-land b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:#F29A5C;margin-bottom:.3rem;font-weight:400}
+.np-dir{color:rgba(255,255,255,.55);font-style:italic;font-size:1rem}
+.np-go{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 0;color:rgba(255,255,255,.55);font-size:.9rem}
+.np-go .ck{margin:0}
+.np-body .ck,.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;border-radius:1em;background:#E8722A;color:#fff;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-style:normal;
+  font-weight:700;white-space:nowrap;translate:0 -.1em}
+.np-body .ck.next{background:#4F7FFE;animation:ckp 1.3s ease-in-out infinite}
+.np-body .ck.done{background:rgba(255,255,255,.16);color:rgba(255,255,255,.55)}
+@keyframes ckp{50%{opacity:.55}}
+body.has-notes{--vh:58vh}
+body.has-notes .deck{bottom:42vh}
+body.has-notes .hud{bottom:calc(42vh + 1.1rem)}
+body.has-notes .bar{bottom:42vh}
+body.has-notes .keys{bottom:calc(42vh + 1.2rem)}
+.toast{position:fixed;left:50%;bottom:2.2rem;translate:-50% 0;z-index:20;background:#1B1F27;color:#F2F3F5;
+  padding:.75rem 1.1rem;border-radius:10px;font-size:.9rem;max-width:34rem;box-shadow:0 1rem 2rem -1rem rgba(0,0,0,.6)}
+
+/* close: the ring draws itself as the slide lands */
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.loopc small{transition:opacity .4s}
+
+/* screenshot mode (?steps=N): everything lands instantly */
+body.snap *,body.snap *::before,body.snap *::after{transition-duration:0s!important;transition-delay:0s!important;animation-duration:0s!important;animation-delay:0s!important}
+
+.tree .hk{width:1.5cqw;height:1.5cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.18);
+  box-shadow:0 0 1.4cqw rgba(86,211,208,.6);margin-left:-.6cqw}
+.tree .hk.shown{animation:stamp .5s var(--e-spring) both}
+
+/* cost: the three things the agent decides */
+.tolls{left:6.2cqw;top:19cqw;width:40cqw;display:flex;flex-direction:column;gap:1.4cqw}
+.tolls div{display:grid;grid-template-columns:5cqw 1fr;align-items:center;gap:1.4cqw;padding-bottom:1.4cqw;border-bottom:1px solid var(--line)}
+.tolls b{font-size:4.4cqw;font-weight:500;line-height:1;background:var(--risk);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tolls span{font-size:2cqw;font-weight:500;letter-spacing:-.01em}
+/* scope: one small circle, one enormous one */
+.scope2{left:6.2cqw;right:6.2cqw;top:17cqw;height:34cqw}
+.scope2 .c{position:absolute;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.8cqw}
+.scope2 .c b{font-weight:500;letter-spacing:-.015em}
+.scope2 .c span{color:var(--ink-2);font-size:1.15cqw;line-height:1.35}
+.scope2 .c1{left:4cqw;bottom:4cqw;width:16cqw;height:16cqw;background:rgba(79,127,254,.18);border:.2cqw solid var(--blue);padding:2cqw}
+.scope2 .c1 b{font-size:2cqw}
+.scope2 .c2{right:2cqw;top:-1cqw;width:36cqw;height:36cqw;padding:6cqw;
+  background:radial-gradient(circle at 40% 40%,rgba(232,114,42,.22),rgba(224,83,63,.04));border:.2cqw dashed rgba(232,114,42,.6)}
+.scope2 .c2 b{font-size:2.2cqw;line-height:1.2;text-wrap:balance}
+.scope2 .c2.shown{animation:grow 1.4s var(--e-dec) both}
+.tier ul{gap:.9cqw}
+
+/* slide 2: the guardrails strip themselves a beat after the line lands */
+.strip{left:0;top:0;width:0;height:0}
+.strip.shown~.rails .rail:nth-child(1){animation:stripL 1.2s var(--e-big) both}
+.strip.shown~.rails .rail:nth-child(2){animation:stripR 1.2s var(--e-big) .1s both}
+.strip.shown~.rails .rail:nth-child(3){animation:stripL 1.2s var(--e-big) .2s both}
+@keyframes stripL{to{translate:-110cqw 0;opacity:0}}
+@keyframes stripR{to{translate:110cqw 0;opacity:0}}
+/* the ring: one colour per stage, shared with the agenda. Build blue, Validate cyan, Strip orange.
+   Each arc fades from one stage's colour into the next. It draws itself as the slide lands. */
+.s.on .ring .arc{animation:draw 1.3s var(--e-big) .3s both}
+.s.on .ring .arc:nth-of-type(2){animation-delay:.8s}
+.s.on .ring .arc:nth-of-type(3){animation-delay:1.3s}
+.ring .n-b circle{stroke:#4F7FFE;stroke-width:3;fill:color-mix(in srgb,#4F7FFE 18%,#151A24)}
+.ring .n-v circle{stroke:#56D3D0;stroke-width:3;fill:color-mix(in srgb,#56D3D0 16%,#151A24)}
+.ring .n-s circle{stroke:#E8722A;stroke-width:3;fill:color-mix(in srgb,#E8722A 16%,#151A24)}
+.ring .n-b .sm{fill:#8FB0FF}.ring .n-v .sm{fill:#9BE7E5}.ring .n-s .sm{fill:#F6A673}
+.agenda .ag0{border-color:rgba(255,255,255,.45)}.agenda .ag0 b{color:var(--ink-2)}
+.agenda .ag1{border-color:var(--blue)}.agenda .ag1 b{color:#8FB0FF}
+.agenda .ag2{border-color:var(--cyan)}.agenda .ag2 b{color:#9BE7E5}
+.agenda .ag3{border-color:var(--orange)}.agenda .ag3 b{color:#F6A673}
+.agenda b{text-transform:uppercase;letter-spacing:.12em}
+
+/* not everything should be Do It For Me */
+.dwm{left:6.2cqw;right:6.2cqw;top:16.5cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw}
+.dwm .glass{padding:2cqw 2.2cqw}
+.dwm ul{list-style:none;margin:1.2cqw 0 0;padding:0;display:flex;flex-direction:column;gap:.8cqw}
+.dwm li{font-size:2cqw;font-weight:500;letter-spacing:-.012em;padding-left:1.8cqw;position:relative}
+.dwm li::before{content:"";position:absolute;left:0;top:.5em;width:.7cqw;height:.7cqw;border-radius:50%}
+.dwm .stay{border-color:rgba(86,211,208,.45)}.dwm .stay li::before{background:var(--cyan)}
+.dwm .hand{border-color:rgba(232,114,42,.45)}.dwm .hand li::before{background:var(--orange)}
+.dwm .pt{margin:1.4cqw 0 0;font-size:1.3cqw;color:var(--ink-2)}
+/* magic/risk: the day-one pin and the drift right */
+.dayone{left:calc(6.2cqw + .35 * 87.6cqw);right:6.2cqw;top:33.2cqw;height:3cqw;display:flex;align-items:center;gap:1cqw;translate:-3cqw 0}
+.dayone .dline{flex:1;height:0;border-top:.2cqw dashed rgba(255,255,255,.55);position:relative;max-width:30cqw}
+.dayone .dline::after{content:"";position:absolute;right:-.4cqw;top:-.75cqw;border-left:1.1cqw solid rgba(255,255,255,.7);border-top:.65cqw solid transparent;border-bottom:.65cqw solid transparent}
+.dayone .dl{color:#fff;white-space:nowrap}
+
+.dwm .glass{padding:1.8cqw 2.2cqw}
+.gap{left:6.2cqw;right:6.2cqw;top:33.2cqw;padding:1.2cqw 1.8cqw;display:flex;align-items:center;gap:1cqw;flex-wrap:nowrap}
+.gap .lab{margin-right:.6cqw;white-space:nowrap}
+.gap .g{font-size:1.32cqw;font-weight:500;white-space:nowrap}
+.gap .ar{color:var(--ink-3);font-size:1.5cqw}
+/* same check-ins, bigger job: four check-in dots on a short bar, then the same four on a long one */
+.xl{left:6.2cqw;right:6.2cqw;top:19cqw;display:flex;flex-direction:column;gap:4cqw}
+.xrow{display:grid;grid-template-columns:14cqw 1fr 6cqw;align-items:center;gap:2cqw}
+.xbar{position:relative;height:1.2cqw;border-radius:1cqw;display:flex;justify-content:space-between;align-items:center;padding:0 .2cqw}
+.xbar.xs{width:24%;background:rgba(255,255,255,.18)}
+.xbar.l{width:100%;background:var(--aura);transform-origin:left;}
+.xrow.shown .xbar.l{animation:stretch 1.6s var(--e-big) both}
+@keyframes stretch{from{width:24%}to{width:100%}}
+.xbar i{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#0F1218;border:.25cqw solid #fff;box-shadow:0 0 1.4cqw rgba(255,255,255,.4)}
+.xrow .sz{font-size:4.4cqw;font-weight:500;letter-spacing:-.03em;text-align:right;color:var(--ink-2)}
+
+/* ── grid view ─────────────────────────────────────────────────── */
+.grid-ov{position:fixed;inset:0;z-index:40;display:none;overflow-y:auto;padding:2.4rem 3vw 3rem;
+  background:rgba(10,12,16,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.grid-ov.on{display:block}
+.grid-ov .gh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 1.4rem;font-size:1.3rem;font-weight:500}
+.grid-ov .gh .lab{font-size:.7rem}
+.grid-ov .gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.gtile{appearance:none;border:0;padding:0;font:inherit;text-align:left;color:inherit;position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+  background:#0F1218;cursor:pointer;outline:2px solid rgba(255,255,255,.08);outline-offset:3px;transition:outline-color .15s,transform .15s}
+.gtile:hover,.gtile.sel{outline-color:rgba(255,255,255,.6);transform:translateY(-2px)}
+.gtile.cur{outline-color:#4F7FFE}
+.gtile .gs{position:absolute;inset:0;overflow:hidden;isolation:isolate;pointer-events:none}
+.gtile .frame{width:100%;height:100%;left:0;top:0;translate:none}
+.gtile *,.gtile *::before,.gtile *::after{animation:none!important;transition:none!important}
+.gtile [data-step]{opacity:1!important;translate:none!important}
+.gtile .ring .arc,.gtile .mr path.c,.gtile .hill .st{stroke-dashoffset:0}
+.gtile .mr path.f{opacity:1}
+.gtile .ppt .cheap i{width:3.4cqw}.gtile .ppt .good i{width:16cqw}
+.gtile .exits .gauge i{width:var(--w)}
+.gtile .loop .node{opacity:1}
+.gtile .vposter{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gtile .bw .vposter{position:static;display:block;aspect-ratio:16/10;height:auto}
+.gtile .gnum{position:absolute;left:8px;bottom:7px;z-index:5;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;background:rgba(0,0,0,.65);color:#fff}
+.gtile.cur .gnum{background:#4F7FFE}
+.nav.gridb{font-size:.9rem}
+
+.contract .half{font-size:1.05cqw;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#9BE7E5;margin:1.1cqw 0 .2cqw}
+.contract .half b{font-weight:500;color:var(--ink-3)}
+.contract .half.sub{color:#F6A673;margin-top:1.4cqw}
+.contract em.sub{color:var(--orange);font-size:1.6cqw}
+.contract .row{padding:.7cqw 0}
+
+/* export mode (?clean): no chrome on the slide */
+body.clean .hud,body.clean .bar,body.clean .keys{display:none!important}
+
+.tsteps .vh{font-size:1.6cqw}.tsteps .vs{font-size:1.05cqw}
+
+.ppt.shown .cheap i{width:3.4cqw}
+.ppt.shown .cheap i:nth-child(1){transition-delay:0.00s}
+.ppt.shown .cheap i:nth-child(2){transition-delay:0.18s}
+.ppt.shown .cheap i:nth-child(3){transition-delay:0.36s}
+.ppt.shown .cheap i:nth-child(4){transition-delay:0.54s}
+.ppt.shown .cheap i:nth-child(5){transition-delay:0.72s}
+.ppt.shown .cheap i:nth-child(6){transition-delay:0.90s}
+.ppt.shown .cheap i:nth-child(7){transition-delay:1.08s}
+.ppt.shown .cheap i:nth-child(8){transition-delay:1.26s}
+
+.s-tiers .tiers{align-items:stretch}
+
+/* Photoshoot under the hood: the pipeline, then one template opened up */
+.flow{left:6.2cqw;right:6.2cqw;top:13.4cqw;display:flex;align-items:center;gap:1cqw}
+.flow .arr{color:var(--ink-3);font-size:1.6cqw}
+.flow .hk{width:1.4cqw;height:1.4cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.18);
+  box-shadow:0 0 1.4cqw rgba(86,211,208,.6);translate:none}
+.flow .hk.shown{animation:stamp .5s var(--e-spring) both}
+.flow .hand{margin-left:auto;font-size:1.3cqw;font-weight:500;color:#9BE7E5;translate:none}
+.s-under .gal img{height:14.5cqw}
+.tree .pill.sel{border-color:var(--blue);background:rgba(79,127,254,.18);color:#fff}
+.s-under .sixty .t{font-size:2.1cqw}
+
+/* Photoshoot under the hood, v3: photo -> templates -> shoot, then one template opened */
+.pipe2{left:6.2cqw;right:6.2cqw;top:13.6cqw;height:17.4cqw;display:grid;grid-template-columns:12.5cqw 3.2cqw 1.25fr 3.2cqw 1fr;align-items:stretch}
+.pc{padding:1.2cqw;display:flex;flex-direction:column;gap:1cqw;min-width:0;overflow:hidden;position:relative}
+.pc .lab{white-space:nowrap}
+.pc .pin{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:.8cqw;margin-top:auto;margin-bottom:auto}
+.pc .ptpl{width:100%;height:100%;object-fit:contain;object-position:center;border-radius:.6cqw;min-height:0}
+.parr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8cqw;color:var(--ink-3);font-size:1.8cqw}
+.parr .hk,.tree .hk{width:1.4cqw;height:1.4cqw;rotate:45deg;border-radius:.3cqw;border:.18cqw solid var(--cyan);background:rgba(86,211,208,.18);
+  box-shadow:0 0 1.4cqw rgba(86,211,208,.6);translate:none;margin:0}
+.parr .hk.shown{animation:stamp .5s var(--e-spring) both}
+.pg6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:.6cqw;flex:1;min-height:0}
+.pg6 figure{margin:0;position:relative;min-height:0;transition:opacity .6s var(--e-micro)}
+.pg6 img{width:100%;height:100%;object-fit:cover;border-radius:.6cqw;display:block}
+.pg6 .tag{position:absolute;left:.4cqw;bottom:.4cqw;font-size:.85cqw;font-weight:500;padding:.2cqw .6cqw;border-radius:10cqw;background:var(--blue);color:#fff}
+.pout .dim{position:absolute;width:0;height:0}
+.dim.shown~.pg6 figure:not(.ctx){opacity:.25}
+.dim.shown~.pg6 figure.ctx img{outline:.22cqw solid var(--blue);outline-offset:.15cqw}
+.sixty2{left:6.2cqw;top:41cqw;display:flex;align-items:baseline;gap:1cqw;padding:1.2cqw 1.8cqw;border-radius:1.2cqw;
+  border:1px solid rgba(232,114,42,.45);background:rgba(232,114,42,.08)}
+.sixty2 b{font-size:3.2cqw;font-weight:500;letter-spacing:-.03em;color:#F6A673}
+.sixty2 span:last-child{font-size:1.35cqw;color:var(--ink-2)}
+.s-under .tree .pill{font-size:1.05cqw}
+
+/* Photoshoot under the hood, v4 */
+.rowa{left:6.2cqw;right:6.2cqw;top:13.2cqw;height:12.6cqw;display:grid;grid-template-columns:11cqw 3.2cqw 31cqw 3.2cqw 1fr;align-items:stretch}
+.rowa .pc{padding:1cqw;gap:.6cqw}
+.rowa .pin{width:7.6cqw;margin:auto}
+.oneclick{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:.8cqw;padding-left:.6cqw}
+.oneclick .pill{font-size:1.5cqw}
+.shots6{left:6.2cqw;right:6.2cqw;top:27.4cqw;display:grid;grid-template-columns:repeat(6,1fr);gap:1cqw}
+.shots6 figure{margin:0;transition:opacity .6s var(--e-micro)}
+.shots6 img{width:100%;height:11cqw;object-fit:cover;border-radius:.9cqw;display:block}
+.shots6 figcaption{font-size:1.1cqw;font-weight:500;color:var(--ink-2);margin-top:.5cqw}
+.dim.shown~.shots6 figure:not(.ctx){opacity:.25}
+.dim.shown~.shots6 figure.ctx img{outline:.25cqw solid var(--blue);outline-offset:.2cqw}
+.dim.shown~.shots6 figure.ctx figcaption{color:#fff}
+.count61{right:6.2cqw;top:15.6cqw;display:flex;align-items:baseline;gap:1cqw;padding:1cqw 1.8cqw;border-radius:1.2cqw;
+  border:1px solid rgba(255,77,77,.7);background:rgba(255,60,60,.12);min-width:24cqw;transition:all .5s var(--e-micro)}
+.count61 b{font-size:3.2cqw;font-weight:500;letter-spacing:-.03em;color:#FF6B6B;font-variant-numeric:tabular-nums;min-width:5cqw}
+.count61 span{font-size:1.35cqw;color:var(--ink-2)}
+.count61.one{border-color:rgba(79,127,254,.6);background:rgba(79,127,254,.12)}
+.count61.one b{color:#8FB0FF}
+.count61:not(.one) span{text-decoration:line-through;text-decoration-color:rgba(255,107,107,.8)}
+.count61:not(.one).shown{animation:shake .45s var(--e-micro) .2s both}
+@keyframes shake{20%,60%{translate:-.4cqw 0}40%,80%{translate:.4cqw 0}}
+
+/* blast radius: a ladder of what the agent can touch */
+.grow{left:6.2cqw;right:6.2cqw;top:14.6cqw;display:flex;align-items:center;gap:1.2cqw}
+.grow span{font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.grow i{flex:1;height:.3cqw;border-radius:1cqw;background:linear-gradient(90deg,rgba(79,127,254,.6),#56D3D0,#F2C230,#E0533F);position:relative}
+.grow i::after{content:"";position:absolute;right:-.9cqw;top:50%;translate:0 -50%;border-left:1.2cqw solid #E0533F;border-top:.7cqw solid transparent;border-bottom:.7cqw solid transparent}
+.ladder{left:6.2cqw;right:6.2cqw;top:18.6cqw;height:25.4cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.2cqw;align-items:end}
+.rung{padding:1.5cqw 1.6cqw;display:flex;flex-direction:column;gap:.6cqw}
+.rung.r1{height:15cqw;border-color:rgba(79,127,254,.5)}
+.rung.r2{height:18.5cqw;border-color:rgba(86,211,208,.5)}
+.rung.r3{height:22cqw;border-color:rgba(242,194,48,.5)}
+.rung.r4{height:25.4cqw;border-color:rgba(224,83,63,.6)}
+.rung .n{font-family:var(--mono);font-size:1.05cqw;color:var(--ink-3)}
+.rung .t{font-size:2.8cqw;font-weight:500;letter-spacing:-.02em;line-height:1}
+.rung .c{font-size:1.4cqw;font-weight:500;line-height:1.3}
+.rung .ex{font-size:1.15cqw;color:var(--ink-2);line-height:1.35;margin-top:auto}
+.rung .door{font-size:1.05cqw;font-weight:500;padding:.35cqw .8cqw;border-radius:10cqw;align-self:flex-start}
+.rung .door.two{background:rgba(86,211,208,.15);color:#9BE7E5;border:1px solid rgba(86,211,208,.5)}
+.rung .door.one{background:rgba(224,83,63,.15);color:#FFA394;border:1px solid rgba(224,83,63,.6)}
+.enforce{left:6.2cqw;right:6.2cqw;bottom:3.2cqw;font-size:1.55cqw;line-height:1.4;color:var(--ink-2)}
+.enforce b{color:#fff;font-weight:500}
+.enforce .hr{font-weight:500}
+
+/* blast radius, simplified: three pieces of advice */
+.brsub{left:6.2cqw;top:13.4cqw;margin:0;font-size:1.9cqw;color:var(--ink-2)}
+.adv{left:6.2cqw;right:6.2cqw;top:19.6cqw;height:21cqw;display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:1.4cqw}
+.adv .glass{padding:1.8cqw 2cqw;display:flex;flex-direction:column;gap:1cqw}
+.adv .n{font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)}
+.adv .t{font-size:2.3cqw;font-weight:500;letter-spacing:-.018em;line-height:1.1}
+.adv .ex{font-size:1.4cqw;color:var(--ink-2);line-height:1.4;margin-top:auto}
+.adv .split{display:grid;grid-template-columns:1fr 1fr;gap:1cqw;margin-top:auto}
+.adv .split div{padding:1cqw 1.2cqw;border-radius:1cqw;display:flex;flex-direction:column;gap:.5cqw}
+.adv .split b{font-size:1.35cqw;font-weight:500}
+.adv .split span{font-size:1.15cqw;color:var(--ink-2);line-height:1.35}
+.adv .yes{background:rgba(86,211,208,.1);border:1px solid rgba(86,211,208,.45)}.adv .yes b{color:#9BE7E5}
+.adv .no{background:rgba(224,83,63,.1);border:1px solid rgba(224,83,63,.55)}.adv .no b{color:#FFA394}
+.adv .av3{border-color:rgba(232,114,42,.5)}
+.s-br .land{right:6.2cqw;max-width:none}
+
+/* what we're stripping now */
+.shift{left:6.2cqw;right:6.2cqw;top:17cqw;display:grid;grid-template-columns:1fr 4cqw 1fr;align-items:center}
+.shift .glass{padding:2cqw 2.4cqw;display:flex;flex-direction:column;gap:.8cqw}
+.shift .t{font-size:2.6cqw;font-weight:500;letter-spacing:-.02em}
+.shift .now .t{color:var(--ink-2)}
+.shift .nxt{border-color:rgba(86,211,208,.5)}
+.shift .arr{text-align:center;font-size:2.4cqw;color:var(--ink-3)}
+.rethink{left:6.2cqw;right:6.2cqw;top:30.5cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4cqw}
+.rethink div{padding:1.4cqw 0 0;border-top:.22cqw solid rgba(255,255,255,.18);display:flex;flex-direction:column;gap:.6cqw}
+.rethink div:nth-child(1){border-color:var(--blue)}.rethink div:nth-child(2){border-color:var(--cyan)}.rethink div:nth-child(3){border-color:var(--orange)}
+.rethink b{font-family:var(--mono);font-size:1.05cqw;font-weight:500;color:var(--ink-3)}
+.rethink span{font-size:1.9cqw;font-weight:500;letter-spacing:-.012em;line-height:1.2}
+
+/* ══ v2 ═══════════════════════════════════════════════════════════ */
+/* tour: the product, big, with one chapter chip */
+.bw.tourbig{left:50%;margin-left:-41cqw;width:82cqw;top:3.6cqw}
+.tchip{position:absolute;left:1.4cqw;bottom:1.4cqw;display:flex;align-items:center;gap:.9cqw;padding:.7cqw 1.4cqw .7cqw .8cqw;border-radius:10cqw;
+  background:rgba(15,18,24,.86);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(1cqw);-webkit-backdrop-filter:blur(1cqw);
+  font-size:1.5cqw;font-weight:500;box-shadow:0 1cqw 3cqw -1cqw rgba(0,0,0,.7)}
+.tchip b{width:2.2cqw;height:2.2cqw;border-radius:50%;display:grid;place-items:center;background:#fff;color:#0F1218;font-size:1.1cqw;font-weight:500}
+/* Pomelli on the spectrum: pins centred on their point (the build's translate was winning) */
+.s-pspec .pm.mark{translate:none!important;margin-left:-15cqw}
+.s-pspec .pm .tag .pill{width:9.5cqw;justify-content:center;box-sizing:border-box}
+/* errors compound: the chain collapses into one agent */
+.collapse.shown~.chain .n{left:50%!important;scale:.3;opacity:0;transition:left .7s var(--e-big),scale .7s var(--e-big),opacity .5s var(--e-micro) .2s}
+.collapse.shown~.chain .ln,.collapse.shown~.chain .pc{opacity:0;transition:opacity .4s}
+.agentnode{left:24cqw!important;right:auto!important;width:28cqw;top:23cqw!important;height:11cqw!important;flex-direction:column;align-items:center!important;
+  justify-content:center;text-align:center;gap:.5cqw;padding:1cqw!important}
+.agentnode b{font-size:2.4cqw;font-weight:500;color:#fff}
+.agentnode span{margin:0!important;font-size:1.3cqw!important}
+.agentnode[data-step]{translate:none!important;transition:opacity .6s var(--e-dec) .45s}
+/* users: the stamp stays centred and inside the margins */
+.ood{translate:none!important;left:50%;margin-left:-23cqw;width:46cqw;text-align:center;font-size:3.2cqw}
+.s-users .land{bottom:4.6cqw}
+/* scope: room for the spec line */
+.s-scope .scope2{top:15.5cqw;height:28cqw}
+.s-scope .scope2 .c2{width:30cqw;height:30cqw;padding:5cqw}
+.s-scope .scope2 .c1{bottom:2cqw}
+/* product decisions: the last click clears the stage for the thesis */
+.clear{left:0;top:0;width:0;height:0}
+.s-tiers .k,.s-tiers .h,.s-tiers .tiers{transition:opacity .5s var(--e-micro)}
+.clear.shown~.k,.clear.shown~.h,.clear.shown~.tiers{opacity:0!important}
+.quote.thesis{top:18cqw;font-size:5.4cqw}
+.s-tiers .tier{border-color:rgba(255,255,255,.12)!important}
+/* exits as words */
+.exits.words .v{font-size:2.3cqw;letter-spacing:-.015em;margin-top:.4cqw}
+.exits.words .glass{padding:1.6cqw 1.8cqw}
+/* check dial reads as a label, not a control */
+.dial.lbl .seg{background:none;border:0;padding:0;gap:1.6cqw}
+.dial.lbl .seg button{pointer-events:none;padding:0;border-radius:0;font-size:1.5cqw;color:var(--ink-3)}
+.dial.lbl .seg button.on{background:none;color:#fff;box-shadow:0 .25cqw 0 var(--cyan)}
+.dial.lbl .seg button+button::before{content:"vs";color:var(--ink-3);margin-right:1.6cqw;font-weight:400}
+/* what we're stripping now */
+.moves{left:6.2cqw;right:6.2cqw;top:15.6cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4cqw}
+.moves .glass{padding:1.6cqw 2cqw;display:grid;grid-template-columns:1fr auto;align-items:center;row-gap:.3cqw}
+.moves .t{font-size:2.2cqw;font-weight:500;letter-spacing:-.015em;grid-column:1}
+.moves .d{font-size:1.35cqw;color:var(--ink-2);grid-column:1}
+.moves .ra{grid-column:2;grid-row:1/3;font-size:2.6cqw;color:#F6A673}
+.striptest{left:6.2cqw;right:6.2cqw;top:27.4cqw;padding:1.4cqw 2cqw;display:flex;align-items:center;gap:1.2cqw;flex-wrap:wrap;
+  border-color:rgba(86,211,208,.5)}
+.striptest .lab{width:100%;color:#9BE7E5}
+.striptest span:not(.lab){font-size:1.7cqw;font-weight:500}
+.striptest i{font-style:normal;color:var(--ink-3);font-size:1.7cqw}
+.striptest b{font-weight:500;color:#9BE7E5}
+.dimall{left:0;top:0;width:0;height:0}
+.s-next .frame>*:not(.finale):not(.dimall){transition:opacity .6s var(--e-micro)}
+.dimall.shown~*:not(.finale){opacity:0!important}
+.finale{left:6.2cqw;right:6.2cqw;top:19cqw;margin:0;font-size:5cqw;line-height:1.08;font-weight:500;letter-spacing:-.03em;text-wrap:balance}
+/* close: the bookend of slide 2 */
+.s-close .cl{left:6.2cqw;right:6.2cqw;top:7cqw;display:flex;flex-direction:column;gap:1.8cqw}
+.s-close .cl p{margin:0;font-size:4.4cqw;line-height:1.05;font-weight:500;letter-spacing:-.03em}
+.s-close .cl .cs{display:block;font-size:1.5cqw;font-weight:400;letter-spacing:0;color:var(--ink-3);margin-top:.6cqw}
+.s-close .rails{top:38cqw}
+.s-close .rail{opacity:0;background:var(--aura)}
+.s-close .rail i{background:#fff}
+.rin,.rout{left:0;top:0;width:0;height:0}
+.rin.shown~.rails .rail{animation:railIn 1.3s var(--e-dec) both}
+.rin.shown~.rails .rail:nth-child(2){animation-delay:.12s}.rin.shown~.rails .rail:nth-child(3){animation-delay:.24s}
+.rout.shown~.rails .rail:nth-child(1){animation:stripL 1.2s var(--e-big) .5s both}
+.rout.shown~.rails .rail:nth-child(2){animation:stripR 1.2s var(--e-big) .6s both}
+.rout.shown~.rails .rail:nth-child(3){animation:stripL 1.2s var(--e-big) .7s both}
+.s-close .bye{justify-content:flex-end;gap:3cqw;align-items:center}
+.s-close .bye .t{font-size:2.2cqw}
+/* grid thumbnails: show the built end state of the new pieces */
+.gtile .rails .rail{opacity:1}
+.gtile .finale{opacity:0}
+.meters[hidden]{display:none!important}
+.s-pspec .pm .tag .pill{height:2.3cqw;padding-top:0;padding-bottom:0}
+</style>
+</head>
+<body data-aura="none">
+<div class="amb" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div class="deck" id="deck">
+<!-- 01 · cover -->
+<section class="s s-cover" data-aura="none"><div class="frame">
+  <svg class="aura" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
+      <filter id="b2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="48"/></filter>
+      <filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+      <linearGradient id="gBody" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="#1B2A63"/><stop offset=".28" stop-color="#4B86F7"/>
+        <stop offset=".62" stop-color="#4F7FFE"/><stop offset="1" stop-color="#3D5FD0"/>
+      </linearGradient>
+      <linearGradient id="gWarm" gradientUnits="userSpaceOnUse" x1="1380" y1="0" x2="1620" y2="0">
+        <stop offset="0" stop-color="#5FB98A"/><stop offset=".35" stop-color="#E3BE2E"/>
+        <stop offset=".7" stop-color="#E8722A"/><stop offset="1" stop-color="#B8322A"/>
+      </linearGradient>
+    </defs>
+    <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
+    <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
+    <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
+    <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
+    <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
+  </svg>
+  <p class="gfs" data-in>Google for Startups</p>
+  <div class="sftw" role="img" aria-label="SF Tech Week" data-in style="--d:.1s"><span class="w-sf">SF</span><span class="w-tech">TECH</span><span class="w-week">WEEK</span></div>
+  <h1 class="tt" data-in style="--d:.25s">Lessons from<br>Launching:</h1>
+  <p class="tt-sub" data-in style="--d:.4s">Deploying Agentic Workflows at Scale</p>
+  <div class="tt-photo" role="img" aria-label="Jaclyn Konzelmann" data-in style="--d:.3s"></div>
+  <div class="tt-name" data-in style="--d:.5s"><b>Jaclyn Konzelmann</b><span>Product Director</span><span>Google Labs</span></div>
+</div></section>
+
+<!-- 02 · strip the guardrails -->
+<section class="s s-strip" data-aura="left"><div class="frame">
+  <div class="attr" data-in><span class="pill">The AI Conference</span><span class="lab">Last week &middot; my advice to the room</span></div>
+  <p class="quote" data-in style="--d:.12s">Strip the guardrails <span class="hl">as the models earn it.</span></p>
+  <i class="strip" data-step="1"></i>
+  <div class="rails" aria-hidden="true">
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+  </div>
+</div></section>
+
+<!-- 03 · how to build them -->
+<section class="s s-build" data-aura="right"><div class="frame">
+  <div class="attr" data-in><span class="pill on">SF Tech Week</span><span class="lab">Today&rsquo;s prompt</span></div>
+  <p class="quote" data-in style="--d:.12s">How to <span class="hl">build</span> the guardrails.</p>
+  <div class="rails" aria-hidden="true">
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+  </div>
+</div></section>
+
+<!-- 04 · full circle -->
+<section class="s s-fc" data-aura="right"><div class="frame">
+  <span class="k" data-in>Full circle</span>
+  <h2 class="h fc-h" data-in style="--d:.08s">You can&rsquo;t strip what you <span class="hl">never built.</span></h2>
+  <p class="fc-sub" data-in style="--d:.18s">And you shouldn&rsquo;t strip what you haven&rsquo;t tested.</p>
+  <div class="ring" aria-hidden="true"><svg viewBox="0 0 600 600">
+    <defs>
+      <linearGradient id="fcbv" gradientUnits="userSpaceOnUse" x1="300" y1="70" x2="499" y2="415"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
+      <linearGradient id="fcvs" gradientUnits="userSpaceOnUse" x1="499" y1="415" x2="101" y2="415"><stop offset="0" stop-color="#56D3D0"/><stop offset="1" stop-color="#E8722A"/></linearGradient>
+      <linearGradient id="fcsb" gradientUnits="userSpaceOnUse" x1="101" y1="415" x2="300" y2="70"><stop offset="0" stop-color="#E8722A"/><stop offset="1" stop-color="#4F7FFE"/></linearGradient>
+    </defs>
+    <circle class="base" cx="300" cy="300" r="230"/>
+    <path class="arc" pathLength="1" stroke="url(#fcbv)" d="M300 70A230 230 0 0 1 499 415"/>
+    <path class="arc" pathLength="1" stroke="url(#fcvs)" d="M499 415A230 230 0 0 1 101 415"/>
+    <path class="arc" pathLength="1" stroke="url(#fcsb)" d="M101 415A230 230 0 0 1 300 70"/>
+    <g class="node n-b"><circle cx="300" cy="70" r="58"/><text x="300" y="76">Build</text></g>
+    <g class="node n-v"><circle cx="499" cy="415" r="58"/><text x="499" y="421">Validate</text></g>
+    <g class="node n-s"><circle cx="101" cy="415" r="58"/><text x="101" y="421">Strip</text></g>
+  </svg></div>
+</div></section>
+
+<!-- 07b · pomelli in action -->
+<section class="s s-tour" data-aura="right"><div class="frame">
+  <div class="bw tourbig" data-in style="--d:.1s">
+    <div class="bwbar"><i></i><i></i><i></i><span>labs.google.com/pomelli</span></div>
+    <video id="tour" style="aspect-ratio:16/9" muted playsinline preload="auto" poster="media/pomelli-tour-poster.jpg" aria-label="Pomelli walkthrough: Business DNA, the Pomelli Agent, a campaign, Photoshoot, Animate, and sharing">
+      <source src="media/pomelli-tour.webm" type="video/webm"><source src="media/pomelli-tour.mp4" type="video/mp4">
+    </video>
+    <div class="tchip"><b id="tourN">1</b><span id="tourL">Business DNA</span></div>
+  </div>
+  <div class="tsteps" hidden>
+    <div class="vt" data-vt="0-12.13" data-n="1" data-l="Business DNA"></div>
+    <div class="vt" data-vt="12.13-21.23" data-n="2" data-l="The Pomelli Agent"></div>
+    <div class="vt" data-vt="21.23-29.53" data-n="3" data-l="A campaign"></div>
+    <div class="vt" data-vt="29.53-37.73" data-n="4" data-l="Photoshoot"></div>
+    <div class="vt" data-vt="37.73-46.9" data-n="5" data-l="Animate"></div>
+    <div class="vt" data-vt="46.9-999" data-n="6" data-l="Share to Google Ads or Instagram"></div>
+  </div>
+</div></section>
+
+<!-- 05 · the spectrum -->
+<section class="s s-spec" data-aura="low"><div class="frame">
+  <span class="k" data-in>The spectrum</span>
+  <h2 class="h" data-in style="--d:.08s">From <span class="hm">Do It With Me</span> to <span class="hr">Do It For Me</span>.</h2>
+  <div class="ask glass" data-step="1">&ldquo;Please just take care of all of this for me.&rdquo;</div>
+  <i class="go-right" data-step="1"></i>
+  <div class="spec" data-in style="--d:.2s">
+    <div class="track"></div><div class="knob"></div>
+    <div class="end">Do It With Me<small>You drive. You spell out what you want.</small></div>
+    <div class="end r">Do It For Me<small>You hand it over. It may even suggest what&rsquo;s next.</small></div>
+  </div>
+</div></section>
+
+<!-- 05b · not everything should be do it for me -->
+<section class="s s-dwm" data-aura="low"><div class="frame">
+  <span class="k" data-in>The spectrum</span>
+  <h2 class="h w" data-in style="--d:.08s">Not everything should be <span class="hr">Do It For Me.</span></h2>
+  <div class="dwm">
+    <div class="glass stay" data-step="2"><span class="lab" style="color:#9BE7E5">Stay in it &middot; Do It With Me</span>
+      <ul><li>Your users enjoy doing it</li><li>They&rsquo;re learning and growing</li></ul>
+      <p class="pt">AI should amplify them. Not replace them. It could be the point.</p></div>
+    <div class="glass hand" data-step="1"><span class="lab" style="color:#F6A673">Hand it over &middot; Do It For Me</span>
+      <ul><li>It&rsquo;s tedious</li><li>It&rsquo;s clearly defined</li><li>Nobody wanted to do it anyway</li></ul>
+      <p class="pt">Set it and forget it.</p></div>
+  </div>
+  <div class="gap glass" data-step="3" style="top:36cqw"><span class="lab">Not clearly defined yet?</span>
+    <span class="g">Keep them in the loop</span><span class="ar">&rarr;</span><span class="g">Fill in what&rsquo;s missing</span><span class="ar">&rarr;</span><span class="g">Build up context</span><span class="ar">&rarr;</span><span class="g hl">Fewer gaps over time</span></div>
+  <div class="spec" data-in style="--d:.2s;top:45.5cqw">
+    <div class="track"></div>
+    <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
+  </div>
+</div></section>
+
+<!-- 06 · magic and risk -->
+<section class="s s-mr" data-aura="low"><div class="frame">
+  <span class="k" data-in>The catch</span>
+  <h2 class="h" data-in style="--d:.08s">The <span class="hm">magic</span> and the <span class="hr">risk</span> come from the same place.</h2>
+  <div class="mr" style="top:18.5cqw;height:19.4cqw" aria-hidden="true"><svg viewBox="0 0 1000 220" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="gM" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
+      <linearGradient id="gR" x1="0" x2="1"><stop offset="0" stop-color="#F2C230"/><stop offset=".6" stop-color="#E8722A"/><stop offset="1" stop-color="#E0533F"/></linearGradient>
+      <linearGradient id="gMf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F7FFE" stop-opacity=".28"/><stop offset="1" stop-color="#4F7FFE" stop-opacity="0"/></linearGradient>
+      <linearGradient id="gRf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8722A" stop-opacity=".26"/><stop offset="1" stop-color="#E8722A" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g data-step="1"><path class="f" fill="url(#gMf)" d="M0 214C150 110 450 40 1000 22L1000 220L0 220Z"/>
+      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" vector-effect="non-scaling-stroke" d="M0 214C150 110 450 40 1000 22"/></g>
+    <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 218C500 214 800 150 1000 14L1000 220L0 220Z"/>
+      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" vector-effect="non-scaling-stroke" d="M0 218C500 214 800 150 1000 14"/></g>
+  </svg></div>
+  <div class="spec">
+    <div class="track"></div>
+    <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
+  </div>
+  <div class="dayone" data-step="3" aria-hidden="true">
+    <span class="pill on">Day one</span><i class="dline"></i><span class="lab dl">Over time, as the models earn it &rarr;</span>
+  </div>
+</div></section>
+
+<!-- 06b · same check-ins, bigger job -->
+<section class="s s-xl" data-aura="right"><div class="frame">
+  <span class="k" data-in>The spectrum, today</span>
+  <h2 class="h w" data-in style="--d:.08s">Same check-ins. <span class="hl">A much bigger job.</span></h2>
+  <div class="xl">
+    <div class="xrow" data-step="1"><span class="lab">A few months ago</span>
+      <div class="xbar xs"><i></i><i></i><i></i><i></i></div><span class="sz">S</span></div>
+    <div class="xrow" data-step="2"><span class="lab" style="color:#fff">Today</span>
+      <div class="xbar l"><i></i><i></i><i></i><i></i></div><span class="sz hl">XL</span></div>
+  </div>
+</div></section>
+
+<!-- 07 · pomelli on the spectrum -->
+<section class="s s-pspec" data-aura="low"><div class="frame">
+  <span class="k" data-in>Pomelli</span>
+  <h2 class="h w" data-in style="--d:.08s">One product. <span class="hl">More than one point on the spectrum.</span></h2>
+  <div class="pm mark" data-step="1" style="left:calc(6.2cqw + .3 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+    <div class="card glass"><img src="media/shoot-context.jpg" alt="">
+      <div><div class="t">Photoshoot</div><div class="d">A product photo in. An on-brand shoot out.</div><div class="tag"><span class="pill">Narrow</span></div></div></div>
+    <div class="stem" style="flex:1"></div><div class="dot"></div>
+  </div>
+  <div class="pm mark" data-step="2" style="left:calc(6.2cqw + .72 * 87.6cqw);top:19.5cqw;height:21.2cqw">
+    <div class="card glass"><div class="chat"><i></i><i class="me"></i><i></i><i class="me"></i><i></i></div>
+      <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill dna">Open-ended</span></div></div></div>
+    <div class="stem" style="flex:1"></div><div class="dot"></div>
+  </div>
+  <div class="spec" data-in style="--d:.2s">
+    <div class="track"></div>
+    <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
+  </div>
+</div></section>
+
+<!-- 08 · five ways -->
+<section class="s s-five" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Why agents break</span>
+  <h2 class="h" data-in style="--d:.08s">Five ways agentic workflows <span class="hr">break in production.</span></h2>
+  <div class="five">
+    <div class="glass" data-step="1"><span class="n">01</span>
+      <svg class="ic" viewBox="0 0 60 60"><rect x="8" y="8" width="44" height="44" rx="10" stroke-dasharray="6 6"/><path class="a" d="M23 24a7 7 0 1 1 9 6.7c-1.3.5-2 1.6-2 3V36"/><circle class="a" cx="30" cy="43" r="1"/></svg>
+      <div class="t">No guaranteed output</div></div>
+    <div class="glass" data-step="2"><span class="n">02</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="10" cy="44" r="5"/><circle cx="28" cy="32" r="5"/><circle class="o" cx="48" cy="14" r="6"/><path d="M14 41l10-6M32 29l11-11"/></svg>
+      <div class="t">Errors compound</div></div>
+    <div class="glass" data-step="3"><span class="n">03</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="24" cy="20" r="9"/><path d="M8 52c2-10 8-15 16-15s14 5 16 15"/><path class="o" d="M44 14a5 5 0 1 1 6 5c-1 .4-1.5 1.2-1.5 2.4V24"/><circle class="o" cx="48.5" cy="30" r=".8"/></svg>
+      <div class="t">Users you didn&rsquo;t plan for</div></div>
+    <div class="glass" data-step="4"><span class="n">04</span>
+      <svg class="ic" viewBox="0 0 60 60"><ellipse cx="30" cy="16" rx="16" ry="6"/><path d="M14 16v10c0 3.3 7.2 6 16 6s16-2.7 16-6V16"/><path class="o" d="M14 26v10c0 3.3 7.2 6 16 6s16-2.7 16-6V26M14 36v10c0 3.3 7.2 6 16 6s16-2.7 16-6V36"/></svg>
+      <div class="t">Costs get away from you</div></div>
+    <div class="glass" data-step="5"><span class="n">05</span>
+      <svg class="ic" viewBox="0 0 60 60"><circle cx="30" cy="30" r="6"/><circle class="a" cx="30" cy="30" r="15" stroke-dasharray="4 5"/><circle class="o" cx="30" cy="30" r="25" stroke-dasharray="3 6"/></svg>
+      <div class="t">The more open, the trickier</div></div>
+  </div>
+  <div class="worse" data-step="6"><div class="wbar"></div><span>Do It With Me</span><span class="r">All five get worse as you move toward Do It For Me</span></div>
+</div></section>
+
+<!-- 09 · no guaranteed output -->
+<section class="s s-out" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Why agents break &middot; 1 of 5</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.8cqw">You don&rsquo;t get a <span class="hr">guaranteed output.</span></h2>
+  <div class="contract glass" data-in style="--d:.2s;top:14.6cqw">
+    <span class="lab">What done looks like &middot; Business DNA</span>
+    <div class="half">Is it done? &middot; <b>objective</b></div>
+    <div class="row"><span>Fonts</span><em>&#10003;</em></div>
+    <div class="row"><span>Colors</span><span class="sw"><i style="background:#2E5E4E"></i><i style="background:#9BC9A8"></i><i style="background:#F3EFE6"></i><i style="background:#111"></i></span></div>
+    <div class="row"><span>Values</span><em>&#10003;</em></div>
+    <div class="row"><span>Imagery</span><em>&#10003;</em></div>
+    <div class="half sub">Is it good? &middot; <b>subjective</b></div>
+    <div class="row"><span>Rich, not thin</span><em class="sub">?</em></div>
+  </div>
+  <div class="outs" style="top:14.6cqw">
+    <div class="glass" data-step="1"><span class="lab">Never arrives</span><div class="spin"></div><div class="loopc" id="loopc">0<small>STILL LOOKING&hellip;</small></div><div class="t">It keeps looping.</div></div>
+    <div class="glass" data-step="2"><span class="lab">Not done</span><p class="para">&ldquo;This brand radiates a timeless, effortless elegance that feels at once refined and&hellip;&rdquo;</p><div class="t">The wrong shape.</div></div>
+    <div class="glass" data-step="3"><span class="lab">Not good</span><div class="meh"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="d">Every field filled in. Still not something you&rsquo;d use.</div><div class="t">Complete, but mediocre.</div></div>
+  </div>
+  <p class="land" data-step="4" style="bottom:3.4cqw">If you don&rsquo;t define done, the agent will.<br><span class="hr">And your users might disagree.</span></p>
+</div></section>
+
+<!-- 10 · errors compound -->
+<section class="s s-chain" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Why agents break &middot; 2 of 5</span>
+  <h2 class="h" data-in style="--d:.08s">Errors <span class="hr">compound.</span></h2>
+  <div class="big" data-in style="--d:.2s"><div class="v" id="cpV">95%</div><div class="l" id="cpL">right at every step</div></div>
+  <i class="collapse" data-step="2"></i>
+  <div class="chain" id="chain" data-in style="--d:.25s"></div>
+  <div class="agentnode" data-step="2"><b>One agent</b><span>The hand-offs are still there.</span></div>
+  <i data-step="1" id="cpGo" style="width:0;height:0"></i>
+  <input id="cpA" type="hidden" value="95"><input id="cpN" type="hidden" value="10"><span id="cpAv" hidden></span><span id="cpNv" hidden></span>
+</div></section>
+
+<!-- 11 · users -->
+<section class="s s-users" data-aura="left"><div class="frame">
+  <span class="k" data-in>Why agents break &middot; 3 of 5</span>
+  <h2 class="h" data-in style="--d:.08s">Your users will use it in ways <span class="hr">you didn&rsquo;t predict.</span></h2>
+  <div class="ups" style="grid-template-columns:repeat(4,1fr)">
+    <div class="up" data-in style="--d:.2s"><img src="media/shoot-flatlay.jpg" alt=""><span class="ok pill on">Expected</span><div class="cap">A product photo</div></div>
+    <div class="up" data-step="1" style="--d:.0s"><svg class="ic" viewBox="0 0 60 60"><path d="M8 24h44M10 24l4-12h32l4 12"/><rect x="12" y="24" width="36" height="26"/><rect class="o" x="26" y="34" width="8" height="16"/><path d="M16 30h7M37 30h7"/></svg><div class="cap">Their storefront</div></div>
+    <div class="up" data-step="1" style="transition-delay:.12s"><svg class="ic" viewBox="0 0 60 60"><rect x="6" y="10" width="48" height="40" rx="5"/><path d="M6 20h48"/><circle cx="12" cy="15" r="1"/><circle cx="17" cy="15" r="1"/><path class="o" d="M14 30h22M14 38h32"/></svg><div class="cap">A screenshot of their website</div></div>
+    <div class="up" data-step="1" style="transition-delay:.24s"><svg class="ic" viewBox="0 0 60 60"><g><circle cx="12" cy="18" r="5"/><circle cx="30" cy="18" r="5"/><circle cx="48" cy="18" r="5"/><circle class="o" cx="12" cy="40" r="5"/><circle class="o" cx="30" cy="40" r="5"/><circle class="o" cx="48" cy="40" r="5"/></g></svg><div class="cap">Six products, one photo</div></div>
+    
+  </div>
+  <div class="ood" data-step="2">Out of distribution</div>
+  <p class="land" data-step="2">A normal app throws an error. <span class="hr">An agent improvises.</span></p>
+</div></section>
+
+<!-- 12 · cost -->
+<section class="s s-cost" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Why agents break &middot; 4 of 5</span>
+  <h2 class="h" data-in style="--d:.08s">Cost <span class="hr">gets away from you.</span></h2>
+  <div class="tolls" data-in style="--d:.2s">
+    <div><b>?</b><span>steps it decides to take</span></div>
+    <div><b>?</b><span>tools it decides to call</span></div>
+    <div><b>?</b><span>how long it decides to think</span></div>
+  </div>
+  <div class="ppt" data-step="1" style="left:auto;right:6.2cqw;top:17cqw;width:40cqw">
+    <span class="lab">Price per successful task</span><div style="height:1.6cqw"></div>
+    <div class="row cheap"><div class="top"><b>Cheaper model</b><span class="mono" style="color:var(--orange)">8 tries</span></div><div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="row good"><div class="top"><b>Stronger model</b><span class="mono" style="color:var(--cyan)">1 try</span></div><div class="bars"><i></i></div></div>
+    <p class="note">Not price per token. A cheap model that needs eight retries can cost more than a good one that gets it right the first time.</p>
+  </div>
+</div></section>
+
+<!-- 13 · scope -->
+<section class="s s-scope" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Why agents break &middot; 5 of 5</span>
+  <h2 class="h" data-in style="--d:.08s">The more open-ended, <span class="hr">the harder it is to make reliable.</span></h2>
+  <div class="scope2">
+    <div class="c c1" data-step="1"><b>Photoshoot</b><span>Product photo in. Photoshoot out.</span></div>
+    <div class="c c2" data-step="2"><b>&ldquo;Build me a website, and keep improving it.&rdquo;</b><span>Every extra degree of freedom is another place to wander.</span></div>
+  </div>
+  <p class="land" data-step="3">Answer all five for your product, <span class="hl">and you have the spec for your guardrails.</span></p>
+</div></section>
+
+<!-- 14 · guardrails are product decisions -->
+<section class="s s-tiers" data-aura="left"><div class="frame">
+  <i class="clear" data-step="4"></i>
+  <span class="k" data-in>Build</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.9cqw">Your first guardrails are <span class="hl">product decisions.</span></h2>
+  <div class="tiers" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="tier t1 glass" data-step="1" style="height:21cqw"><span class="n">01</span><span class="t">Scope</span>
+      <ul><li>What it does. And what it doesn&rsquo;t.</li><li>Photoshoot: a product photo and a set of templates</li><li>Narrow on purpose, before a single model call</li></ul></div>
+    <div class="tier t2 glass" data-step="2" style="height:21cqw"><span class="n">02</span><span class="t">The interface</span>
+      <ul><li>Where do I see what happened?</li><li>Where can I step in? How do I undo?</li><li>Keep editing: let them finish the last 10%</li></ul></div>
+    <div class="tier t3 glass" data-step="3" style="height:21cqw"><span class="n">03</span><span class="t">The system</span>
+      <ul><li>Contracts and exits</li><li>Checks between steps</li><li>A contained blast radius</li></ul></div>
+  </div>
+  <p class="quote thesis" data-step="4">Clever prompting gets you a demo.<br><span class="hl">Product-grade engineering gets you to launch.</span></p>
+</div></section>
+
+<!-- 15 · contracts and exits -->
+<section class="s s-ce" data-aura="right"><div class="frame">
+  <span class="k" data-in>Contracts and exits</span>
+  <h2 class="h" data-in style="--d:.08s">Every step gets a <span class="hm">contract.</span> Every agent gets an <span class="hr">exit.</span></h2>
+  <div class="ce" data-step="1" style="right:auto;width:40cqw"><svg viewBox="0 0 640 352">
+    <rect class="box" x="170" y="96" width="300" height="160" rx="22"/>
+    <text class="t" x="320" y="168" text-anchor="middle">A step</text>
+    <text class="s2" x="320" y="196" text-anchor="middle">model, tools, prompt</text>
+    <path d="M10 176H164" stroke="#56D3D0" stroke-width="4" stroke-linecap="round"/><path d="M150 164l14 12-14 12" fill="none" stroke="#56D3D0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M476 176H630" stroke="#56D3D0" stroke-width="4" stroke-linecap="round"/><path d="M616 164l14 12-14 12" fill="none" stroke="#56D3D0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="port" x="10" y="150">SCHEMA IN</text><text class="port" x="630" y="150" text-anchor="end">SCHEMA OUT</text>
+    <text class="s2" x="10" y="214">what goes in</text><text class="s2" x="630" y="214" text-anchor="end">what comes out,</text><text class="s2" x="630" y="236" text-anchor="end">in what shape</text>
+  </svg></div>
+  <div class="exits words" data-step="2">
+    <div class="glass"><span class="lab">Exit</span><div class="v">Loop cap</div></div>
+    <div class="glass"><span class="lab">Exit</span><div class="v">Time budget</div></div>
+    <div class="glass"><span class="lab">Exit</span><div class="v">Cost budget</div></div>
+    <div class="glass"><span class="lab">When it hits one</span><div class="v">Fallback</div><div class="l">Retry. Go simpler. Or ask the user.</div></div>
+  </div>
+  <p class="land" data-step="3">An agent with no exit never tells you it&rsquo;s stuck.<br><span class="hr">It just keeps going. And you keep paying for it.</span></p>
+</div></section>
+
+<!-- 16 · check between steps -->
+<section class="s s-check" data-aura="left"><div class="frame">
+  <span class="k" data-in>Check between steps</span>
+  <h2 class="h" data-in style="--d:.08s">Check every black box <span class="hm">before it feeds the next one.</span></h2>
+  <div class="pipe" id="pipe" data-in style="--d:.2s;left:10.7cqw;right:10.7cqw"></div>
+  <div class="kinds" data-step="1" style="top:31cqw"><span class="pill">Hard rules &middot; is it done?</span><span class="pill dna">Semantic &middot; is it good?</span></div>
+  <div class="dna glass" data-step="2" style="left:6.2cqw;right:auto;width:62cqw;top:36cqw">
+    <span class="lab">Example &middot; Business DNA from a website</span>
+    <span class="m">HARD RULE</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
+    <span class="m sem">SEMANTIC</span><span class="q">Can every value point back to <b>something the business actually gave us?</b></span>
+  </div>
+  <i class="every3" data-step="4" style="width:0;height:0"></i>
+  <div class="dial lbl" data-step="3">
+    <div class="seg" id="seg"><button class="on" data-every="1">Check every step</button><button data-every="3">Every third step</button></div>
+    <div class="meters" hidden><span><b id="mChecks">5</b>checks</span><span><b id="mLat">+5</b>judge calls of latency</span><span><b id="mRisk">low</b>risk of a silent miss</span></div>
+  </div>
+</div></section>
+
+<!-- 18 · decisions underneath -->
+<section class="s s-under" data-aura="low"><div class="frame">
+  <span class="k" data-in>Photoshoot &middot; under the hood</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.5cqw">One click on top. <span class="hl">A lot of decisions underneath.</span></h2>
+  <div class="rowa">
+    <div class="pc glass ca" data-step="1"><span class="lab">1 &middot; Your photo</span><img class="pin" src="media/shoot-input.jpg" alt="The sunglasses product photo"></div>
+    <div class="parr" data-step="2"><span>&rarr;</span><i class="hk" data-step="6"></i></div>
+    <div class="pc glass cb" data-step="2"><span class="lab">2 &middot; Templates we suggest</span><img class="ptpl" src="media/shoot-templates.jpg" alt="Pomelli suggesting six templates: On Ice, Floral Whimsy, Model Try On, In Use, Flatlay, Halloween"></div>
+    <div class="parr" data-step="3"><span>&rarr;</span><i class="hk" data-step="6"></i></div>
+    <div class="oneclick" data-step="3"><span class="pill on">3 &middot; One click</span><span class="lab">The full shoot &darr;</span></div>
+  </div>
+  <i class="dim" data-step="4"></i>
+  <div class="shots6" data-step="3">
+    <figure><img src="media/shoot-ice.jpg" alt=""><figcaption>On Ice</figcaption></figure>
+    <figure><img src="media/shoot-floral.jpg" alt=""><figcaption>Floral Whimsy</figcaption></figure>
+    <figure><img src="media/shoot-flatlay.jpg" alt=""><figcaption>Flatlay</figcaption></figure>
+    <figure><img src="media/shoot-tryon.jpg" alt=""><figcaption>Model Try On</figcaption></figure>
+    <figure class="ctx"><img src="media/shoot-context.jpg" alt=""><figcaption>In Use</figcaption></figure>
+    <figure><img src="media/shoot-seasonal.jpg" alt=""><figcaption>Halloween</figcaption></figure>
+  </div>
+  <div class="tree" data-step="4" style="top:41.6cqw">
+    <span class="pill on">In Use</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i><span class="pill dna">Your Business DNA</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i>
+    <div class="fork">
+      <div class="fr"><span class="gl">Sunglasses</span><span class="pill sel">On a face</span><span class="pill">Pushed up on a head</span></div>
+      <div class="fr"><span class="gl">Makeup brand</span><span class="pill">In a purse</span><span class="pill">Applying lipstick</span></div>
+    </div>
+  </div>
+  <div class="count61" data-step="5"><b id="c61">60+</b><span id="c61l">options in the interface</span></div>
+  <p class="land" data-step="6" style="bottom:2.2cqw;font-size:1.8cqw;right:auto">Before you add a setting, <span class="hl">ask if your context already knows the answer.</span></p>
+</div></section>
+
+<!-- 19 · blast radius -->
+<section class="s s-br" data-aura="warm"><div class="frame">
+  <span class="k" data-in>Blast radius</span>
+  <h2 class="h w" data-in style="--d:.08s;font-size:3.8cqw">Contain the <span class="hr">blast radius.</span></h2>
+  <p class="brsub" data-in style="--d:.16s">If something goes wrong, how much damage can it do?</p>
+  <div class="adv" style="grid-template-columns:1fr 1fr 1.3fr">
+    <div class="glass" data-step="1"><span class="n">01</span><span class="t">Give it only what it needs</span>
+      <span class="ex">In Pomelli: your Business DNA, and likely the context of the feature you&rsquo;re using.</span></div>
+    <div class="glass" data-step="2"><span class="n">02</span><span class="t">Sandbox where it operates</span>
+      <span class="ex">Code? A closed, isolated box. In Pomelli, creations stay in Pomelli until a person shares them.</span></div>
+    <div class="glass" data-step="3"><span class="n">03</span><span class="t">Treat reads and writes differently</span><span class="ex" style="margin-top:0">The test: can the user undo it?</span>
+      <div class="split"><div class="yes"><b>Read &rarr; low risk</b><span>Your Business DNA, your uploads</span></div>
+      <div class="no"><b>Write &rarr; human in the loop</b><span>Post to Instagram, send to Google Ads</span></div></div></div>
+  </div>
+  <p class="land" data-step="4" style="bottom:3.6cqw">If it only lives in the prompt, it&rsquo;s not a guardrail. <span class="hr">It&rsquo;s wishful thinking.</span></p>
+</div></section>
+
+<!-- 20 · plausible vs good -->
+<section class="s s-pg" data-aura="center"><div class="frame">
+  <span class="k" data-in>Validate</span>
+  <h2 class="h" data-in style="--d:.08s;font-size:4.6cqw">How do you know <span class="hl">it&rsquo;s ready?</span></h2>
+  <p class="brsub" data-in style="--d:.16s;top:15cqw">Validation has two jobs.</p>
+  <div class="jobs" style="top:22.5cqw">
+    <div class="glass" data-step="1"><span class="n">JOB 01 &middot; THE EXPECTED</span><div class="t">Quality, in distribution</div><div class="d">When people use it the way you designed it, does it do what you expect? And is it good?</div></div>
+    <div class="glass" data-step="2"><span class="n">JOB 02 &middot; THE UNEXPECTED</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, does the damage stay inside the blast radius?</div></div>
+  </div>
+  <div class="oops glass" data-step="3" style="left:6.2cqw;right:6.2cqw;bottom:4cqw;top:auto;width:auto;rotate:0deg;display:flex;align-items:center;gap:2cqw">
+    <span class="lab">Skip job 02</span><span class="ad">FLASH SALE &middot; <span>50% off everything</span></span><span class="why" style="margin:0">A sale the business never offered.</span>
+  </div>
+</div></section>
+
+<!-- 21 · hill climb + red team -->
+<section class="s s-hill" data-aura="left"><div class="frame">
+  <span class="k" data-in>Two jobs, two tools</span>
+  <h2 class="h" data-in style="--d:.08s">Hill climb the expected. <span class="hr">Red team the unexpected.</span></h2>
+  <div class="hill" style="top:18.5cqw;height:28cqw" data-step="1"><svg viewBox="0 0 600 420">
+    <defs><linearGradient id="gMagic" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient></defs>
+    <path class="ax" d="M20 20V400H590"/>
+    <path class="st" pathLength="1" d="M20 380H110V336H200V306H290V250H380V214H470V160H560V128"/>
+    <circle cx="560" cy="128" r="8" fill="#56D3D0"/>
+    <text x="30" y="40">quality vs. your examples of good</text><text x="590" y="390" text-anchor="end">measure &middot; improve &middot; repeat</text>
+  </svg></div>
+  <div class="goals" data-step="2" style="top:18cqw">
+    <span class="lab">Red team goals &middot; sandboxed, no script</span>
+    <div class="goal glass"><i>GOAL</i>Make it write something off-brand.</div>
+    <div class="goal glass"><i>GOAL</i>Make a claim the business never made.</div>
+    <div class="goal glass"><i>GOAL</i>Put someone else&rsquo;s logo in the shot.</div>
+  </div>
+</div></section>
+
+<!-- 22 · the loop -->
+<section class="s s-loop" data-aura="right"><div class="frame">
+  <span class="k" data-in>The loop</span>
+  <h2 class="h" data-in style="--d:.08s">Break it. Bucket it. <span class="hl">Guard it. Re-check it.</span></h2>
+  <div class="loop" style="top:17.5cqw;width:34cqw;height:34cqw"><svg viewBox="0 0 600 600">
+    <circle class="orbit" cx="300" cy="300" r="240"/>
+    <g class="node" data-step="1" style="--c:#E8722A"><circle cx="300" cy="60" r="62"/><text x="300" y="58">Break</text><text class="sm" x="300" y="80">trajectories</text></g>
+    <g class="node" data-step="2" style="--c:#F2C230"><circle cx="540" cy="300" r="62"/><text x="540" y="298">Bucket</text><text class="sm" x="540" y="320">behaviors</text></g>
+    <g class="node" data-step="3" style="--c:#56D3D0"><circle cx="300" cy="540" r="62"/><text x="300" y="538">Guard</text><text class="sm" x="300" y="560">guardrails</text></g>
+    <g class="node" data-step="4" style="--c:#4F7FFE"><circle cx="60" cy="300" r="62"/><text x="60" y="298">Re-check</text><text class="sm" x="60" y="320">quality evals</text></g>
+  </svg></div>
+  <div class="bucket" data-step="5" style="top:18.5cqw">
+    <div class="glass one"><span class="lab">The point fix &middot; one symptom</span><div class="t">Block the phrase &ldquo;50% off&rdquo;</div></div>
+    <div class="glass all"><span class="lab" style="color:#BFF2F0">The bucket &middot; the root cause</span><div class="t">The agent invents offers the business never made.</div></div>
+  </div>
+  <p class="judg" data-step="5" style="bottom:4cqw"><b>Fix the root cause, and you fix the failures you haven&rsquo;t seen yet.</b><br>Good enough is a judgment call. Make it, and own it.</p>
+</div></section>
+
+<!-- 23 · what we're stripping now -->
+<section class="s s-next" data-aura="center"><div class="frame">
+  <i class="dimall" data-step="5"></i>
+  <span class="k" data-in>Strip</span>
+  <h2 class="h" data-in style="--d:.08s;font-size:4.6cqw">What we&rsquo;re <span class="hl">stripping now.</span></h2>
+  <div class="moves">
+    <div class="glass" data-step="1"><span class="t">Pomelli Agent</span><span class="d">doing more</span><span class="ra">&rarr;</span></div>
+    <div class="glass" data-step="2"><span class="t">Websites</span><span class="d">beyond templates</span><span class="ra">&rarr;</span></div>
+    <div class="glass" data-step="3"><span class="t">Check-ins</span><span class="d">rethought</span><span class="ra">&rarr;</span></div>
+  </div>
+  <div class="striptest glass" data-step="4"><span class="lab">How you know it&rsquo;s earned</span>
+    <span>Turn it off in testing</span><i>&rarr;</i><span>Re-run evals and red team</span><i>&rarr;</i><span>Failure stays gone? <b>Strip it.</b></span></div>
+  <div class="spec" style="top:42cqw"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
+  <p class="finale" data-step="5">When you build a guardrail, <span class="hl">write down the test that lets you strip it.</span></p>
+</div></section>
+
+<!-- 25 · close -->
+<section class="s s-close" data-aura="left"><div class="frame">
+  <div class="cl">
+    <p data-step="1">Build the guardrails.<span class="cs">Pick your spot on purpose. Design for failure.</span></p>
+    <p data-step="2">Validate them.<span class="cs">Hill climb the expected. Red team the unexpected.</span></p>
+    <p data-step="3">Then strip them <span class="hl">as the models earn it.</span></p>
+  </div>
+  <i class="rin" data-step="1"></i><i class="rout" data-step="3"></i>
+  <div class="rails" aria-hidden="true">
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+    <div class="rail"><i style="left:12%"></i><i style="left:38%"></i><i style="left:64%"></i><i style="left:90%"></i></div>
+  </div>
+  <div class="bye" data-step="4"><span class="t">Thank you.</span><span class="who"><b>Jaclyn Konzelmann</b><br>Product Director &middot; Google Labs &middot; @jacalulu</span></div>
+</div></section>
+
+
+</div>
+<div class="hud" id="hud">
+  <button class="nav prev" aria-label="Previous slide">&#8249;</button>
+  <span class="pips" id="pips"></span>
+  <span class="count"><span id="cur">1</span> / 26</span>
+  <button class="nav next" aria-label="Next slide">&#8250;</button>
+  <button class="nav gridb" id="gridbtn" aria-label="Grid view" title="Grid view (O)">&#9638;</button>
+  <button class="nav fs" id="fs" aria-label="Full screen" title="Full screen (F)">&#9974;</button>
+</div>
+<div class="bar"><span id="fill"></span></div>
+<div class="keys" id="keys">&#8592; &#8594; slides &middot; O grid &middot; N speaker notes</div>
+<div class="jump" id="jump" hidden>
+  <div class="jump-bar"><input id="jumpn" type="number" min="1" inputmode="numeric" placeholder="Slide #"><span class="jump-hint">Enter to go &middot; Esc to close</span></div>
+  <div class="jump-list" id="jumplist"></div>
+</div>
+<div class="np" id="np" hidden>
+  <div class="np-bar">
+    <span class="np-cue" id="npcue"></span>
+    <span class="np-clock" id="npclock">00:00</span>
+    <span class="np-next" id="npnext"></span>
+    <span class="np-hint">N notes &middot; T timer (starts on first press) &middot; P window &middot; F full screen</span>
+  </div>
+  <div class="np-body" id="npbody"></div>
+</div>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.s')], deck=document.getElementById('deck');
+  let i=0;
+  const cur=document.getElementById('cur'), fill=document.getElementById('fill');
+  const pips=document.getElementById('pips');
+  const TONE=["dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark", "dark"];
+  // The ground never changes; the ambient aura drifts to each slide's mood.
+  function paint(n){ document.body.dataset.aura = slides[n].dataset.aura || 'low'; }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    slides.forEach(s=>s.querySelectorAll('[data-count]').forEach(el=>{
+      if(!s.classList.contains('on')){delete el.dataset.ran; el.textContent='0.0';}
+    }));
+    // the clip starts from the top every time she lands on the slide
+    slides[i].querySelectorAll('video').forEach(v=>{
+      try{v.currentTime=0;}catch(e){} v.play().catch(()=>{});
+    });
+    cur.textContent=i+1;
+    fill.style.width=((i+1)/slides.length*100)+'%';
+    paint(i);
+    paintNotes();
+    pushPres();
+    try{location.hash=i+1;}catch(e){}
+  }
+  // ── click-to-build: a slide with data-step items advances inside itself ──
+  let st=0;   // build step on the current slide
+  const steps=s=>{const e=[...s.querySelectorAll('[data-step]')];
+    return e.length?Math.max(...e.map(x=>+x.dataset.step)):0;};
+  // A real number, revealed. It counts to 24.1 and stops - the figure is off
+  // the post itself, and there is no claim here about the shape of the climb.
+  const EASE=k=>1-Math.pow(1-k,3);
+  function runCounts(){
+    slides[i].querySelectorAll('.shown [data-count]').forEach(el=>{
+      if(el.dataset.ran) return; el.dataset.ran='1';
+      const to=+el.dataset.count, t0=performance.now(), d=1500;
+      (function tick(t){
+        const k=Math.min(1,(t-t0)/d);
+        el.textContent=(to*EASE(k)).toFixed(1);
+        if(k<1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }
+  function paintSteps(){
+    slides[i].querySelectorAll('[data-step]').forEach(e=>{
+      e.classList.toggle('shown', +e.dataset.step<=st);
+    });
+    runCounts();
+    document.dispatchEvent(new CustomEvent('deckstep',{detail:{i,st}}));
+    const t=steps(slides[i]);
+    pips.innerHTML = t ? Array.from({length:t},(_,k)=>
+      `<i class="${k<st?'on':''}"></i>`).join('') : '';
+  }
+  // ── advancing ────────────────────────────────────────────────────
+  // → fires the slide's next build if it has one, otherwise moves to the
+  // next slide. The whole of a slide's notes shows at once; the blue pill
+  // marks the click that the next press will fire.
+  function go(d){
+    if(d>0 && t0===null) timer(true);   // the clock starts on the first forward press
+    const t=steps(slides[i]);
+    if(d>0 && st<t){st++; paintSteps(); paintNotes(); pushPres(); return;}
+    if(d<0 && st>0){st--; paintSteps(); paintNotes(); pushPres(); return;}
+    const n=i+d;
+    if(n<0||n>=slides.length) return;
+    show(n);
+    st = d<0 ? steps(slides[n]) : 0;
+    paintSteps(); paintNotes(); pushPres();
+  }
+  window.__pgdbg=()=>({slide:i+1,st,steps:steps(slides[i])});
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+    if(e.key==='Home'){show(0);} if(e.key==='End'){show(slides.length-1);}
+    if(e.key==='f'||e.key==='F'){e.preventDefault();toggleFS();}
+    if(e.key==='n'||e.key==='N'){
+      e.preventDefault();
+      np.hidden=!np.hidden;
+      document.body.classList.toggle('has-notes',!np.hidden);
+      if(!np.hidden) paintNotes();
+    }
+    if(e.key==='t'||e.key==='T'){e.preventDefault();timer(t0===null);}
+    if(e.key==='p'||e.key==='P'){e.preventDefault();openPres();}
+    if(e.key==='+'||e.key==='='){e.preventDefault();notesSize(1);}
+    if(e.key==='-'||e.key==='_'){e.preventDefault();notesSize(-1);}
+  });
+  // ── notes text size: + and - in either window, remembered between runs ──
+  let nsf=1; try{nsf=parseFloat(localStorage.getItem('notes-size'))||1;}catch(e){}
+  function applyNotesSize(){
+    document.documentElement.style.setProperty('--ns',(1.2*nsf).toFixed(3)+'rem');
+    if(pres&&!pres.closed) pres.document.documentElement.style.setProperty('--ns',(1.45*nsf).toFixed(3)+'rem');
+  }
+  function notesSize(d){
+    nsf=Math.min(2.2,Math.max(0.7,Math.round((nsf+d*0.1)*10)/10));
+    try{localStorage.setItem('notes-size',nsf);}catch(e){}
+    applyNotesSize();
+  }
+  // ── immersion: real full screen, and chrome that gets out of the way ──
+  function toggleFS(){
+    const d=document.documentElement;
+    if(document.fullscreenElement) document.exitFullscreen?.();
+    else d.requestFullscreen?.().catch(()=>{});
+  }
+  document.getElementById('fs').onclick=e=>{e.stopPropagation();toggleFS();};
+  const hud=document.getElementById('hud'), bar=document.querySelector('.bar'), keys=document.getElementById('keys');
+  let idle;
+  function wake(){
+    hud.classList.remove('away'); bar.classList.remove('away'); keys.classList.remove('away');
+    document.body.style.cursor='';
+    clearTimeout(idle);
+    idle=setTimeout(()=>{
+      hud.classList.add('away'); bar.classList.add('away'); keys.classList.add('away');
+      document.body.style.cursor='none';
+    }, 2600);
+  }
+  ['mousemove','keydown','touchstart','click'].forEach(ev=>
+    document.addEventListener(ev, wake, {passive:true}));
+  wake();
+  document.querySelector('.next').onclick=()=>go(1);
+  document.querySelector('.prev').onclick=()=>go(-1);
+  deck.addEventListener('click',e=>{
+    if(e.target.closest('.hud,.jump,.ix'))return;
+    if(!deckJump.panel.hidden){deckJump.close();return;}   // a click outside just dismisses the jump panel
+    go(e.clientX > innerWidth*0.5 ? 1 : -1);
+  });
+  let x0=null;
+  deck.addEventListener('touchstart',e=>x0=e.changedTouches[0].clientX,{passive:true});
+  deck.addEventListener('touchend',e=>{
+    if(x0===null)return; const dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>45) go(dx<0?1:-1); x0=null;
+  },{passive:true});
+  // Chromium will not decode a megabyte-scale data: URI on a media element -
+  // readyState stays 0 and nothing ever loads. The bytes ride in a script tag
+  // and become a blob URL here, which media elements do accept.
+  // ── presenter window ──────────────────────────────────────────────
+  // A second window she puts on the laptop while the deck is on the projector.
+  // Written straight into an about:blank popup rather than served from a URL,
+  // so it is same-origin and scriptable with no second file to keep in sync.
+  let pres=null;
+  function pushPres(){
+    if(!pres || pres.closed) return;
+    const d=pres.document, n=NOTES[i]; if(!n) return;
+    d.getElementById('cue').textContent=n.cue;
+    d.getElementById('pos').textContent=(i+1)+' / '+slides.length;
+    d.getElementById('body').innerHTML=renderNote(n,'');
+    d.getElementById('next').innerHTML = (i+1<HEADS.length && HEADS[i+1])
+      ? '<b>Next</b>'+esc(HEADS[i+1]) : '<b>Next</b>-';
+    d.getElementById('body').scrollTop=0;
+    presClock();
+  }
+  function presClock(){
+    if(!pres || pres.closed) return;
+    pres.document.getElementById('clock').textContent =
+      (t0===null) ? '00:00' : fmt(Date.now()-t0);
+  }
+  function openPres(){
+    if(pres && !pres.closed){ pres.focus(); return; }
+    pres = window.open('', 'deck-notes', 'width='+Math.min(screen.availWidth,1600)+',height='+screen.availHeight+',left=0,top=0');
+    if(!pres){ toast('Pop-up blocked - allow pop-ups for this page, or press N for the drawer.'); return; }
+    pres.document.write("<!doctype html><html><head><meta charset=\"utf-8\">\n<title>Speaker notes</title>\n<style>\n*{box-sizing:border-box}\nhtml,body{height:100%;margin:0}\nbody{background:#15120F;color:#F2EDE6;font:400 17px/1.55 -apple-system,\n     BlinkMacSystemFont,\"Segoe UI\",Helvetica,Arial,sans-serif;\n     display:flex;flex-direction:column;overflow:hidden}\n.bar{display:flex;align-items:baseline;gap:1.4rem;flex-wrap:wrap;\n     padding:.9rem 1.6rem .7rem;border-bottom:1px solid rgba(242,237,230,.14);\n     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;\n     letter-spacing:.1em}\n.cue{text-transform:uppercase;color:#FF8A5C}\n.clock{font-size:1.5rem;letter-spacing:.03em;font-variant-numeric:tabular-nums}\n.pos{color:rgba(242,237,230,.55)}\n.hint{margin-left:auto;color:rgba(242,237,230,.3);text-align:right}\nmain{flex:1;overflow-y:auto;padding:1.5rem 1.6rem 2rem}\nmain p{margin:0 0 1rem;max-width:52em;font-size:var(--ns,1.35rem);line-height:1.5}\nmain b.hl{font-weight:700;color:#fff}\n.ck.next{background:#5E9BFF;animation:ckp 1.3s ease-in-out infinite}\n.ck.done{background:rgba(242,237,230,.16);color:rgba(242,237,230,.55)}\n@keyframes ckp{50%{opacity:.55}}\n.go{display:flex;align-items:center;gap:.7rem;margin:1.4rem 0 0;color:rgba(242,237,230,.55);font-size:1rem}\n.go .ck{margin:0}\n\n.pos{cursor:pointer;border-bottom:1px dotted rgba(242,237,230,.4)}\n.jump[hidden]{display:none}\n.jump{position:fixed;left:1.6rem;right:1.6rem;top:3.6rem;bottom:1.2rem;z-index:20;display:flex;flex-direction:column;background:#1E1A16;color:#F2EDE6;border-radius:14px;box-shadow:0 1.4rem 3rem -1rem rgba(0,0,0,.7);overflow:hidden}\n.jump-bar{display:flex;gap:.8rem;align-items:center;padding:.8rem .9rem;border-bottom:1px solid rgba(242,237,230,.14)}\n.jump-bar input{width:7rem;font:inherit;font-size:1.2rem;padding:.45rem .6rem;border-radius:8px;border:1px solid rgba(242,237,230,.25);background:rgba(242,237,230,.06);color:#fff;outline:none}\n.jump-hint{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(242,237,230,.45)}\n.jump-list{overflow-y:auto;padding:.4rem}\n.jump-list .j{display:flex;gap:.8rem;align-items:baseline;width:100%;text-align:left;background:none;border:0;color:inherit;font:inherit;font-size:1.05rem;padding:.5rem .7rem;border-radius:8px;cursor:pointer}\n.jump-list .j:hover{background:rgba(242,237,230,.08)}\n.jump-list .j.on{background:rgba(255,77,109,.22)}\n.jump-list .j b{font-family:ui-monospace,Menlo,monospace;font-weight:400;font-size:.72rem;color:#FF8A5C;min-width:2.2ch;text-align:right}\n.peek{opacity:.32;margin-top:1.8rem;font-size:calc(var(--ns,1.6rem)*.78)!important;max-width:52em}\n.land{border-left:3px solid #FF4D6D;padding-left:1rem;font-weight:600}\n.land b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:.62rem;\n        letter-spacing:.2em;text-transform:uppercase;color:#FF6B85;\n        margin-bottom:.35rem;font-weight:400}\n.dir{color:rgba(242,237,230,.55);font-style:italic;font-size:calc(var(--ns,1.35rem)*.82)}\n.ck{display:inline-block;margin:0 .22em;padding:.14em .6em .18em;\n    border-radius:1em;background:#FF4D6D;color:#fff;\n    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;\n    letter-spacing:.14em;text-transform:uppercase;font-style:normal;\n    font-weight:700;white-space:nowrap;translate:0 -.1em}\n.next{border-top:1px solid rgba(242,237,230,.14);padding:.8rem 1.6rem 1rem;\n      font-size:.95rem;color:rgba(242,237,230,.5)}\n.next b{font-family:ui-monospace,Menlo,monospace;font-size:.62rem;\n        letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,230,.35);\n        display:block;margin-bottom:.25rem;font-weight:400}\n.nav{display:flex;gap:.6rem;padding:0 1.6rem 1.1rem}\n.nav button{flex:1;appearance:none;border:1px solid rgba(242,237,230,.2);\n  background:rgba(242,237,230,.05);color:#F2EDE6;border-radius:10px;\n  padding:.7rem;font-size:1rem;cursor:pointer}\n.nav button:hover{background:rgba(242,237,230,.12)}\n</style></head><body>\n<div class=\"bar\"><span class=\"cue\" id=\"cue\"></span>\n  <span class=\"clock\" id=\"clock\">00:00</span>\n  <span class=\"pos\" id=\"pos\"></span>\n  <span class=\"hint\">&#8592; &#8594; move the deck &middot; T timer &middot; + &minus; text size &middot; G or click the count to jump</span></div>\n<div class=\"jump\" id=\"jump\" hidden><div class=\"jump-bar\"><input id=\"jumpn\" type=\"number\" min=\"1\" inputmode=\"numeric\" placeholder=\"Slide #\"><span class=\"jump-hint\">Enter to go &middot; Esc to close</span></div><div class=\"jump-list\" id=\"jumplist\"></div></div>\n<main id=\"body\"></main>\n<div class=\"next\" id=\"next\"></div>\n<div class=\"nav\"><button id=\"prev\">&#8592; Back</button>\n  <button id=\"next-btn\">Next &#8594;</button></div>\n</body></html>");
+    pres.document.close();
+    const d=pres.document;
+    d.getElementById('prev').onclick=()=>go(-1);
+    d.getElementById('next-btn').onclick=()=>go(1);
+    d.addEventListener('keydown', e=>{
+      if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+      if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+      if(e.key==='t'||e.key==='T'){e.preventDefault();timer(t0===null);}
+      if(e.key==='p'||e.key==='P'){e.preventDefault();openPres();}
+      if(e.key==='+'||e.key==='='){e.preventDefault();notesSize(1);}
+      if(e.key==='-'||e.key==='_'){e.preventDefault();notesSize(-1);}
+    });
+    applyNotesSize();
+    const pj=wireJump(d); d.getElementById('pos').addEventListener('click',()=>pj.panel.hidden?pj.open():pj.close());
+    pres.addEventListener('beforeunload',()=>{pres=null;});
+    pushPres();
+  }
+  function toast(msg){
+    const el=document.createElement('div');
+    el.textContent=msg; el.className='toast';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 5200);
+  }
+  window.addEventListener('beforeunload',()=>{ if(pres&&!pres.closed) pres.close(); });
+
+  // One branch, two builds. The split build ships a filename map and the
+  // video just gets an src - the browser then fetches only the encode it can
+  // play, and only when the slide asks it to. The single-file build has no
+  // map, falls through, and decodes its base64 into a blob exactly as before.
+  const VSRC = (()=>{ const el=document.getElementById('vid-src');
+    try { return el ? JSON.parse(el.textContent) : null; } catch(e) { return null; } })();
+  document.querySelectorAll('video[data-vid]').forEach(v=>{
+    const webm = v.canPlayType('video/webm; codecs="vp9"');
+    const pick = webm ? ['webm','video/webm'] : ['mp4','video/mp4'];
+    if(VSRC && VSRC[v.dataset.vid]){
+      // Deliberately NOT calling play() here. preload='none' is pointless if
+      // something asks the video to start, and this loop runs for every clip
+      // in the deck at startup - which pulled 1.3MB before slide one had
+      // finished painting. show() already plays the videos on the slide she
+      // is actually on, and it runs after this, so a deep link still works.
+      v.preload='none';
+      v.src=VSRC[v.dataset.vid][pick[0]];
+      v.muted=true;
+      return;
+    }
+    const raw = document.getElementById(v.dataset.vid+'-'+pick[0]);
+    if(!raw) return;
+    const bin=atob(raw.textContent.trim());
+    const arr=new Uint8Array(bin.length);
+    for(let k=0;k<bin.length;k++) arr[k]=bin.charCodeAt(k);
+    v.src=URL.createObjectURL(new Blob([arr],{type:pick[1]}));
+    v.muted=true; v.play().catch(()=>{});
+    raw.remove();
+  });
+  // ── presenter notes ───────────────────────────────────────────────
+  // The full narrative per slide, straight from the script. Hidden until N,
+  // so the deck is still a deck; the clock is for practice runs.
+  const NOTES=[{"cue": "Open · 0:00", "paras": ["Hi everyone. Last week, at The AI Conference, I left a room with one piece of advice."]}, {"cue": "Open · 0:11", "paras": ["LAND: Strip the guardrails as the models earn it.", ">> [[CLICK]] The rails strip. Let them go in silence.", "And this week, the prompt I was given is..."]}, {"cue": "Open · 0:27", "paras": [">> Say nothing. Let the rails build back in. Wait for the laugh.", "So which is it? Strip them, or build them?"]}, {"cue": "Open · 0:39", "paras": ["Both. In that order. It's a full circle.", ">> The ring draws itself as the slide lands.", "LAND: You can't strip what you never built. And you shouldn't strip what you haven't tested.", "If you're shipping agents, you'll go around this circle more than once. Today, I'll take you around it once. Why agents break when they meet real users. How we built the guardrails, and how we validated them. And what we're stripping right now.", "All with Pomelli. It's a Google Labs experiment that helps small businesses create on-brand marketing. Here's a real run, sped up."]}, {"cue": "Open · 1:21", "paras": ["I give it a website, and it learns all about the business. We call that the Business DNA. Logo, fonts, colors, tone of voice, values.", "Then I ask the Pomelli Agent to shift the brand toward quality and materials, and it comes back with options.", "From there, a campaign. Then Photoshoot. I pick a product and a few templates, and it generates the shoot.", "I can bring a shot to life with Animate, and share it straight to Google Ads or Instagram."]}, {"cue": "The spectrum · 2:18", "paras": ["Now, a product framework I use a lot.", "When I design an AI-native product, I think about things along a spectrum. On one end is Do It With Me. This is where the user drives and AI helps. It's the most conservative side, and usually the user spells out exactly what they want done.", "On the other end is Do It For Me. This is where the user hands the whole thing over to the agent. Sometimes the agent might even proactively suggest what it should be doing, and then go ahead and complete it.", "And the extreme version of Do It For Me is a sentence I hear a lot: [[CLICK]] please just take care of all of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:23", "paras": ["And for a lot of tasks, that really is the goal. [[CLICK]] The tedious stuff, the clearly defined stuff, the things nobody wanted to do anyway. Set it and forget it.", "But not everything should be Do It For Me. I don't want to automate my whole life away. [[CLICK]] If your users enjoy the work, or they're learning and growing, they might want AI to amplify them. Not replace them.", "LAND: For those use cases, Do It With Me isn't a bad thing. It could be the point.", "And when a task [[CLICK]] isn't clearly defined yet, keep the user in the loop to fill in what's missing. Then keep building up that context, so there are fewer gaps the more someone uses your product."]}, {"cue": "The spectrum · 4:21", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions. That's what makes it feel [[CLICK]] magical.", "It's also exactly what makes it [[CLICK]] less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side. It's to pick your spot on purpose. A simple rule: the clearer the task, and the easier a mistake is to undo, the further right you can go.", "And the spot you pick on [[CLICK]] day one isn't where you'll stay. You move right as the models earn it. Every guardrail you strip is a step to the right."]}, {"cue": "The spectrum · 5:20", "paras": ["These days, I spend a lot of my time looking for ways to move right. But moving right doesn't mean the user stops checking in.", "[[CLICK]] A few months ago, a handful of check-ins finished a small task. [[CLICK]] Today, the same handful can finish an extra-large one.", "You saw it in the video. A few check-ins, and out came a brand, a campaign and a whole photoshoot."]}, {"cue": "The spectrum · 5:53", "paras": ["Two features from that video show how one product can live at more than one point on the spectrum.", "[[CLICK]] Photoshoot sits toward Do It With Me. A product photo in, professional studio and lifestyle shots out. Clear input, clear output.", "The [[CLICK]] Pomelli Agent, which we launched at I/O this year, is much more open-ended. You chat with it, upload docs and photos, and build your Business DNA together.", "Same product. Same users. Very different guardrails. So we've seen a lot of ways things can go right. And go wrong."]}, {"cue": "01 Why agents break · 6:36", "paras": ["So here are five ways agentic workflows break in production. We had to design Pomelli around all five.", "One, [[CLICK]] there's no guaranteed output. Two, [[CLICK]] errors compound. Three, [[CLICK]] your users do things you never planned for. Four, [[CLICK]] costs can get away from you. And five, [[CLICK]] the more open-ended the agent, the trickier all of this gets.", "And each of these gets [[CLICK]] worse as you move toward Do It For Me.", ">> Only keep \"We had to design Pomelli around all five\" if you're comfortable standing behind it. Fallback: \"We've run into all five.\""]}, {"cue": "01 Why agents break · 7:11", "paras": ["First, the output. Ask a model for the same thing twice, and you can get two different answers. So you need a clear picture of what done looks like. It comes down to two questions. Is it done? And is it good?", "The first one is objective. For Business DNA, we need fonts, colors, values and imagery. If anything's missing, it's not done.", "The second one is subjective. The values field can be filled in, and still be thin.", "And the output can let you down three ways. Sometimes [[CLICK]] it never arrives. If something's missing, the Pomelli Agent goes back to look for it. Try, check, try again. Left alone, it can keep looking.", "Sometimes it's [[CLICK]] the wrong shape. You ask for fields, you get a lovely paragraph. That's not done.", "And sometimes it's [[CLICK]] complete, but mediocre. That's not good.", "Nothing crashes. The loop just spins. The paragraph looks like an answer. The mediocre one looks done.", "LAND: [[CLICK]] If you don't define done, the agent will. And your users might disagree."]}, {"cue": "01 Why agents break · 8:31", "paras": ["That's one step. Now chain them together. Second, errors compound. Small errors don't cancel out. They accumulate.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates just a little, step three builds on it, and step four builds on that. And it's very confident while it does it.", "In Pomelli, that first link is Business DNA. Get the brand wrong there, and every photoshoot, campaign and website inherits it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, [[CLICK]] a ten step chain is right about 60 percent of the time. Napkin math, but the direction is right.", "And if you hand the whole thing to [[CLICK]] one agent that figures out the steps itself...", "LAND: The hand-offs don't go away. You just can't see them anymore."]}, {"cue": "01 Why agents break · 9:38", "paras": ["And that's with inputs you planned for. Third, your users. They will use your product in ways you didn't predict. It's not a question of if. It's a question of how creatively.", "Take Photoshoot. We designed it for product photos. [[CLICK]] But what happens when someone uploads a photo of their storefront? A screenshot of their website? One photo with six products in it?", "Those photos are [[CLICK]] out of distribution. The agent wasn't tested on every case, but it will still try its best. Sometimes with mixed results. Same in the agent chat. People ask it everything. Including, occasionally, help with a kid's science project.", "LAND: A normal app throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:32", "paras": ["All of that ends up on one bill. Fourth, cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's [[CLICK]] price per successful task. A cheap model that needs eight retries can cost more than a good one that gets it right the first time."]}, {"cue": "01 Why agents break · 11:22", "paras": ["And fifth, scope. This one makes the other four worse. The more open-ended your agent, the harder it is to make it work reliably.", "[[CLICK]] Photoshoot is narrow. Product photo in, photoshoot out.", "[[CLICK]] Now compare: build me a website, and keep improving it. That's wide open. Every extra degree of freedom is another place for it to wander.", "Today, our Websites feature is fairly templated. That's how we tamed it.", "So that's five ways agents break.", "LAND: [[CLICK]] Answer each one for your product, and you have the spec for your guardrails."]}, {"cue": "02 Build · 12:05", "paras": ["None of those five throws an error. So your guardrails have to. And your first guardrails aren't in the model. They're product decisions.", "[[CLICK]] First, scope. Decide what the feature does, and just as importantly, what it doesn't. Photoshoot takes a product photo and a set of templates. That narrowness is a guardrail. It shrinks what can go wrong before a single model call.", "[[CLICK]] Second, the interface. Where do I see what happened? Where can I step in? How do I undo it? Your first output won't always be the best one. That's okay if the user can finish the last ten percent. In Pomelli, every image can be regenerated or edited, and nothing gets shared until the person says so. Those are guardrails too. Your users just call them features.", "[[CLICK]] And then, the system underneath. Contracts, checks between steps, and a contained blast radius.", "LAND: [[CLICK]] Clever prompting gets you a demo. Product-grade engineering gets you to launch."]}, {"cue": "02 Build · 13:19", "paras": ["Next, contracts and exits.", "Every agent, and every step inside it, needs a [[CLICK]] contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an [[CLICK]] exit strategy. A loop cap. A time budget. A cost budget. And a fallback for when it hits one: retry, drop to something simpler, or hand back to the user for more context.", "We learned this on the Pomelli Agent. When it couldn't find something, it kept looking. So we shipped with a hard stop.", ">> Add \"at fifteen loops\" only once the number is confirmed.", "LAND: [[CLICK]] An agent with no exit never tells you it's stuck. It just keeps going. And you keep paying for it."]}, {"cue": "02 Build · 14:11", "paras": ["Remember that 60 percent? This is how you fight it. Every time a black box finishes its job, [[CLICK]] check the output before it feeds the next one. Catch the slip at step two, and step three never builds on it.", "Checks answer the same two questions. Hard rules ask: is it done? Semantic checks ask: is it good?", "Take [[CLICK]] Business DNA. Say one step reads a website and pulls out the brand. A hard rule: did we get colors, fonts and a logo? A semantic check: can every value point back to something the business actually gave us? If it can't, the agent made it up.", "Hard rules are cheap. Semantic checks often mean another model call, a model acting as a judge. That costs more time and more money.", "So you can [[CLICK]] check after every step. Or [[CLICK]] every third step: fewer checks and less latency, but more room for a silent miss. It's a dial. Set it by how much a mistake at that step costs you."]}, {"cue": "02 Build · 15:29", "paras": ["Here's what that looks like in a real feature. Let's look under the hood of Photoshoot.", "[[CLICK]] A user picks a product photo. [[CLICK]] We suggest templates that would work well for it. [[CLICK]] Then, one click, and we generate the full shoot. Here are six shots for a London eyewear brand, one per template.", "But every template hides its own set of decisions. Take [[CLICK]] In Use. What does in use actually mean? We work that out from your Business DNA. If you sell sunglasses, maybe it's on someone's face, or pushed up on their head. If you sell makeup, maybe it's in a purse, or applying lipstick.", "We could have exposed all of that as settings. But we really didn't want [[CLICK]] sixty-plus options in the interface. So those decisions happen behind the scenes, [[CLICK]] and each hand-off is a place we can check, before the next step builds on it.", "LAND: Before you add a setting, ask if your context already knows the answer."]}, {"cue": "02 Build · 16:44", "paras": ["Last piece: contain the blast radius. If something goes wrong, how much damage can it do? Picture the worst case, and protect for that. Three things.", "[[CLICK]] One. Give the agent only what the task needs. In Pomelli, that's your Business DNA, and likely the context of the feature you're using.", "[[CLICK]] Two. Sandbox where it operates. If your agent runs code, run it in a closed, isolated box. In Pomelli, everything the agent makes stays in Pomelli until a person chooses to share it.", "[[CLICK]] Three. Treat reads and writes differently. Reading is low risk. Writing, especially anything that leaves your product, is not. The test is simple: can the user undo it? Posting to Instagram or sending to Google Ads, not easily. So today, in Pomelli, the person initiates those.", "And if an agent shouldn't post, [[CLICK]] don't give it the ability to post.", "LAND: If it only lives in the prompt, it's not a guardrail. It's wishful thinking."]}, {"cue": "03 Validate · 17:58", "paras": ["So that's how we built it. Now, how do you know it's ready to launch? Well, this is where validation comes in, and it has two jobs.", "[[CLICK]] The first is the expected. When people use it the way you designed it, does it do what you expect? And is it actually good? That's quality, within distribution.", "[[CLICK]] The second job is the unexpected. When someone tries something weird, does the damage stay inside the blast radius? That's misuse, or something out of distribution.", "For a marketing product, [[CLICK]] skipping job two looks like an ad promising a sale the business never offered."]}, {"cue": "03 Validate · 18:46", "paras": ["For job one, the expected, you [[CLICK]] hill climb on quality. Build a set of examples of what good looks like. Make it look like your real users. A bakery. A law firm. A shop with a terrible website. Measure against it, improve, repeat.", "For job two, the unexpected, you [[CLICK]] red team. That can be people on your team, or contractors who do this for a living. Give them a sandboxed version, and let them break it in unconstrained ways. Don't hand them a script.", "What you can hand them is goals. Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Then step back. You'll be amazed, and probably a little horrified, by how creative people truly are."]}, {"cue": "03 Validate · 19:50", "paras": ["Then you run the loop.", "As people [[CLICK]] break your agent, you collect their trajectories, the full record of what it did. You group them into [[CLICK]] buckets of behavior, and add a [[CLICK]] guardrail for each bucket.", "Then, and this is the part people sometimes skip, you [[CLICK]] re-run your quality evals. Make sure the new guardrails didn't quietly break what was working.", "Now, why buckets? Because at scale, you can't fix failures one at a time. You have to fix the kind of failure. Say a red teamer gets the agent to write that flash sale. [[CLICK]] The point fix is to block the phrase fifty percent off. The root cause is that the agent invents offers the business never made.", "LAND: Fix the root cause, and you fix the failures you haven't seen yet.", "And the loop doesn't stop at launch. That's where at scale really starts. Once you launch, your users keep voting. A regenerate is a vote. An edit is a vote. Walking away is a vote. Feed those signals back in. Good enough is a judgment call. Make it, and own it.", ">> Framed as advice. Only say Pomelli does this if it does."]}, {"cue": "04 Strip · 21:15", "paras": ["Which brings me back to where I started. We launched Pomelli with a lot of these guardrails. They were right for the models we had. Now the models are earning more, and we want Pomelli to feel agent-native. So we're asking which guardrails to strip.", "[[CLICK]] The Pomelli Agent we launched at I/O does a fraction of what we think it should. [[CLICK]] Websites is templated today, and we want to move it right. [[CLICK]] And we're rethinking the check-ins we designed, as agents get better at the work.", "So how do you know a model has earned it? Stripping a guardrail is a launch too. [[CLICK]] Turn it off in testing. Re-run your quality evals and your red team goals. If the failure doesn't come back, strip it. If it does, it stays.", "LAND: [[CLICK]] When you build a guardrail, write down the test that lets you strip it."]}, {"cue": "04 Strip · 22:23", "paras": ["So, three things to take with you.", "[[CLICK]] Build the guardrails. Pick your spot on the spectrum, on purpose. Then design for failure. Contracts and exits. Checks between steps. A contained blast radius.", "[[CLICK]] Validate them. Hill climb the expected. Red team the unexpected.", "LAND: [[CLICK]] Then strip them as the models earn it.", ">> Two-second beat.", "[[CLICK]] Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Pomelli in action", "Do It With Me / Do It For Me", "Not everything should be Do It For Me", "Magic and risk", "Same check-ins, bigger job", "Pomelli on the spectrum", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost", "Scope", "Guardrails are product decisions", "Contracts and exits", "Check between steps", "Decisions underneath", "Contain the blast radius", "How do you know it's ready?", "Hill climb, then red team", "The loop", "What we're stripping now", "Thank you"];
+  const np=document.getElementById('np'), npb=document.getElementById('npbody'),
+        npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
+        npk=document.getElementById('npclock');
+  let t0=null, tick=null;
+  const fmt=ms=>{const s=Math.floor(ms/1000);
+    return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+  function clock(){
+    if(t0!==null) npk.textContent=fmt(Date.now()-t0);
+    presClock();
+  }
+  function timer(on){
+    clearInterval(tick);
+    if(on){ t0=Date.now(); tick=setInterval(clock,250); clock(); }
+    else { t0=null; npk.textContent='00:00'; presClock(); }
+  }
+  function paintNotes(){
+    const n=NOTES[i]; if(!n) return;
+    npc.textContent=n.cue;
+    npn.textContent = i+1<HEADS.length && HEADS[i+1] ? 'Next: '+HEADS[i+1] : '';
+    npb.innerHTML = renderNote(n,'np-');
+  }
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  // ── the click cue lives IN the sentence ───────────────────────────
+  // A cue parked at the top of a note is useless by the time she is three
+  // lines in. [[CLICK]] in notes.py is written at the exact word she should
+  // click on, and becomes an inline pill here. Function declaration, not a
+  // const, because pushPres() calls it from higher up the file.
+  function renderNote(n, P){
+    let k=0;
+    const bold=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b class="hl">$1</b>');
+    const mark=t=>bold(t).replace(/\[\[CLICK\]\]/g,()=>{
+      k++; const c=k<=st?'ck done':(k===st+1?'ck next':'ck'); return '<i class="'+c+'">click</i>';
+    });
+    const body=n.paras.map(p=>{
+      if(p.startsWith('LAND: '))
+        return '<p class="'+P+'land"><b>Land this</b>'+mark(p.slice(6))+'</p>';
+      if(p.startsWith('>> '))
+        return '<p class="'+P+'dir">'+mark(p.slice(3))+'</p>';
+      return '<p>'+mark(p)+'</p>';
+    }).join('');
+    const pending = st < Math.min(k, steps(slides[i]));
+    const what = pending ? null : (i+1<slides.length ? 'next slide' : null);
+    return body + (what ? '<p class="'+P+'go"><i class="ck next">click</i><span>'+what+'</span></p>' : '');
+  }
+  applyNotesSize();
+  // ── jump to a slide ───────────────────────────────────────────────
+  // Click the counter (or press G) in either window: type a number and
+  // press Enter, or pick a slide from the list. Lands on its first page.
+  function slideLabel(k){
+    const el=slides[k].querySelector('h2,.q,.cap,.tl-name');
+    return ((HEADS[k]||'')||(el?el.textContent:'')).replace(/\s+/g,' ').trim().slice(0,64);
+  }
+  function jumpList(){
+    return slides.map((s,k)=>'<button class="j'+(k===i?' on':'')+'" data-n="'+(k+1)+'"><b>'+(k+1)+'</b><span>'+esc(slideLabel(k))+'</span></button>').join('');
+  }
+  function goSlide(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    show(n); st=0; paintSteps(); paintNotes(); pushPres();
+  }
+  function wireJump(doc){
+    const panel=doc.getElementById('jump'), list=doc.getElementById('jumplist'), inp=doc.getElementById('jumpn');
+    const open=()=>{ list.innerHTML=jumpList(); panel.hidden=false; inp.value=''; inp.focus();
+      const on=list.querySelector('.on'); if(on) on.scrollIntoView({block:'center'}); };
+    const close=()=>{ panel.hidden=true; inp.blur(); };
+    const goTo=v=>{ const n=parseInt(v,10); if(Number.isFinite(n)) goSlide(n-1); close(); };
+    list.addEventListener('click',e=>{ const b=e.target.closest('.j'); if(b){ e.stopPropagation(); goTo(b.dataset.n); } });
+    inp.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Enter') goTo(inp.value); if(e.key==='Escape') close(); });
+    panel.addEventListener('click',e=>e.stopPropagation());
+    doc.addEventListener('click',e=>{ if(!panel.hidden && !e.target.closest('.jump,.count,.pos')) close(); });
+    doc.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!panel.hidden) close(); if((e.key==='g'||e.key==='G')&&doc.activeElement!==inp){ e.preventDefault(); panel.hidden?open():close(); } });
+    return {open,close,panel};
+  }
+  window.__goSlide=goSlide; window.__curSlide=()=>i;
+  const deckJump=wireJump(document);
+  document.querySelector('.count').addEventListener('click',e=>{ e.stopPropagation(); deckJump.panel.hidden?deckJump.open():deckJump.close(); });
+  const start=parseInt(location.hash.slice(1),10);
+  show(Number.isFinite(start)&&start>0?start-1:0);
+  st=0; paintSteps();
+})();
+</script>
+<script>/* Slide behaviours that go beyond show/hide. The kit engine fires a `deckstep`
+   event on every slide change and build; everything here keys off the slide
+   that is on and its step. Interactive controls carry .ix so a click on them
+   never advances the deck. */
+(function(){
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const cur=()=>$('.s.on');
+
+  // keep sliders from stealing the arrow keys after a drag
+  document.addEventListener('pointerup',e=>{ if(e.target.matches('input[type=range]')) e.target.blur(); });
+  $$('.ix').forEach(el=>{ ['click','pointerdown','touchstart'].forEach(ev=>el.addEventListener(ev,e=>e.stopPropagation(),{passive:true})); });
+
+  // ── 06 · magic and risk: a handle you can drag along the spectrum ──────
+  const here=$('#here'), vline=$('#vline');
+  function yAt(path,x){ // sample the bezier for the y at a given x (viewBox units)
+    const L=path.getTotalLength(); let lo=0,hi=L;
+    for(let k=0;k<24;k++){ const m=(lo+hi)/2; (path.getPointAtLength(m).x<x?lo=m:hi=m); }
+    return path.getPointAtLength(lo).y;
+  }
+  function paintHere(){
+    if(!here) return;
+    const v=+here.value, x=v*10;
+    const m=Math.round((220-yAt($('#cM'),x))/2.06), r=Math.round((220-yAt($('#cR'),x))/2.06);
+    $('#rdM').textContent=Math.max(0,m)+'%'; $('#rdR').textContent=Math.max(0,r)+'%';
+    vline.style.left=`calc(6.2cqw + ${v/100} * 87.6cqw)`;
+  }
+  here&&here.addEventListener('input',paintHere);
+
+  // ── 09 · the loop counter runs to the cap ──────────────────────────────
+  let loopT=null;
+  function runLoop(on){
+    const el=$('#loopc'); if(!el) return; clearInterval(loopT);
+    const cap=el.querySelector('small');
+    if(!on){ el.firstChild.nodeValue='0'; cap.style.opacity=0; return; }
+    // no cap here - this slide is the problem; the cap shows up later, as the guardrail
+    let n=0; cap.style.opacity=1;
+    loopT=setInterval(()=>{ n++; el.firstChild.nodeValue=String(n); if(n>=99) clearInterval(loopT); },140);
+  }
+
+  // ── 10 · errors compound: a live chain ──────────────────────────────────
+  const chain=$('#chain'), cpA=$('#cpA'), cpN=$('#cpN');
+  let lit=false, litT=[];
+  function drawChain(){
+    if(!chain) return;
+    const n=+cpN.value, a=+cpA.value/100;
+    $('#cpAv').textContent=(+cpA.value)+'%'; $('#cpNv').textContent=n;
+    let h='';
+    for(let k=0;k<n;k++){
+      const x=n===1?50:(k/(n-1))*100;
+      if(k<n-1){ const x2=((k+1)/(n-1))*100; h+=`<span class="ln" style="left:${x}%;width:${x2-x}%"></span>`; }
+      h+=`<span class="n" style="left:${x}%">${k+1}</span>`;
+      if(n<=12) h+=`<span class="pc" style="left:${x}%">${(Math.pow(a,k+1)*100).toFixed(0)}%</span>`;
+    }
+    chain.innerHTML=h;
+    if(lit){ $$('.n',chain).forEach((el,k)=>{ el.classList.add('lit'); if(k===n-1) el.classList.add('bad'); }); setBig(Math.pow(a,n), n, a); }
+    else setBig(a,1,a);
+  }
+  function setBig(p,n,a){
+    $('#cpV').textContent=Math.round(p*100)+'%';
+    $('#cpL').textContent = n===1 ? 'right at every step' : `chance the whole ${n}-step chain is right, at ${(a*100).toFixed(a*100%1?1:0)}% per step`;
+  }
+  function lightChain(){
+    litT.forEach(clearTimeout); litT=[];
+    const n=+cpN.value, a=+cpA.value/100, nodes=$$('.n',chain);
+    nodes.forEach((el,k)=>litT.push(setTimeout(()=>{
+      el.classList.add('lit'); if(k===n-1) el.classList.add('bad');
+      setBig(Math.pow(a,k+1), k+1, a);
+    }, 160*k+150)));
+    litT.push(setTimeout(()=>{lit=true;}, 160*n+200));
+  }
+  cpA&&cpA.addEventListener('input',drawChain); cpN&&cpN.addEventListener('input',drawChain);
+
+  // ── 16 · checkpoints and the every-step / every-third dial ─────────────
+  const pipe=$('#pipe'); let every=1;
+  function drawPipe(){
+    if(!pipe) return;
+    const B=6; let h='';
+    for(let k=0;k<B;k++){
+      const x=(k/(B-1))*100;
+      if(k<B-1){ const x2=((k+1)/(B-1))*100; h+=`<span class="ar" style="left:${x}%;width:${x2-x}%"></span>`; }
+      h+=`<span class="bx" style="left:${x}%">step ${k+1}</span>`;
+      if(k<B-1){ const on=((k+1)%every===0); h+=`<span class="ck${on?'':' off'}" data-step="1" style="left:${(x+((k+1)/(B-1))*100)/2}%"><span>&#10003;</span></span>`; }
+    }
+    pipe.innerHTML=h;
+    const checks=Math.floor((B-1)/every);
+    $('#mChecks').textContent=checks; $('#mChecks').nextSibling && ($('#mChecks').nextSibling.nodeValue = checks===1?'check':'checks'); $('#mLat').textContent='+'+checks; $('#mLat').nextSibling && ($('#mLat').nextSibling.nodeValue = checks===1?'judge call of latency':'judge calls of latency'); $('#mRisk').textContent= every===1?'low':'higher';
+  }
+  $$('#seg button').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation(); every=+b.dataset.every;
+    $$('#seg button').forEach(x=>x.classList.toggle('on',x===b));
+    drawPipe(); syncPipe();
+  }));
+  function syncPipe(){ const s=cur(); const st=s?+(s.dataset.st||0):0;
+    $$('.ck',pipe).forEach(el=>el.classList.toggle('shown', st>=1)); }
+
+  // ── 17 · walkthrough steps follow the video ────────────────────────────
+  // chapter labels follow their video
+  [['#walk','.s-walk .vt'],['#tour','.s-tour .vt']].forEach(([v,sel])=>{
+    const vid=$(v); if(!vid) return;
+    vid.addEventListener('timeupdate',()=>{
+      const t=vid.currentTime;
+      $$(sel).forEach(el=>{ const [a,b]=el.dataset.vt.split('-').map(Number); const on=t>=a && t<b; el.classList.toggle('cur', on);
+        if(on && el.dataset.l){ const n=$('#tourN'), l=$('#tourL'); if(l.textContent!==el.dataset.l){ n.textContent=el.dataset.n; l.textContent=el.dataset.l; } } });
+    });
+  });
+
+  // ── Photoshoot: 60+ options count down to one click ───────────────────
+  let t61=null;
+  function run61(on){
+    const b=$('#c61'), l=$('#c61l'), box=b&&b.closest('.count61'); if(!b) return; clearInterval(t61);
+    if(!on){ b.textContent='60+'; l.textContent='options in the interface'; box.classList.remove('one'); return; }
+    if(document.body.classList.contains('snap')){ b.textContent='1'; l.textContent='click for the user'; box.classList.add('one'); return; }
+    let n=60; b.textContent='60+'; l.textContent='options in the interface'; box.classList.remove('one');
+    setTimeout(()=>{ t61=setInterval(()=>{ n-=Math.max(1,Math.round(n/9)); if(n<=1){ n=1; clearInterval(t61);
+      l.textContent='click for the user'; box.classList.add('one'); } b.textContent=String(n); },70); },1100);
+  }
+  // ── step dispatcher ────────────────────────────────────────────────────
+  let lastSlide=null;
+  document.addEventListener('deckstep',e=>{
+    const {i,st}=e.detail, s=cur(); if(!s) return;
+    s.dataset.st=st;
+    const fresh = s!==lastSlide; lastSlide=s;
+    if(s.classList.contains('s-mr') && fresh) paintHere();
+    if(s.classList.contains('s-out')) runLoop(st>=1);
+    if(s.classList.contains('s-chain')){
+      if(fresh){ litT.forEach(clearTimeout); litT=[]; lit=false; drawChain(); }
+      if(st>=1 && !lit && !litT.length) lightChain();
+      if(st===0){ litT.forEach(clearTimeout); litT=[]; lit=false; drawChain(); }
+    }
+    if(s.classList.contains('s-under')) run61(st>=5);
+    if(s.classList.contains('s-check')){
+      // click 4 flips the dial on its own - she can't reach the toggle on stage
+      const want = st>=4 ? 3 : 1;
+      if(fresh || want!==every){ every=want; $$('#seg button').forEach(x=>x.classList.toggle('on', +x.dataset.every===every)); drawPipe(); }
+      syncPipe();
+    }
+  });
+  drawChain(); drawPipe(); paintHere();
+
+  // ── debug: ?steps=N fires N forward presses after load (for screenshots) ─
+  const q=new URLSearchParams(location.search), n=+q.get('steps');
+  if(q.has('steps')) document.body.classList.add('snap');
+  if(q.has('clean')) document.body.classList.add('clean');
+  if(n>0) setTimeout(()=>{ for(let k=0;k<n;k++) document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight'})); },300);
+
+  // ── grid view: every slide as a live thumbnail, fully built ────────────
+  // Thumbnails are clones of the real sections, so they always match the deck.
+  // The clone drops the class "s" (the engine counts every .s as a slide) and
+  // every id (so nothing here steals a getElementById from the real slide).
+  const ov=document.createElement('div'); ov.className='grid-ov'; ov.setAttribute('aria-hidden','true');
+  ov.innerHTML='<div class="gh"><span>All slides</span><span class="lab">Click a slide &middot; arrows + Enter &middot; Esc to close</span></div><div class="gg"></div>';
+  document.body.appendChild(ov);
+  const gg=ov.querySelector('.gg'); let gsel=0;
+  const real=()=>[...document.querySelectorAll('#deck > section.s')];
+  function openGrid(){
+    const secs=real(), cur=window.__curSlide?window.__curSlide():0; gsel=cur;
+    gg.innerHTML='';
+    secs.forEach((sec,k)=>{
+      const t=document.createElement('button'); t.className='gtile'+(k===cur?' cur':''); t.type='button';
+      const c=sec.cloneNode(true);
+      c.classList.remove('s','on'); c.classList.add('gs'); c.removeAttribute('data-st');
+      c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      c.querySelectorAll('video').forEach(v=>{ const im=document.createElement('img'); im.src=v.getAttribute('poster')||''; im.className='vposter'; v.replaceWith(im); });
+      c.querySelectorAll('input').forEach(e=>e.remove());
+      t.appendChild(c);
+      const n=document.createElement('span'); n.className='gnum'; n.textContent=k+1; t.appendChild(n);
+      t.addEventListener('click',e=>{ e.stopPropagation(); closeGrid(); window.__goSlide(k); });
+      gg.appendChild(t);
+    });
+    ov.classList.add('on'); ov.setAttribute('aria-hidden','false');
+    const c=gg.children[cur]; c&&c.scrollIntoView({block:'center'});
+  }
+  function closeGrid(){ ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); gg.innerHTML=''; }
+  function mark(){ [...gg.children].forEach((t,k)=>t.classList.toggle('sel',k===gsel)); gg.children[gsel]&&gg.children[gsel].scrollIntoView({block:'nearest'}); }
+  document.addEventListener('keydown',e=>{
+    const on=ov.classList.contains('on');
+    if(!on && (e.key==='o'||e.key==='O') && !e.target.matches('input,textarea')){ e.preventDefault(); e.stopImmediatePropagation(); openGrid(); return; }
+    if(!on) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    const cols=Math.max(1,Math.round(gg.clientWidth/(gg.children[0]?gg.children[0].offsetWidth+22:300)));
+    if(e.key==='Escape'||e.key==='o'||e.key==='O') closeGrid();
+    else if(e.key==='ArrowRight'){ gsel=Math.min(gg.children.length-1,gsel+1); mark(); }
+    else if(e.key==='ArrowLeft'){ gsel=Math.max(0,gsel-1); mark(); }
+    else if(e.key==='ArrowDown'){ gsel=Math.min(gg.children.length-1,gsel+cols); mark(); }
+    else if(e.key==='ArrowUp'){ gsel=Math.max(0,gsel-cols); mark(); }
+    else if(e.key==='Enter'){ const k=gsel; closeGrid(); window.__goSlide(k); }
+  },true);
+  const gb=document.getElementById('gridbtn');
+  gb&&gb.addEventListener('click',e=>{ e.stopPropagation(); ov.classList.contains('on')?closeGrid():openGrid(); });
+  ov.addEventListener('click',e=>{ if(e.target===ov) closeGrid(); });
+  if(q.has('grid')) setTimeout(openGrid,400);
+})();
+</script>
+</body>
+</html>
