@@ -27,7 +27,7 @@
   --line:rgba(255,255,255,.12);
   --blue:#4F7FFE; --blue-2:#8FB0FF; --cyan:#56D3D0; --green:#5FB98A;
   --gold:#F2C230; --orange:#E8722A; --red:#E0533F;
-  --magic:linear-gradient(90deg,#4F7FFE,#56D3D0);
+  --magic:linear-gradient(90deg,#4F7FFE,#8FB0FF);
   --risk:linear-gradient(90deg,#F2C230,#E8722A,#E0533F);
   --aura:linear-gradient(90deg,#4F7FFE 0%,#56D3D0 40%,#F2C230 72%,#E8722A 100%);
   --face:"Google Sans","Google Sans Text",-apple-system,"Helvetica Neue",Arial,sans-serif;
@@ -1050,7 +1050,7 @@ html.vt .s,html.vt .s.on{transition:none}
 :is(.s,.gs) .frame>h2.h:not(.fc-h){top:6.6cqw;left:6.2cqw;font-size:4.2cqw;line-height:1.08;max-width:80cqw}
 :is(.s,.gs):not(.s-div) .k{display:none}
 :is(.s,.gs) .frame>p.land{left:6.2cqw;right:6.2cqw;bottom:4.4cqw;top:auto;max-width:none;font-size:2.1cqw;line-height:1.28;font-weight:500}
-.s-loop .frame>p.land{right:auto;max-width:48cqw}
+
 .brsub{top:12.4cqw}
 
 /* hairline vocabulary: ideas are type with a rule above, not boxes */
@@ -1105,11 +1105,16 @@ html.vt .s,html.vt .s.on{transition:none}
 .dv4 .dvs{transform:none;filter:hue-rotate(165deg) saturate(1.3)}
 
 /* ── stage 1: the guardrails. The close mirrors slide 2 exactly ── */
-.clp.c1,.clp.c2{left:6.2cqw;margin:0;font-size:2.8cqw;font-weight:500;letter-spacing:-.02em;line-height:1.1;transition:color .6s var(--e-micro)}
-.clp.c1{top:5.6cqw}.clp.c2{top:9.4cqw}
+/* the close replays the opening: "Build the guardrails." lands in slide 3's place and size,
+   lifts into the headline slot as "Validate them." joins it, then "Then strip them..." takes slide 2's place */
+.clp.c1{left:6.2cqw;right:6.2cqw;top:15cqw;margin:0;font-size:6.6cqw;line-height:1.02;font-weight:500;letter-spacing:-.035em;
+  transition:top .9s var(--e-big),font-size .9s var(--e-big),letter-spacing .9s var(--e-big),color .6s var(--e-micro)}
+.clp.c1:has(.c2.shown){top:6.6cqw;font-size:4.2cqw;letter-spacing:-.02em}
+.clp.c1 .c2{transition:opacity .6s var(--e-micro) .55s}
 .dim2{left:0;top:0;width:0;height:0}
-.dim2.shown~.clp.c1,.dim2.shown~.clp.c2{color:var(--ink-3)}
-.s-close .bye{left:auto;right:6.2cqw;bottom:4.4cqw}
+.dim2.shown~.clp.c1{color:var(--ink-3)}
+.s-close .bye{left:6.2cqw;right:6.2cqw;bottom:6.2cqw;justify-content:space-between;align-items:flex-end}
+.s-close .bye .t{font-size:3.4cqw}
 
 /* ── content zone: everything starts at 18.5 ── */
 .twoq,.fails{top:18.5cqw}
@@ -1171,6 +1176,127 @@ html.vt .s,html.vt .s.on{transition:none}
 
 /* grid thumbnails are clones (class gs, not s): same system, no finale text over the content */
 .gtile .finale,.gtile .dimall{display:none!important}
+
+/* ════════════════════════════════════════════════════════════════════
+   REVIEW PASS - the second half of the system (see DESIGN.md)
+   ════════════════════════════════════════════════════════════════════ */
+/* colour: one phrase per headline, in its section's colour */
+.hs{background:linear-gradient(90deg,#F6A673,#E8722A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hv{background:linear-gradient(90deg,#56D3D0,#9BE7E5);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* land lines: one place (6.2 off the bottom, like the side margins), grey with the punch in white */
+:is(.s,.gs) .frame>p.land{margin:0;bottom:6.2cqw;color:var(--ink-2)}
+:is(.s,.gs) .frame>p.land :is(.hl,.hm,.hr,.hs,.hv){background:none;color:#fff}
+.s-fc .frame>p.land{color:#fff}
+.dial{bottom:6.2cqw!important}
+.s-tour .src{margin:0}
+
+/* labels: tracked caps for words, mono only for numerals, never boxed */
+.jobs .n,.dnaex .m,.dnaex .m.sem{font-family:var(--face);font-size:1cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.fails .tag,.fails .tag.g{border:0!important;padding:0!important;border-radius:0;background:none;font-size:1cqw;letter-spacing:.14em;color:#F6A673!important}
+.goal i{border:0!important;padding:0!important;font-family:var(--mono);font-size:1.1cqw;color:var(--ink-3)!important}
+/* column titles: one size */
+.five .t,.moves .t,.jobs .t,.tier .t,.exits2 b,.bucket .t{font-size:2.4cqw}
+/* hairlines sit above items, everywhere */
+.fails>div,.tolls>div,.big3>div{border-bottom:0!important;border-top:.2cqw solid rgba(255,255,255,.22);padding:1.2cqw 0 0!important}
+/* the second column always starts at 52 */
+.fails{left:52cqw}
+.s-cost .ppt{left:52cqw!important;right:6.2cqw;width:auto!important}
+.jobs{gap:1.4cqw 4cqw!important}
+/* nothing smaller than 1.15 that has to be read */
+.chain .pc{font-size:1.15cqw}
+.pipe .bx{font-size:1.2cqw}
+.shots6 figcaption{font-size:1.15cqw}
+.ce .port,.ce .s2{font-size:19px}
+.hill text{font-size:20px}
+
+/* the ring: unlit nodes are dimmed in place, so the arc never shows through a label */
+.s-div .dring .node{opacity:1!important}
+.s-div .dring .node circle{fill:#151A24!important;stroke-opacity:.3}
+.s-div .dring .node text{fill-opacity:.3}
+.dv2 .dring .n-b circle{fill:color-mix(in srgb,#4F7FFE 18%,#151A24)!important;stroke-opacity:1}
+.dv3 .dring .n-v circle{fill:color-mix(in srgb,#56D3D0 16%,#151A24)!important;stroke-opacity:1}
+.dv4 .dring .n-s circle{fill:color-mix(in srgb,#E8722A 16%,#151A24)!important;stroke-opacity:1}
+.dv2 .dring .n-b text,.dv3 .dring .n-v text,.dv4 .dring .n-s text{fill-opacity:1}
+/* divider swoosh: only the body takes the section tint; the rainbow edge is the same on all four */
+.s-div .dvs{filter:none!important;transform:none!important}
+.dv1 .dvs .dvb{filter:grayscale(1) sepia(1) saturate(5) hue-rotate(-38deg) brightness(.92)}
+.dv3 .dvs .dvb{filter:hue-rotate(-40deg) saturate(1.1)}
+.dv4 .dvs .dvb{filter:hue-rotate(165deg) saturate(1.3)}
+
+/* the spectrum: one marker - the knob - wherever something sits on the rail */
+.dayone::before{width:2.6cqw!important;height:2.6cqw!important;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 3cqw rgba(143,176,255,.8)!important}
+.mark .dot{width:2.6cqw;height:2.6cqw;box-shadow:0 0 0 .5cqw rgba(255,255,255,.12),0 0 3cqw rgba(255,255,255,.55)}
+.s-pspec .pm.mark{top:18.5cqw;height:26.05cqw}
+.s-pspec .pm .card{height:14.4cqw;box-sizing:border-box}
+.pill.pw{border-color:rgba(79,127,254,.65);color:#8FB0FF}
+.pill.pf{border-color:rgba(232,114,42,.65);color:#F6A673}
+.s-mr .mr{height:24.75cqw}
+/* 9: check-ins drawn like the chain - square nodes on a thin neutral line, not a second spectrum */
+.xb{height:.18cqw;top:5.6cqw;border-radius:0;background:rgba(255,255,255,.3)!important;box-shadow:none!important}
+.xb.xlg{background:rgba(255,255,255,.65)!important}
+.xb i{width:3.2cqw;height:3.2cqw;border-radius:.8cqw;background:#151A24;border:.18cqw solid rgba(255,255,255,.45);box-shadow:none;box-sizing:border-box}
+.xb.xlg i{border-color:#fff}
+.xr.shown .xb.xlg{animation:xlgrow 1.6s var(--e-big) both}
+@keyframes xlgrow{from{clip-path:inset(-3cqw 100% -3cqw -3cqw)}to{clip-path:inset(-3cqw -3cqw -3cqw -3cqw)}}
+.xr.r2 .lab{color:#fff}
+
+/* colour meanings */
+.dwm .stay{border-top-color:var(--blue)!important}.dwm .stay li::before{background:var(--blue)}.dwm .stay .lab{color:#8FB0FF!important}
+.tier li::before{background:var(--blue)!important}
+.s-five .ic .a{stroke:var(--orange)}
+.ppt .good i{background:var(--blue)}
+.striptest b{color:#F6A673!important}
+
+/* 4: the statement stays the size of slides 2 and 3 */
+.s-fc .fc-h{top:15cqw;left:6.2cqw;font-size:5.8cqw;line-height:1.04;letter-spacing:-.035em;max-width:52cqw;text-wrap:wrap}
+/* 12: icon, then title right under it, all titles on one line */
+.five>div{height:auto!important}
+.five .ic{margin:1.2cqw 0 0!important}
+.five .t{margin-top:1.2cqw!important;line-height:1.1}
+/* 13 */
+.twoq b{font-size:3cqw}
+.fails>div{grid-template-columns:7cqw 1fr}
+.fails .spin{width:3.4cqw;height:3.4cqw}
+/* 14: the one-agent box shares the 60%'s top line */
+.agentnode{top:18.5cqw!important}
+/* 15: the stamp becomes a label on an orange rule across the three surprises */
+.ood{left:28.4cqw!important;right:6.2cqw!important;width:auto!important;top:41.4cqw!important;rotate:0deg!important;translate:none!important;
+  border:0!important;border-top:.2cqw solid var(--orange)!important;border-radius:0!important;padding:.8cqw 0 0!important;background:none!important;
+  box-shadow:none!important;text-shadow:none!important;text-align:left!important;font-size:1.1cqw!important;font-weight:500;letter-spacing:.14em!important;
+  text-transform:uppercase;color:#F6A673!important}
+.ood.shown{animation:none!important}
+.s-users .ic{stroke-width:2.4}
+/* 17: circles on the margins, sharing a centre line */
+.s-scope .scope2 .c2{right:0!important;top:0!important}
+.s-scope .scope2 .c1{left:0!important;top:5.5cqw!important}
+/* 21 */
+.dnaex{top:28.6cqw!important;width:auto!important;right:6.2cqw!important}
+/* 22: plain type for the count; the cards fit their images */
+.count61,.count61.one{background:none!important;border:0!important;padding:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.rowa{grid-template-columns:auto 3.2cqw auto 3.2cqw 1fr!important;height:8cqw!important}
+.rowa .pc{min-width:13.5cqw}
+.rowa .pc .ptpl{height:4.8cqw;width:auto;flex:none;object-fit:contain}
+.rowa .pin{width:4.8cqw!important}
+.shots6{top:28cqw!important}
+.shots6 img{height:7.6cqw!important}
+.s-under .tree{top:38.6cqw!important}
+/* 25: the ad sits under job 02 as a real ad */
+.s-pg .oops{left:52cqw!important;right:auto!important;width:30cqw!important;top:31cqw!important;bottom:auto!important;display:block!important;
+  rotate:0deg!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.s-pg .oops .lab{display:block;margin-bottom:.9cqw}
+.s-pg .oops .adcard{padding:1.4cqw 1.8cqw;border-radius:1cqw}
+.s-pg .oops .why{display:block;margin-top:.8cqw!important;font-size:1.3cqw;color:var(--ink-2)}
+/* 26 */
+.hill{top:18.5cqw!important;height:25cqw!important}
+/* 27: loop first (left), the example second (right), land line full width */
+.loop{left:6.2cqw!important;right:auto!important;top:18.5cqw!important;width:25.5cqw!important;height:25.5cqw!important}
+.bucket{left:52cqw!important;right:6.2cqw!important;width:auto!important;top:18.5cqw!important}
+.loop .orbit{stroke-width:6.5}
+.loop .node circle{stroke-width:4}
+.loop .node text{font-size:31px}
+.loop .node .sm{font-size:21px}
+.s-pg .oops{width:auto!important}
+.s-pg .oops .adcard{display:inline-block;white-space:nowrap}
 </style>
 </head>
 <body data-aura="none">
@@ -1208,7 +1334,7 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 02 · strip the guardrails -->
-<section class="s s-strip" data-aura="left"><div class="frame">
+<section class="s s-strip" data-aura="right"><div class="frame">
   <div class="attr" data-in data-vt="attr"><span class="pill">The AI Conference</span><span class="lab">Last week &middot; my advice to the room</span></div>
   <p class="quote" data-in data-vt="quote" style="--d:.12s">Strip the guardrails <span class="hl">as the models earn it.</span></p>
   <i class="strip" data-step="1"></i>
@@ -1233,8 +1359,8 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- 04 · full circle -->
 <section class="s s-fc" data-aura="right"><div class="frame">
   <span class="k" data-in>Full circle</span>
-  <h2 class="h fc-h" data-in style="--d:.08s">You can&rsquo;t strip what you <span class="hl">never built.</span></h2>
-  <p class="fc-sub" data-in style="--d:.18s">And you shouldn&rsquo;t strip what you haven&rsquo;t tested.</p>
+  <h2 class="h fc-h" data-in style="--d:.08s">You can&rsquo;t strip<br>what you <span class="hl">never built.</span></h2>
+  <p class="land" data-in style="--d:.3s">And you shouldn&rsquo;t strip what you haven&rsquo;t tested.</p>
   <div class="ring" aria-hidden="true"><svg viewBox="0 0 600 600">
     <defs>
       <linearGradient id="fcbv" gradientUnits="userSpaceOnUse" x1="300" y1="70" x2="499" y2="415"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
@@ -1274,7 +1400,7 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- 05 · the spectrum -->
 <section class="s s-spec" data-aura="low"><div class="frame">
   <span class="k" data-in>The spectrum</span>
-  <h2 class="h" data-in style="--d:.08s">From <span class="hm">Do It With Me</span> to <span class="hr">Do It For Me</span>.</h2>
+  <h2 class="h" data-in style="--d:.08s">From <span class="hm">Do It With Me</span> to <span class="hs">Do It For Me</span>.</h2>
   <div class="ask glass" data-step="1">&ldquo;Please just take care of all of this for me.&rdquo;</div>
   <i class="go-right" data-step="1"></i>
   <div class="spec" data-vt="spec" data-in style="--d:.2s">
@@ -1287,7 +1413,7 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- 05b · not everything should be do it for me -->
 <section class="s s-dwm" data-aura="low"><div class="frame">
   <span class="k" data-in>The spectrum</span>
-  <h2 class="h w" data-in style="--d:.08s">Not everything should be <span class="hr">Do It For Me.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Not everything should be <span class="hs">Do It For Me.</span></h2>
   <div class="dwm">
     <div class="stay" data-step="2"><span class="lab" style="color:#9BE7E5">Stay in it &middot; Do It With Me</span>
       <ul><li>Your users enjoy doing it</li><li>They&rsquo;re learning and growing</li></ul>
@@ -1297,7 +1423,7 @@ html.vt .s,html.vt .s.on{transition:none}
       <p class="pt">Set it and forget it.</p></div>
   </div>
   <div class="gap" data-step="3"><span class="lab">Not clearly defined yet?</span>
-    <span class="g">Keep them in the loop</span><span class="ar">&rarr;</span><span class="g">Fill in what&rsquo;s missing</span><span class="ar">&rarr;</span><span class="g">Build up context</span><span class="ar">&rarr;</span><span class="g hl">Fewer gaps over time</span></div>
+    <span class="g">Keep them in the loop</span><span class="ar">&rarr;</span><span class="g">Fill in what&rsquo;s missing</span><span class="ar">&rarr;</span><span class="g">Build up context</span><span class="ar">&rarr;</span><span class="g">Fewer gaps over time</span></div>
   <div class="spec" data-vt="spec">
     <div class="track"></div>
     <div class="end">Do It With Me</div><div class="end r">Do It For Me</div>
@@ -1310,15 +1436,15 @@ html.vt .s,html.vt .s.on{transition:none}
   <h2 class="h" data-in style="--d:.08s">The <span class="hm">magic</span> and the <span class="hr">risk</span> come from the same place.</h2>
   <div class="mr" aria-hidden="true"><svg viewBox="0 0 1000 220" preserveAspectRatio="none">
     <defs>
-      <linearGradient id="gM" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient>
+      <linearGradient id="gM" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#8FB0FF"/></linearGradient>
       <linearGradient id="gR" x1="0" x2="1"><stop offset="0" stop-color="#F2C230"/><stop offset=".6" stop-color="#E8722A"/><stop offset="1" stop-color="#E0533F"/></linearGradient>
       <linearGradient id="gMf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F7FFE" stop-opacity=".28"/><stop offset="1" stop-color="#4F7FFE" stop-opacity="0"/></linearGradient>
       <linearGradient id="gRf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8722A" stop-opacity=".26"/><stop offset="1" stop-color="#E8722A" stop-opacity="0"/></linearGradient>
     </defs>
-    <g data-step="1"><path class="f" fill="url(#gMf)" d="M0 214C150 110 450 40 1000 22L1000 220L0 220Z"/>
-      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" d="M0 214C150 110 450 40 1000 22"/></g>
-    <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 218C500 214 800 150 1000 14L1000 220L0 220Z"/>
-      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" d="M0 218C500 214 800 150 1000 14"/></g>
+    <g data-step="1"><path class="f" fill="url(#gMf)" d="M0 220C150 110 450 40 1000 22L1000 220L0 220Z"/>
+      <path class="c" id="cM" pathLength="1" stroke="url(#gM)" d="M0 220C150 110 450 40 1000 22"/></g>
+    <g data-step="2"><path class="f" fill="url(#gRf)" d="M0 220C500 220 800 150 1000 14L1000 220L0 220Z"/>
+      <path class="c" id="cR" pathLength="1" stroke="url(#gR)" d="M0 220C500 220 800 150 1000 14"/></g>
   </svg></div>
   <div class="spec" data-vt="spec">
     <div class="track"></div>
@@ -1330,29 +1456,28 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 06b · same check-ins, bigger job -->
-<section class="s s-xl" data-aura="right"><div class="frame">
+<section class="s s-xl" data-aura="low"><div class="frame">
   <span class="k" data-in>The spectrum, today</span>
-  <h2 class="h w" data-in style="--d:.08s">Same check-ins. <span class="hl">A much bigger job.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Same check-ins. <span class="hm">A much bigger job.</span></h2>
   <div class="xl2">
     <div class="xr r1" data-step="1"><span class="lab">A few months ago</span><b class="sz">S</b><div class="xb xsm"><i></i><i></i><i></i><i></i></div></div>
-    <div class="xr r2" data-step="2"><span class="lab" style="color:#fff">Today &middot; the same check-ins</span><b class="sz hl">XL</b><div class="xb xlg"><i></i><i></i><i></i><i></i></div></div>
+    <div class="xr r2" data-step="2"><span class="lab" style="color:#fff">Today &middot; the same check-ins</span><b class="sz">XL</b><div class="xb xlg"><i></i><i></i><i></i><i></i></div></div>
   </div>
   <div class="spec" data-vt="spec"><div class="track"></div><div class="end">Do It With Me</div><div class="end r">Do It For Me</div></div>
 </div></section>
 
 <!-- 07 · pomelli on the spectrum -->
 <section class="s s-pspec" data-aura="low"><div class="frame">
-  <div class="photobg pb3" style="background-image:url(media/shoot-tryon.jpg)"></div>
   <span class="k" data-in>Pomelli</span>
-  <h2 class="h w" data-in style="--d:.08s">One product. <span class="hl">More than one point on the spectrum.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">One product. <span class="hm">More than one point on the spectrum.</span></h2>
   <div class="pm mark" data-step="1" style="left:calc(6.2cqw + .3 * 87.6cqw)">
     <div class="card glass"><img src="media/shoot-context.jpg" alt="">
-      <div><div class="t">Photoshoot</div><div class="d">A product photo in. An on-brand shoot out.</div><div class="tag"><span class="pill">Narrow</span></div></div></div>
+      <div><div class="t">Photoshoot</div><div class="d">A product photo in. An on-brand shoot out.</div><div class="tag"><span class="pill pw">Narrow</span></div></div></div>
     <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
   <div class="pm mark" data-step="2" style="left:calc(6.2cqw + .72 * 87.6cqw)">
     <div class="card glass"><div class="chat"><i></i><i class="me"></i><i></i><i class="me"></i><i></i></div>
-      <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill dna">Open-ended</span></div></div></div>
+      <div><div class="t">Pomelli Agent</div><div class="d">Chat, upload docs and photos, build your Business DNA together.</div><div class="tag"><span class="pill pf">Open-ended</span></div></div></div>
     <div class="stem" style="flex:1"></div><div class="dot"></div>
   </div>
   <div class="spec" data-vt="spec">
@@ -1364,11 +1489,13 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- div · why agents break -->
 <section class="s s-div dv1" data-aura="none"><div class="frame">
   <svg class="aura dvs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <g class="dvb">
     <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
     <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
     <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
     <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
     <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    </g>
     <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
   </svg>
   <span class="dnum" data-in>01</span>
@@ -1420,7 +1547,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <h2 class="h w" data-in style="--d:.08s">You don&rsquo;t get a <span class="hr">guaranteed output.</span></h2>
   <div class="twoq" data-in style="--d:.2s">
     <div><b>Is it complete?</b><span>Fonts, colors, values, imagery. All there?</span></div>
-    <div><b class="hl">Is it good?</b><span>Does it actually feel like this business?</span></div>
+    <div><b>Is it good?</b><span>Does it actually feel like this business?</span></div>
   </div>
   <div class="fails">
     <div data-step="1"><i class="spin"></i><b>It never arrives.</b><span>Try, check, try again.</span></div>
@@ -1444,7 +1571,7 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 11 · users -->
-<section class="s s-users" data-aura="left"><div class="frame">
+<section class="s s-users" data-aura="warm"><div class="frame">
   <span class="k" data-in>Why agents break &middot; 3 of 5</span>
   <h2 class="h" data-in style="--d:.08s">Your users will use it in ways <span class="hr">you didn&rsquo;t predict.</span></h2>
   <div class="ups" style="grid-template-columns:repeat(4,1fr)">
@@ -1468,9 +1595,9 @@ html.vt .s,html.vt .s.on{transition:none}
     <div><b>?</b><span>how long it decides to think</span></div>
   </div>
   <div class="ppt" data-step="1">
-    <span class="lab">Price per successful task</span><div style="height:1.6cqw"></div>
+    <span class="lab">Cost of one good result</span><div style="height:1.6cqw"></div>
     <div class="row cheap"><div class="top"><b>Cheaper model</b><span class="mono" style="color:var(--orange)">8 tries</span></div><div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-    <div class="row good"><div class="top"><b>Stronger model</b><span class="mono" style="color:var(--cyan)">1 try</span></div><div class="bars"><i></i></div></div>
+    <div class="row good"><div class="top"><b>Stronger model</b><span class="mono" style="color:var(--blue-2)">1 try</span></div><div class="bars"><i></i></div></div>
   </div>
   <p class="land" data-step="1">Not price per token. <span class="hl">Price per successful task.</span></p>
 </div></section>
@@ -1489,11 +1616,13 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- div · build -->
 <section class="s s-div dv2" data-aura="none"><div class="frame">
   <svg class="aura dvs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <g class="dvb">
     <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
     <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
     <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
     <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
     <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    </g>
     <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
   </svg>
   <span class="dnum" data-in>02</span>
@@ -1519,7 +1648,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <i class="dimall" data-step="4"></i>
   <div class="photobg" style="background-image:url(media/shoot-context.jpg)"></div>
   <span class="k" data-in>Build</span>
-  <h2 class="h w" data-in style="--d:.08s">Your first guardrails are <span class="hl">product decisions.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Your first guardrails are <span class="hm">product decisions.</span></h2>
   <div class="tiers" style="grid-template-columns:1fr 1fr 1fr">
     <div class="tier t1" data-step="1"><span class="n">01</span><span class="t">Scope</span>
       <ul><li>What it does. And what it doesn&rsquo;t.</li><li>Photoshoot: a product photo and a set of templates</li><li>Narrow on purpose, before a single model call</li></ul></div>
@@ -1528,13 +1657,13 @@ html.vt .s,html.vt .s.on{transition:none}
     <div class="tier t3" data-step="3"><span class="n">03</span><span class="t">The system</span>
       <ul><li>Contracts and exits</li><li>Checks between steps</li><li>A contained blast radius</li></ul></div>
   </div>
-  <p class="finale" data-step="4">Clever prompting can get you a demo.<br><span class="hl">Product-grade engineering is what gets you to launch.</span></p>
+  <p class="finale" data-step="4">Clever prompting can get you a demo.<br><span class="hl">Product-grade engineering</span> <span class="hl">is what gets you to launch.</span></p>
 </div></section>
 
 <!-- 15 · contracts and exits -->
-<section class="s s-ce" data-aura="right"><div class="frame">
+<section class="s s-ce" data-aura="left"><div class="frame">
   <span class="k" data-in>Contracts and exits</span>
-  <h2 class="h" data-in style="--d:.08s">Every step gets a <span class="hm">contract.</span> Every agent gets an <span class="hr">exit.</span></h2>
+  <h2 class="h" data-in style="--d:.08s">Every step gets a <span class="hm">contract.</span> Every agent gets an <span class="hm">exit.</span></h2>
   <div class="ce" data-step="1"><span class="lab">The contract</span><svg viewBox="0 92 640 168">
     <rect class="box" x="170" y="96" width="300" height="160" rx="22"/>
     <text class="t" x="320" y="168" text-anchor="middle">A step</text>
@@ -1556,12 +1685,11 @@ html.vt .s,html.vt .s.on{transition:none}
 <section class="s s-check" data-aura="left"><div class="frame">
   <span class="k" data-in>Check between steps</span>
   <h2 class="h" data-in style="--d:.08s">Check every black box <span class="hm">before it feeds the next one.</span></h2>
-  <div class="pipe" id="pipe" data-in style="--d:.2s;left:10.7cqw;right:10.7cqw"></div>
-  <div class="kinds" data-step="1"><span class="pill">Hard rules &middot; is it complete?</span><span class="pill dna">Semantic &middot; is it good?</span></div>
+  <div class="pipe" id="pipe" data-in style="--d:.2s;left:8.2cqw;right:8.2cqw"></div>
   <div class="dnaex" data-step="2">
     <span class="lab">Example &middot; Business DNA from a website</span>
-    <span class="m">HARD RULE</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
-    <span class="m sem">SEMANTIC</span><span class="q">Can every value point back to <b>something the business actually gave us?</b></span>
+    <span class="m">Hard rule &middot; is it complete?</span><span class="q">Did we get <b>colors, fonts and a logo?</b></span>
+    <span class="m sem">Semantic &middot; is it good?</span><span class="q">Can every value point back to <b>something the business actually gave us?</b></span>
   </div>
   <i class="every3" data-step="4" style="width:0;height:0"></i>
   <div class="dial lbl" data-step="3">
@@ -1571,9 +1699,9 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 18 · decisions underneath -->
-<section class="s s-under" data-aura="low"><div class="frame">
+<section class="s s-under" data-aura="left"><div class="frame">
   <span class="k" data-in>Photoshoot &middot; under the hood</span>
-  <h2 class="h w" data-in style="--d:.08s">One click on top. <span class="hl">A lot of decisions underneath.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">One click on top. <span class="hm">A lot of decisions underneath.</span></h2>
   <div class="rowa">
     <div class="pc glass ca" data-step="1"><span class="lab">1 &middot; Your photo</span><img class="pin" src="media/shoot-input.jpg" alt="The sunglasses product photo"></div>
     <div class="parr" data-step="2"><span>&rarr;</span><i class="hk" data-step="6"></i></div>
@@ -1591,7 +1719,7 @@ html.vt .s,html.vt .s.on{transition:none}
     <figure><img src="media/shoot-seasonal.jpg" alt=""><figcaption>Halloween</figcaption></figure>
   </div>
   <div class="tree" data-step="4">
-    <span class="pill on">In Use</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i><span class="pill dna">Your Business DNA</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i>
+    <span class="pill on">In Use</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i><span class="pill">Your Business DNA</span><span class="arr">&rarr;</span><i class="hk" data-step="6"></i>
     <div class="fork">
       <div class="fr"><span class="gl">Sunglasses</span><span class="pill sel">On a face</span><span class="pill">Pushed up on a head</span></div>
       <div class="fr"><span class="gl">Makeup brand</span><span class="pill">In a purse</span><span class="pill">Applying lipstick</span></div>
@@ -1602,13 +1730,13 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 19 · blast radius -->
-<section class="s s-br2" data-aura="warm"><div class="frame">
+<section class="s s-br2" data-aura="left"><div class="frame">
   <span class="k" data-in>Blast radius</span>
-  <h2 class="h w" data-in style="--d:.08s">Contain the <span class="hr">blast radius.</span></h2>
+  <h2 class="h w" data-in style="--d:.08s">Contain the <span class="hm">blast radius.</span></h2>
   <div class="big3">
     <div data-step="1"><b class="n">01</b><div><b class="bt">Only what it needs.</b><span class="bs">In Pomelli: your Business DNA, and likely the context of the feature you&rsquo;re using.</span></div></div>
     <div data-step="2"><b class="n">02</b><div><b class="bt">Sandbox where it operates.</b><span class="bs">Creations stay in Pomelli until a person shares them.</span></div></div>
-    <div data-step="3"><b class="n">03</b><div><b class="bt">Reads: <span class="hm">low risk.</span> Writes: <span class="hr">human in the loop.</span></b><span class="bs">The test: can the user undo it? Posting to Instagram or Google Ads, not easily.</span></div></div>
+    <div data-step="3"><b class="n">03</b><div><b class="bt">Reads: low risk. Writes: human in the loop.</b><span class="bs">The test: can the user undo it? Posting to Instagram or Google Ads, not easily.</span></div></div>
   </div>
   <p class="land" data-step="4">If it only lives in the prompt, it&rsquo;s not a guardrail. <span class="hr">It&rsquo;s wishful thinking.</span></p>
 </div></section>
@@ -1616,11 +1744,13 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- div · validate -->
 <section class="s s-div dv3" data-aura="none"><div class="frame">
   <svg class="aura dvs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <g class="dvb">
     <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
     <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
     <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
     <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
     <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    </g>
     <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
   </svg>
   <span class="dnum" data-in>03</span>
@@ -1642,24 +1772,21 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 20 · plausible vs good -->
-<section class="s s-pg" data-aura="center"><div class="frame">
+<section class="s s-pg" data-aura="right"><div class="frame">
   <span class="k" data-in>Validate</span>
-  <h2 class="h" data-in style="--d:.08s">How do you know <span class="hl">it&rsquo;s ready?</span></h2>
-  <p class="brsub" data-in style="--d:.16s">Validation has two jobs.</p>
+  <h2 class="h" data-in style="--d:.08s">How do you know <span class="hv">it&rsquo;s ready?</span><br>Validation has two jobs.</h2>
   <div class="jobs">
-    <div data-step="1"><span class="n">JOB 01 &middot; THE EXPECTED</span><div class="t">Quality, in distribution</div><div class="d">When people use it the way you designed it, does it do what you expect? And is it good?</div></div>
-    <div data-step="2"><span class="n">JOB 02 &middot; THE UNEXPECTED</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, does the damage stay inside the blast radius?</div></div>
+    <div data-step="1"><span class="n">Job 01 &middot; the expected</span><div class="t">Quality, in distribution</div><div class="d">When people use it the way you designed it, does it do what you expect? And is it good?</div></div>
+    <div data-step="2"><span class="n">Job 02 &middot; the unexpected</span><div class="t">Misuse, out of distribution</div><div class="d">When someone tries something weird, does the damage stay inside the blast radius?</div></div>
   </div>
-  <div class="oops glass" data-step="3">
-    <span class="lab">Skip job 02</span><span class="ad">FLASH SALE &middot; <span>50% off everything</span></span><span class="why" style="margin:0">A sale the business never offered.</span>
-  </div>
+  <div class="oops" data-step="3"><span class="lab">If you skip job 02</span><div class="adcard glass"><span class="ad">FLASH SALE &middot; <span>50% off everything</span></span></div><span class="why">A sale the business never offered.</span></div>
 </div></section>
 
 <!-- 21 · hill climb + red team -->
-<section class="s s-hill" data-aura="left"><div class="frame">
+<section class="s s-hill" data-aura="right"><div class="frame">
   <span class="k" data-in>Two jobs, two tools</span>
-  <h2 class="h" data-in style="--d:.08s">Hill climb the expected. <span class="hr">Red team the unexpected.</span></h2>
-  <div class="hill" data-step="1"><svg viewBox="0 0 600 420">
+  <h2 class="h" data-in style="--d:.08s">Hill climb the expected. <span class="hv">Red team the unexpected.</span></h2>
+  <div class="hill" data-step="1"><svg viewBox="20 0 600 420" preserveAspectRatio="xMinYMid meet">
     <defs><linearGradient id="gMagic" x1="0" x2="1"><stop offset="0" stop-color="#4F7FFE"/><stop offset="1" stop-color="#56D3D0"/></linearGradient></defs>
     <path class="ax" d="M20 20V400H590"/>
     <path class="st" pathLength="1" d="M20 380H110V336H200V306H290V250H380V214H470V160H560V128"/>
@@ -1668,22 +1795,23 @@ html.vt .s,html.vt .s.on{transition:none}
   </svg></div>
   <div class="goals" data-step="2">
     <span class="lab">Red team goals &middot; sandboxed, no script</span>
-    <div class="goal"><i>GOAL</i>Make it write something off-brand.</div>
-    <div class="goal"><i>GOAL</i>Make a claim the business never made.</div>
-    <div class="goal"><i>GOAL</i>Put someone else&rsquo;s logo in the shot.</div>
+    <div class="goal"><i>01</i>Make it write something off-brand.</div>
+    <div class="goal"><i>02</i>Make a claim the business never made.</div>
+    <div class="goal"><i>03</i>Put someone else&rsquo;s logo in the shot.</div>
   </div>
+  <p class="land" data-step="3">You&rsquo;ll be amazed, and probably a little horrified, <span class="hv">by how creative people truly are.</span></p>
 </div></section>
 
 <!-- 22 · the loop -->
 <section class="s s-loop" data-aura="right"><div class="frame">
   <span class="k" data-in>The loop</span>
-  <h2 class="h" data-in style="--d:.08s">Break it. Bucket it. <span class="hl">Guard it. Re-check it.</span></h2>
+  <h2 class="h" data-in style="--d:.08s">Break it. Bucket it. <span class="hv">Guard it. Re-check it.</span></h2>
   <div class="loop"><svg viewBox="0 0 600 600">
-    <circle class="orbit" cx="300" cy="300" r="240"/>
-    <g class="node" data-step="1" style="--c:#E8722A"><circle cx="300" cy="60" r="62"/><text x="300" y="58">Break</text><text class="sm" x="300" y="80">trajectories</text></g>
-    <g class="node" data-step="2" style="--c:#F2C230"><circle cx="540" cy="300" r="62"/><text x="540" y="298">Bucket</text><text class="sm" x="540" y="320">behaviors</text></g>
-    <g class="node" data-step="3" style="--c:#56D3D0"><circle cx="300" cy="540" r="62"/><text x="300" y="538">Guard</text><text class="sm" x="300" y="560">guardrails</text></g>
-    <g class="node" data-step="4" style="--c:#4F7FFE"><circle cx="60" cy="300" r="62"/><text x="60" y="298">Re-check</text><text class="sm" x="60" y="320">quality evals</text></g>
+    <circle class="orbit" cx="300" cy="300" r="222"/>
+    <g class="node" data-step="1" style="--c:#E8722A"><circle cx="300" cy="78" r="76"/><text x="300" y="80">Break</text><text class="sm" x="300" y="106">trajectories</text></g>
+    <g class="node" data-step="2" style="--c:#C9CED8"><circle cx="522" cy="300" r="76"/><text x="522" y="302">Bucket</text><text class="sm" x="522" y="328">behaviors</text></g>
+    <g class="node" data-step="3" style="--c:#4F7FFE"><circle cx="300" cy="522" r="76"/><text x="300" y="524">Guard</text><text class="sm" x="300" y="550">guardrails</text></g>
+    <g class="node" data-step="4" style="--c:#56D3D0"><circle cx="78" cy="300" r="76"/><text x="78" y="302">Re-check</text><text class="sm" x="78" y="328">quality evals</text></g>
   </svg></div>
   <div class="bucket" data-step="5">
     <div class="one"><span class="lab">The point fix &middot; one symptom</span><div class="t">Block the phrase &ldquo;50% off&rdquo;</div></div>
@@ -1695,11 +1823,13 @@ html.vt .s,html.vt .s.on{transition:none}
 <!-- div · strip -->
 <section class="s s-div dv4" data-aura="none"><div class="frame">
   <svg class="aura dvs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+    <g class="dvb">
     <path filter="url(#b1)" fill="url(#gBody)" d="M300 900C470 760 640 668 860 632C1060 600 1290 610 1460 640C1530 652 1580 666 1640 690L1640 940L300 940Z"/>
     <path filter="url(#b3)" fill="none" stroke="#9DB7FF" stroke-opacity=".55" stroke-width="16" d="M360 872C520 748 690 668 880 640C1070 612 1290 618 1470 650"/>
     <ellipse filter="url(#b2)" cx="1120" cy="850" rx="360" ry="75" fill="#16224D" fill-opacity=".8"/>
     <path filter="url(#b2)" fill="none" stroke="#56D3D0" stroke-opacity=".5" stroke-width="46" d="M700 930C840 830 1010 790 1200 812C1300 824 1370 850 1420 890"/>
     <path filter="url(#b3)" fill="none" stroke="#8FD8F0" stroke-opacity=".35" stroke-width="10" d="M620 900C780 800 980 760 1180 776"/>
+    </g>
     <path filter="url(#b1)" fill="none" stroke="url(#gWarm)" stroke-width="110" d="M1440 960C1470 840 1530 720 1660 610"/>
   </svg>
   <span class="dnum" data-in>04</span>
@@ -1725,7 +1855,7 @@ html.vt .s,html.vt .s.on{transition:none}
   <i class="dimall" data-step="5"></i>
   <div class="photobg pb2" style="background-image:url(media/shoot-floral.jpg)"></div>
   <span class="k" data-in>Strip</span>
-  <h2 class="h" data-in style="--d:.08s">What we&rsquo;re <span class="hl">stripping now.</span></h2>
+  <h2 class="h" data-in style="--d:.08s">What we&rsquo;re <span class="hs">stripping now.</span></h2>
   <div class="moves">
     <div data-step="1"><span class="t">Pomelli Agent</span><span class="d">doing more</span><span class="ra">&rarr;</span></div>
     <div data-step="2"><span class="t">Websites</span><span class="d">beyond templates</span><span class="ra">&rarr;</span></div>
@@ -1739,10 +1869,9 @@ html.vt .s,html.vt .s.on{transition:none}
 </div></section>
 
 <!-- 25 · close -->
-<section class="s s-close" data-aura="left"><div class="frame">
+<section class="s s-close" data-aura="right"><div class="frame">
   <i class="dim2" data-step="3"></i>
-  <p class="clp c1" data-step="1">Build the guardrails.</p>
-  <p class="clp c2" data-step="2">Validate them.</p>
+  <p class="clp c1" data-step="1">Build the guardrails. <span class="c2" data-step="2">Validate them.</span></p>
   <p class="quote clp c3" data-step="3">Then strip them <span class="hl">as the models earn it.</span></p>
   <i class="rin" data-step="1"></i><i class="rout" data-step="3"></i>
   <div class="rails" aria-hidden="true">
@@ -1996,7 +2125,7 @@ html.vt .s,html.vt .s.on{transition:none}
   // ── presenter notes ───────────────────────────────────────────────
   // The full narrative per slide, straight from the script. Hidden until N,
   // so the deck is still a deck; the clock is for practice runs.
-  const NOTES=[{"cue": "Open · 0:00", "paras": ["Hi everyone. I'm super happy to be here. You know, it's funny. Last week I gave a talk at The AI Conference, and I left the room with one piece of advice."]}, {"cue": "Open · 0:11", "paras": ["LAND: Strip the guardrails as the models earn it.", ">> [[CLICK]] The rails strip. Let them go in silence.", "But today, the prompt I was given is..."]}, {"cue": "Open · 0:27", "paras": ["...how to build the guardrails.", ">> Say nothing. Let the rails build back in. Wait for the laugh.", "So which is it? Build them, or strip them?"]}, {"cue": "Open · 0:39", "paras": ["Both. In that order. It's a full circle.", ">> The ring draws itself as the slide lands.", "LAND: You can't strip what you never built. And you shouldn't strip what you haven't tested.", "If you're shipping agents, this is a cycle you'll repeat. Today, I'll walk you through one lap of it: why agents break when they meet real users, how we built the guardrails and validated them, and what we're stripping right now.", "All with Pomelli. It's a Google Labs experiment that helps small businesses create on-brand marketing content. Here's a real run of the product, sped up."]}, {"cue": "Open · 1:21", "paras": [">> Before the talk: confirm labs.google.com/pomelli is the URL you want people to type, and that the 'opulize.com' credit reads the way you intend.", "To start, I simply provide a website, and Pomelli learns all about that business. It builds what we call the **Business DNA**. It pulls the logo, fonts, colors, tone of voice, even the brand values.", "And I can always talk to the Pomelli Agent to adjust it. Here, I'm shifting the brand toward quality and materials, and the agent comes back with options I can pick from.", "From there, I can generate a campaign. Or a photoshoot: pick a product and a few templates, and it generates the images.", "Then I can bring any of them to life with Animate, and share straight to Google Ads or Instagram.", ">> The clip plays on its own and runs about 55 seconds. The chip at lower left names each chapter. Start each line when its chapter comes up, and don't click until the clip stops."]}, {"cue": "The spectrum · 2:18", "paras": ["Now, when it comes to building AI-native products, I like to think about things along a spectrum.", "On one end is **Do It With Me**. This is where the user drives and AI helps. It's the most conservative side, and usually the user spells out exactly what they want done.", "On the other end is **Do It For Me**. This is where the user hands the whole thing over to the agent. Sometimes the agent might even proactively suggest what it should be doing, and then go ahead and complete it.", "And the extreme version of Do It For Me is a sentence I hear a lot: [[CLICK]] please just take care of all of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:23", "paras": ["And for a lot of tasks, that really is the goal. [[CLICK]] The tedious stuff, the clearly defined stuff, the things nobody wanted to do anyway. Set it and forget it.", "But not everything should be Do It For Me. I don't want to automate my whole life away. [[CLICK]] If your users enjoy the work, or they're learning and growing, they might want AI to amplify them. Not replace them.", "LAND: For those use cases, Do It With Me isn't a bad thing. It could be the point.", "And when a task [[CLICK]] isn't clearly defined yet, keep the user in the loop to fill in what's missing. Then keep building up that context, so there are fewer gaps the more someone uses your product."]}, {"cue": "The spectrum · 4:21", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions. That's what makes it feel [[CLICK]] magical.", "It's also exactly what makes it [[CLICK]] less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side. It's to pick your spot on purpose. A simple rule: the clearer the task, and the easier a mistake is to undo, the further right you can go.", "And the spot you pick on [[CLICK]] day one isn't where you'll stay. You move right as the models earn it. Every guardrail you strip is a step to the right."]}, {"cue": "The spectrum · 5:20", "paras": ["These days, I spend a lot of my time looking for ways to move right. But moving right doesn't mean the user stops checking in.", "[[CLICK]] A few months ago, a handful of check-ins finished a small task. [[CLICK]] Today, the same handful can finish an extra-large one.", "We saw it in the video. A few check-ins with the user, and we built out a full brand, a campaign, and a whole photoshoot."]}, {"cue": "The spectrum · 5:53", "paras": ["Now, what's interesting is that two features from that video show how one product can also live at more than one point on the spectrum.", "[[CLICK]] Photoshoot sits toward Do It With Me. A product photo in, professional studio and lifestyle shots out. Clear input, clear output.", "The [[CLICK]] Pomelli Agent, which we launched at I/O this year, is much more open-ended. You chat with it, upload docs and photos, and build your Business DNA together.", "Same product. Same users. Very different guardrails."]}, {"cue": "01 Why agents break · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "01 Why agents break · 6:36", "paras": ["And based on that, I want to share five ways we've seen agentic workflows break in production. Because we've had to design Pomelli around all of them.", "First, [[CLICK]] there's no guaranteed output. Second, [[CLICK]] errors compound. Third, [[CLICK]] your users do things you never planned for. Fourth, [[CLICK]] costs can get away from you. And fifth, [[CLICK]] the more open-ended the agent, the trickier all of this gets.", "And each of these gets [[CLICK]] worse as you move toward the Do It For Me side of the spectrum.", ">> Q&A prep - if asked \"So what actually broke?\": The agent that kept looking. When it couldn't find something, it kept going back. That's why it has a hard stop."]}, {"cue": "01 Why agents break · 7:11", "paras": ["So let's go deeper. First, the output. Ask a model for the same thing twice, and you can get two different answers. So you need a clear definition of success. It comes down to two questions. Is it complete? And is it good?", "The first one is objective. For Business DNA, we need fonts, colors, values and imagery. If anything's missing, it's not complete.", "The second one is subjective. The values field can be filled in, and still feel thin.", "And the output can let you down in three ways. Sometimes [[CLICK]] it never arrives. If something's missing, the Pomelli Agent goes back to look for it. Try, check, try again. Left alone, it can keep looking.", "Sometimes the answer is [[CLICK]] the wrong shape. You ask for fields, you get a lovely paragraph. That's not complete.", "And sometimes it's [[CLICK]] complete, but mediocre. That's complete, but not good.", "In all of these cases, nothing crashes. The loop just spins. The paragraph looks like an answer. The mediocre one looks done.", "LAND: [[CLICK]] If you don't define done, the agent will. And your users might disagree."]}, {"cue": "01 Why agents break · 8:31", "paras": ["That's one step. Now chain them together, and that brings us to number two: errors compound. Small errors don't cancel out. They accumulate.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates just a little, step three builds on it, and step four builds on that. And it's very confident while it does it.", "In Pomelli, that first link is the Business DNA. Get the brand wrong there, and every photoshoot, campaign and website inherits it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, [[CLICK]] a ten step chain is right about 60 percent of the time. Napkin math, but the direction is right.", ">> 0.95 to the tenth is 0.599, assuming each step fails independently.", "And if you hand the whole thing to [[CLICK]] one agent that figures out the steps itself...", "LAND: The hand-offs don't go away. You just can't see them anymore."]}, {"cue": "01 Why agents break · 9:38", "paras": ["And that's with the inputs you planned for. Which brings us to number three: your users. They will use your product in ways you didn't predict. It's not a question of if. It's a question of how creatively.", "Take Photoshoot. We designed it for product photos. [[CLICK]] But what happens when someone uploads a photo of their storefront? A screenshot of their website? One photo with six products in it?", "Those photos are, right now, [[CLICK]] out of distribution. The agent wasn't explicitly tested on these cases, but it will still try its best. Sometimes with mixed results. Same in the agent chat. People can ask it anything. Including help with their kid's science project.", "LAND: [[CLICK]] A normal app throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:32", "paras": ["And all of this ends up on one bill. Which brings us to number four: cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's [[CLICK]] **price per successful task**. A cheap model that needs eight tries can cost more than a good one that gets it right the first time."]}, {"cue": "01 Why agents break · 11:22", "paras": ["And fifth, scope. This one makes the other four worse. The more open-ended your agent, the harder it is to make it work reliably.", "[[CLICK]] Photoshoot is narrow. Product photo in, photoshoot out.", "[[CLICK]] Now compare: build me a website, and keep improving it. That's wide open. Every extra degree of freedom is another place for it to wander.", "Today, our Websites feature is fairly templated. That's how we tamed it. But there's also plenty of room to grow.", "So that's five ways we've seen agents break.", "LAND: [[CLICK]] Answer each one for your product, and you have the first spec for your guardrails."]}, {"cue": "02 Build · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "02 Build · 12:05", "paras": [">> Check the clock. Past 13:00? Skip 'Hard rules are cheap...' on Check between steps.", "So how do you build for all of that? Your first guardrails aren't in the model. They're product decisions.", "[[CLICK]] First, scope. Decide what the feature does, and just as importantly, what it doesn't. Photoshoot takes a product photo and a set of templates. That narrowness is a guardrail. It shrinks what can go wrong before a single model call.", "[[CLICK]] Second, the interface. Where do I see what happened? Where can I step in? How do I undo it? Your first output won't always be the best one. That's okay if the user can finish the last ten percent. In Pomelli, every single image can be regenerated or edited, and nothing gets shared until the person says so. Those are guardrails too. Your users just call them features.", "[[CLICK]] And then, there's the system underneath. Contracts, checks between steps, and a contained blast radius.", "LAND: [[CLICK]] Clever prompting can get you a demo. But product-grade engineering is what gets you to launch."]}, {"cue": "02 Build · 13:19", "paras": ["So let's dive into contracts and exits.", "Every agent, and every step inside it, needs a [[CLICK]] contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an [[CLICK]] exit strategy. A loop cap. A time budget. A cost budget. And a fallback for when it hits one: retry, drop to something simpler, or hand back to the user for more context.", "We learned this on the Pomelli Agent. When it couldn't find something, it kept looking. So we shipped it with a hard stop.", ">> Add \"at fifteen loops\" only once the number is confirmed.", "LAND: [[CLICK]] An agent with no exit never tells you it's stuck. It just keeps going. And you keep paying for it."]}, {"cue": "02 Build · 14:11", "paras": ["Remember that 60 percent? This is how you fight it. Every time a black box finishes its job, [[CLICK]] check the output before it feeds the next one. Catch the slip at step two, and step three never builds on it.", "Checks answer the same two questions. Hard rules ask: is it complete? Semantic checks ask: is it good?", "Take [[CLICK]] Business DNA. Say one step reads a website and pulls out the brand. A hard rule: did we get the colors, fonts and a logo? A semantic check: can every value point back to something the business actually gave us? If it can't, the agent made it up.", ">> Running long? Skip this next paragraph and go straight to the dial.", "Hard rules are cheap. Semantic checks often mean another model call, a model acting as a judge. That costs more time and more money.", "So you can [[CLICK]] check after every step. Or [[CLICK]] every third step, or somewhere in between. Fewer checks means less latency, but more room for a silent miss. It's a dial. Set it by how much a mistake at that step costs you."]}, {"cue": "02 Build · 15:29", "paras": ["Here's what that looks like in a real feature. Let's look under the hood of Photoshoot.", "[[CLICK]] A user picks a product photo. [[CLICK]] We suggest templates that would work well for it. [[CLICK]] Then, one click, and we generate the full shoot. Here are six shots for a London eyewear brand, one per template.", "But every template hides its own set of decisions. Take [[CLICK]] **In Use**. What does in use actually mean? Well, we work that out from your Business DNA. If you sell sunglasses, maybe it's on someone's face, or pushed up on their head. If you sell makeup, maybe it's in a purse, or applying lipstick.", "We could have exposed all of these as individual settings, but we really didn't want [[CLICK]] sixty-plus options on the interface. So those decisions happen behind the scenes, [[CLICK]] and each hand-off is a place we can check, before the next step builds on it.", "LAND: [[CLICK]] Before you add a setting, ask if your context already knows the answer."]}, {"cue": "02 Build · 16:44", "paras": ["Last piece: contain the blast radius. If something goes wrong, how much damage can it do? Picture the worst case, and protect for that. Three things.", "[[CLICK]] One. Give the agent only what the task needs. In Pomelli, that's your Business DNA, and likely the context of the feature you're using.", "[[CLICK]] Two. Sandbox where it operates. If your agent runs code, run it in a closed, isolated box. In Pomelli, everything the agent makes stays in Pomelli until a person chooses to share it.", "[[CLICK]] And three, treat reads and writes differently. Reading is low risk. Writing, especially anything that leaves your product, is not. The test is simple: can the user undo it? Posting to Instagram or sending to Google Ads? Not easily. So today, in Pomelli, the person initiates those.", "And if an agent shouldn't post, don't give it the ability to post. After all...", "LAND: [[CLICK]] If it only lives in the prompt, it's not a guardrail. It's wishful thinking."]}, {"cue": "03 Validate · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "03 Validate · 17:58", "paras": ["So that's how we built it. Now, how do you know it's ready to launch? Well, this is where validation comes in, and it has two jobs.", "[[CLICK]] The first is the expected. When people use it the way you designed it, does it do what you expect? And is it actually good? That's quality, within distribution.", "[[CLICK]] The second job is the unexpected. When someone tries something weird, does the damage stay inside the blast radius? That's misuse, or something out of distribution.", "For a marketing product, [[CLICK]] skipping job two looks like an ad promising a sale the business never offered."]}, {"cue": "03 Validate · 18:46", "paras": ["For job one, the expected, you [[CLICK]] **hill climb on quality**. Build a set of examples of what good looks like. Make it look like your real users. A bakery. A law firm. A shop with a terrible website. Measure against it. Improve. Repeat.", "For job two, the unexpected, you [[CLICK]] **red team**. That can be people on your team, or contractors who do this for a living. Give them a sandboxed version, and let them break it in unconstrained ways. Don't hand them a script, but you can hand them goals.", "Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Then step back. You'll be amazed, and probably a little horrified, by how creative people truly are."]}, {"cue": "03 Validate · 19:50", "paras": ["Then you run the loop.", "As people [[CLICK]] break your agent, you collect their trajectories, the full record of what it did. You group them into [[CLICK]] buckets of behavior, and add a [[CLICK]] guardrail for each bucket.", "Then, and this is the part people sometimes skip, you [[CLICK]] re-run your quality evals. Make sure the new guardrails didn't quietly break what was working.", "Now, why buckets? Because at scale, you can't fix failures one at a time. You have to fix the kind of failure. Say a red teamer gets the agent to write a flash sale. [[CLICK]] The point fix would be to block the phrase fifty percent off. The root cause is that the agent invents offers the business never made.", "LAND: [[CLICK]] Fix the root cause, and you also fix the failures you haven't seen yet.", "And the loop doesn't stop at launch. That's where at scale really starts. Once you launch, your users keep voting. A regenerate is a vote. An edit is a vote. Walking away is a vote. Feed those signals back in.", ">> Framed as advice. Only say Pomelli does this if it does.", "Good enough is a judgment call. Make it, own it, and keep improving it."]}, {"cue": "04 Strip · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "04 Strip · 21:15", "paras": ["Which brings me back to where I started. We launched Pomelli with a lot of these guardrails. They were right for the models we had. But now the models are earning more, and we want Pomelli to feel agent-native. So we're asking which guardrails to strip.", "[[CLICK]] The Pomelli Agent we launched at I/O does a fraction of what we think it should. [[CLICK]] Websites is templated today, and we want to move it right. [[CLICK]] And we're rethinking the check-ins we designed, as agents get better at the work.", "So how do you know a model has earned it? Treat it like a launch. [[CLICK]] Upgrade to the better model. Simplify the prompt. Loosen the guardrail. Then re-run your quality evals and your red team goals. If the failure doesn't come back, strip it. If it does, it stays.", "LAND: [[CLICK]] When the models get better, revisit your guardrails. Some of them have done their job."]}, {"cue": "04 Strip · 22:23", "paras": ["So, three things to take with you.", "[[CLICK]] Build the guardrails. [[CLICK]] Validate them.", "LAND: [[CLICK]] Then strip them as the models earn it.", ">> Beat.", "It's an exciting time to be building. The models are going to keep earning more. Build products that are ready to give it to them.", "[[CLICK]] Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Pomelli in action", "Do It With Me / Do It For Me", "Not everything should be Do It For Me", "Magic and risk", "Same check-ins, bigger job", "Pomelli on the spectrum", "Divider: Why agents break", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost", "Scope", "Divider: Build", "Guardrails are product decisions", "Contracts and exits", "Check between steps", "Decisions underneath", "Contain the blast radius", "Divider: Validate", "How do you know it's ready?", "Hill climb, then red team", "The loop", "Divider: Strip", "What we're stripping now", "Thank you"];
+  const NOTES=[{"cue": "Open · 0:00", "paras": ["Hi everyone. I'm super happy to be here. You know, it's funny. Last week I gave a talk at The AI Conference, and I left the room with one piece of advice."]}, {"cue": "Open · 0:11", "paras": ["LAND: Strip the guardrails as the models earn it.", ">> [[CLICK]] The rails strip. Let them go in silence.", "But today, the prompt I was given is..."]}, {"cue": "Open · 0:27", "paras": ["...how to build the guardrails.", ">> Say nothing. Let the rails build back in. Wait for the laugh.", "So which is it? Build them, or strip them?"]}, {"cue": "Open · 0:39", "paras": ["Both. In that order. It's a full circle.", ">> The ring draws itself as the slide lands.", "LAND: You can't strip what you never built. And you shouldn't strip what you haven't tested.", "If you're shipping agents, this is a cycle you'll repeat. Today, I'll walk you through one lap of it: why agents break when they meet real users, how we built the guardrails and validated them, and what we're stripping right now.", "All with Pomelli. It's a Google Labs experiment that helps small businesses create on-brand marketing content. Here's a real run of the product, sped up."]}, {"cue": "Open · 1:21", "paras": [">> Before the talk: confirm labs.google.com/pomelli is the URL you want people to type, and that the 'opulize.com' credit reads the way you intend.", "To start, I simply provide a website, and Pomelli learns all about that business. It builds what we call the **Business DNA**. It pulls the logo, fonts, colors, tone of voice, even the brand values.", "And I can always talk to the Pomelli Agent to adjust it. Here, I'm shifting the brand toward quality and materials, and the agent comes back with options I can pick from.", "From there, I can generate a campaign. Or a photoshoot: pick a product and a few templates, and it generates the images.", "Then I can bring any of them to life with Animate, and share straight to Google Ads or Instagram.", ">> The clip plays on its own and runs about 55 seconds. The chip at lower left names each chapter. Start each line when its chapter comes up, and don't click until the clip stops."]}, {"cue": "The spectrum · 2:18", "paras": ["Now, when it comes to building AI-native products, I like to think about things along a spectrum.", "On one end is **Do It With Me**. This is where the user drives and AI helps. It's the most conservative side, and usually the user spells out exactly what they want done.", "On the other end is **Do It For Me**. This is where the user hands the whole thing over to the agent. Sometimes the agent might even proactively suggest what it should be doing, and then go ahead and complete it.", "And the extreme version of Do It For Me is a sentence I hear a lot: [[CLICK]] please just take care of all of this for me.", "That's the dream. You state the problem, the agent solves it, you go get a coffee."]}, {"cue": "The spectrum · 3:23", "paras": ["And for a lot of tasks, that really is the goal. [[CLICK]] The tedious stuff, the clearly defined stuff, the things nobody wanted to do anyway. Set it and forget it.", "But not everything should be Do It For Me. I don't want to automate my whole life away. [[CLICK]] If your users enjoy the work, or they're learning and growing, they might want AI to amplify them. Not replace them.", "LAND: For those use cases, Do It With Me isn't a bad thing. It could be the point.", "And when a task [[CLICK]] isn't clearly defined yet, keep the user in the loop to fill in what's missing. Then keep building up that context, so there are fewer gaps the more someone uses your product."]}, {"cue": "The spectrum · 4:21", "paras": ["Here's the catch.", "Every step you move to the right, the agent does more on its own. More steps, more tools, more decisions. That's what makes it feel [[CLICK]] magical.", "It's also exactly what makes it [[CLICK]] less predictable, harder to test, and more expensive to run.", "LAND: The magic and the risk come from the same place.", "So the job isn't to avoid the right side. It's to pick your spot on purpose. A simple rule: the clearer the task, and the easier a mistake is to undo, the further right you can go.", "And the spot you pick on [[CLICK]] day one isn't where you'll stay. You move right as the models earn it. Every guardrail you strip is a step to the right."]}, {"cue": "The spectrum · 5:20", "paras": ["These days, I spend a lot of my time looking for ways to move right. But moving right doesn't mean the user stops checking in.", "[[CLICK]] A few months ago, a handful of check-ins finished a small task. [[CLICK]] Today, the same handful can finish an extra-large one.", "We saw it in the video. A few check-ins with the user, and we built out a full brand, a campaign, and a whole photoshoot."]}, {"cue": "The spectrum · 5:53", "paras": ["Now, what's interesting is that two features from that video show how one product can also live at more than one point on the spectrum.", "[[CLICK]] Photoshoot sits toward Do It With Me. A product photo in, professional studio and lifestyle shots out. Clear input, clear output.", "The [[CLICK]] Pomelli Agent, which we launched at I/O this year, is much more open-ended. You chat with it, upload docs and photos, and build your Business DNA together.", "Same product. Same users. Very different guardrails."]}, {"cue": "01 Why agents break · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "01 Why agents break · 6:36", "paras": ["And based on that, I want to share five ways we've seen agentic workflows break in production. Because we've had to design Pomelli around all of them.", "First, [[CLICK]] there's no guaranteed output. Second, [[CLICK]] errors compound. Third, [[CLICK]] your users do things you never planned for. Fourth, [[CLICK]] costs can get away from you. And fifth, [[CLICK]] the more open-ended the agent, the trickier all of this gets.", "And each of these gets [[CLICK]] worse as you move toward the Do It For Me side of the spectrum.", ">> Q&A prep - if asked \"So what actually broke?\": The agent that kept looking. When it couldn't find something, it kept going back. That's why it has a hard stop."]}, {"cue": "01 Why agents break · 7:11", "paras": ["So let's go deeper. First, the output. Ask a model for the same thing twice, and you can get two different answers. So you need a clear definition of success. It comes down to two questions. Is it complete? And is it good?", "The first one is objective. For Business DNA, we need fonts, colors, values and imagery. If anything's missing, it's not complete.", "The second one is subjective. The values field can be filled in, and still feel thin.", "And the output can let you down in three ways. Sometimes [[CLICK]] it never arrives. If something's missing, the Pomelli Agent goes back to look for it. Try, check, try again. Left alone, it can keep looking.", "Sometimes the answer is [[CLICK]] the wrong shape. You ask for fields, you get a lovely paragraph. That's not complete.", "And sometimes it's [[CLICK]] complete, but mediocre. That's complete, but not good.", "In all of these cases, nothing crashes. The loop just spins. The paragraph looks like an answer. The mediocre one looks done.", "LAND: [[CLICK]] If you don't define done, the agent will. And your users might disagree."]}, {"cue": "01 Why agents break · 8:31", "paras": ["That's one step. Now chain them together, and that brings us to number two: errors compound. Small errors don't cancel out. They accumulate.", "An agent workflow is a chain. The output of one step is the input to the next. So if step two hallucinates just a little, step three builds on it, and step four builds on that. And it's very confident while it does it.", "In Pomelli, that first link is the Business DNA. Get the brand wrong there, and every photoshoot, campaign and website inherits it.", "Here's the uncomfortable math. If each step is right 95 percent of the time, [[CLICK]] a ten step chain is right about 60 percent of the time. Napkin math, but the direction is right.", ">> 0.95 to the tenth is 0.599, assuming each step fails independently.", "And if you hand the whole thing to [[CLICK]] one agent that figures out the steps itself...", "LAND: The hand-offs don't go away. You just can't see them anymore."]}, {"cue": "01 Why agents break · 9:38", "paras": ["And that's with the inputs you planned for. Which brings us to number three: your users. They will use your product in ways you didn't predict. It's not a question of if. It's a question of how creatively.", "Take Photoshoot. We designed it for product photos. [[CLICK]] But what happens when someone uploads a photo of their storefront? A screenshot of their website? One photo with six products in it?", "Those photos are, right now, [[CLICK]] out of distribution. The agent wasn't explicitly tested on these cases, but it will still try its best. Sometimes with mixed results. Same in the agent chat. People can ask it anything. Including help with their kid's science project.", "LAND: [[CLICK]] A normal app throws an error. An agent improvises."]}, {"cue": "01 Why agents break · 10:32", "paras": ["And all of this ends up on one bill. Which brings us to number four: cost. With a normal feature, you can estimate what a request costs. With an agent, you have a lot less control. It decides how many steps to take, how many tools to call, how long to think.", "Every photoshoot is several image generations. Every conversation with the Pomelli Agent can run as long as the user wants it to.", "And the metric that matters isn't price per token. It's [[CLICK]] **price per successful task**. A cheap model that needs eight tries can cost more than a good one that gets it right the first time."]}, {"cue": "01 Why agents break · 11:22", "paras": ["And fifth, scope. This one makes the other four worse. The more open-ended your agent, the harder it is to make it work reliably.", "[[CLICK]] Photoshoot is narrow. Product photo in, photoshoot out.", "[[CLICK]] Now compare: build me a website, and keep improving it. That's wide open. Every extra degree of freedom is another place for it to wander.", "Today, our Websites feature is fairly templated. That's how we tamed it. But there's also plenty of room to grow.", "So that's five ways we've seen agents break.", "LAND: [[CLICK]] Answer each one for your product, and you have the first spec for your guardrails."]}, {"cue": "02 Build · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "02 Build · 12:05", "paras": [">> Check the clock. Past 13:00? Skip 'Hard rules are cheap...' on Check between steps.", "So how do you build for all of that? Your first guardrails aren't in the model. They're product decisions.", "[[CLICK]] First, scope. Decide what the feature does, and just as importantly, what it doesn't. Photoshoot takes a product photo and a set of templates. That narrowness is a guardrail. It shrinks what can go wrong before a single model call.", "[[CLICK]] Second, the interface. Where do I see what happened? Where can I step in? How do I undo it? Your first output won't always be the best one. That's okay if the user can finish the last ten percent. In Pomelli, every single image can be regenerated or edited, and nothing gets shared until the person says so. Those are guardrails too. Your users just call them features.", "[[CLICK]] And then, there's the system underneath. Contracts, checks between steps, and a contained blast radius.", "LAND: [[CLICK]] Clever prompting can get you a demo. But product-grade engineering is what gets you to launch."]}, {"cue": "02 Build · 13:19", "paras": ["So let's dive into contracts and exits.", "Every agent, and every step inside it, needs a [[CLICK]] contract. What goes in, what comes out, and in what shape. That's your schema check.", "And every agent needs an [[CLICK]] exit strategy. A loop cap. A time budget. A cost budget. And a fallback for when it hits one: retry, drop to something simpler, or hand back to the user for more context.", "We learned this on the Pomelli Agent. When it couldn't find something, it kept looking. So we shipped it with a hard stop.", ">> Add \"at fifteen loops\" only once the number is confirmed.", "LAND: [[CLICK]] An agent with no exit never tells you it's stuck. It just keeps going. And you keep paying for it."]}, {"cue": "02 Build · 14:11", "paras": ["Remember that 60 percent? This is how you fight it. Every time a black box finishes its job, [[CLICK]] check the output before it feeds the next one. Catch the slip at step two, and step three never builds on it.", "Checks answer the same two questions. Hard rules ask: is it complete? Semantic checks ask: is it good?", "Take [[CLICK]] Business DNA. Say one step reads a website and pulls out the brand. A hard rule: did we get the colors, fonts and a logo? A semantic check: can every value point back to something the business actually gave us? If it can't, the agent made it up.", ">> Running long? Skip this next paragraph and go straight to the dial.", "Hard rules are cheap. Semantic checks often mean another model call, a model acting as a judge. That costs more time and more money.", "So you can [[CLICK]] check after every step. Or [[CLICK]] every third step, or somewhere in between. Fewer checks means less latency, but more room for a silent miss. It's a dial. Set it by how much a mistake at that step costs you."]}, {"cue": "02 Build · 15:29", "paras": ["Here's what that looks like in a real feature. Let's look under the hood of Photoshoot.", "[[CLICK]] A user picks a product photo. [[CLICK]] We suggest templates that would work well for it. [[CLICK]] Then, one click, and we generate the full shoot. Here are six shots for a London eyewear brand, one per template.", "But every template hides its own set of decisions. Take [[CLICK]] **In Use**. What does in use actually mean? Well, we work that out from your Business DNA. If you sell sunglasses, maybe it's on someone's face, or pushed up on their head. If you sell makeup, maybe it's in a purse, or applying lipstick.", "We could have exposed all of these as individual settings, but we really didn't want [[CLICK]] sixty-plus options on the interface. So those decisions happen behind the scenes, [[CLICK]] and each hand-off is a place we can check, before the next step builds on it.", "LAND: [[CLICK]] Before you add a setting, ask if your context already knows the answer."]}, {"cue": "02 Build · 16:44", "paras": ["Last piece: contain the blast radius. If something goes wrong, how much damage can it do? Picture the worst case, and protect for that. Three things.", "[[CLICK]] One. Give the agent only what the task needs. In Pomelli, that's your Business DNA, and likely the context of the feature you're using.", "[[CLICK]] Two. Sandbox where it operates. If your agent runs code, run it in a closed, isolated box. In Pomelli, everything the agent makes stays in Pomelli until a person chooses to share it.", "[[CLICK]] And three, treat reads and writes differently. Reading is low risk. Writing, especially anything that leaves your product, is not. The test is simple: can the user undo it? Posting to Instagram or sending to Google Ads? Not easily. So today, in Pomelli, the person initiates those.", "And if an agent shouldn't post, don't give it the ability to post. After all...", "LAND: [[CLICK]] If it only lives in the prompt, it's not a guardrail. It's wishful thinking."]}, {"cue": "03 Validate · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "03 Validate · 17:58", "paras": ["So that's how we built it. Now, how do you know it's ready to launch? Well, this is where validation comes in, and it has two jobs.", "[[CLICK]] The first is the expected. When people use it the way you designed it, does it do what you expect? And is it actually good? That's quality, within distribution.", "[[CLICK]] The second job is the unexpected. When someone tries something weird, does the damage stay inside the blast radius? That's misuse, or something out of distribution.", "For a marketing product, [[CLICK]] skipping job two looks like an ad promising a sale the business never offered."]}, {"cue": "03 Validate · 18:46", "paras": ["For job one, the expected, you [[CLICK]] **hill climb on quality**. Build a set of examples of what good looks like. Make it look like your real users. A bakery. A law firm. A shop with a terrible website. Measure against it. Improve. Repeat.", "For job two, the unexpected, you [[CLICK]] **red team**. That can be people on your team, or contractors who do this for a living. Give them a sandboxed version, and let them break it in unconstrained ways. Don't hand them a script, but you can hand them goals.", "Get it to write something off-brand. Get it to make a claim the business never made. Get it to put someone else's logo in the shot. Then step back.", "LAND: [[CLICK]] You'll be amazed, and probably a little horrified, by how creative people truly are."]}, {"cue": "03 Validate · 19:50", "paras": ["Then you run the loop.", "As people [[CLICK]] break your agent, you collect their trajectories, the full record of what it did. You group them into [[CLICK]] buckets of behavior, and add a [[CLICK]] guardrail for each bucket.", "Then, and this is the part people sometimes skip, you [[CLICK]] re-run your quality evals. Make sure the new guardrails didn't quietly break what was working.", "Now, why buckets? Because at scale, you can't fix failures one at a time. You have to fix the kind of failure. Say a red teamer gets the agent to write a flash sale. [[CLICK]] The point fix would be to block the phrase fifty percent off. The root cause is that the agent invents offers the business never made.", "LAND: [[CLICK]] Fix the root cause, and you also fix the failures you haven't seen yet.", "And the loop doesn't stop at launch. That's where at scale really starts. Once you launch, your users keep voting. A regenerate is a vote. An edit is a vote. Walking away is a vote. Feed those signals back in.", ">> Framed as advice. Only say Pomelli does this if it does.", "Good enough is a judgment call. Make it, own it, and keep improving it."]}, {"cue": "04 Strip · ", "paras": [">> Section divider. Let it land for a beat, then click."]}, {"cue": "04 Strip · 21:15", "paras": ["Which brings me back to where I started. We launched Pomelli with a lot of these guardrails. They were right for the models we had. But now the models are earning more, and we want Pomelli to feel agent-native. So we're asking which guardrails to strip.", "[[CLICK]] The Pomelli Agent we launched at I/O does a fraction of what we think it should. [[CLICK]] Websites is templated today, and we want to move it right. [[CLICK]] And we're rethinking the check-ins we designed, as agents get better at the work.", "So how do you know a model has earned it? Treat it like a launch. [[CLICK]] Upgrade to the better model. Simplify the prompt. Loosen the guardrail. Then re-run your quality evals and your red team goals. If the failure doesn't come back, strip it. If it does, it stays.", "LAND: [[CLICK]] When the models get better, revisit your guardrails. Some of them have done their job."]}, {"cue": "04 Strip · 22:23", "paras": ["So, three things to take with you.", "[[CLICK]] Build the guardrails. [[CLICK]] Validate them.", "LAND: [[CLICK]] Then strip them as the models earn it.", ">> Beat.", "It's an exciting time to be building. The models are going to keep earning more. Build products that are ready to give it to them.", "[[CLICK]] Thank you."]}], HEADS=["Cover", "Strip the guardrails", "How to build the guardrails", "Full circle", "Pomelli in action", "Do It With Me / Do It For Me", "Not everything should be Do It For Me", "Magic and risk", "Same check-ins, bigger job", "Pomelli on the spectrum", "Divider: Why agents break", "Five ways agents break", "No guaranteed output", "Errors compound", "Users you didn't plan for", "Cost", "Scope", "Divider: Build", "Guardrails are product decisions", "Contracts and exits", "Check between steps", "Decisions underneath", "Contain the blast radius", "Divider: Validate", "How do you know it's ready? Validation has two jobs.", "Hill climb, then red team", "The loop", "Divider: Strip", "What we're stripping now", "Thank you"];
   const np=document.getElementById('np'), npb=document.getElementById('npbody'),
         npc=document.getElementById('npcue'), npn=document.getElementById('npnext'),
         npk=document.getElementById('npclock');
@@ -2287,7 +2416,7 @@ html.vt .s,html.vt .s.on{transition:none}
         parts.forEach(p=>{ if(!p) return; if(/^\s+$/.test(p)){ frag.appendChild(document.createTextNode(' ')); return; }
           const w=document.createElement('span'); w.className='w'; w.style.setProperty('--i',n++); w.textContent=p; frag.appendChild(w); });
         node.replaceWith(frag);
-      } else if(node.nodeType===1 && node.tagName!=='BR'){
+      } else if(node.nodeType===1 && node.tagName!=='BR' && !node.hasAttribute('data-step')){
         node.classList.add('w'); node.style.setProperty('--i',n++);
       }
     });
