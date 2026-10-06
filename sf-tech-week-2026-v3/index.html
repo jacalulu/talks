@@ -1379,6 +1379,16 @@ html.vtx .s,html.vtx .s.on{transition:none}
 .gtile .post.bad{animation:none}
 .post{width:18cqw}.post .pimg{height:14.6cqw}.post{font-size:1cqw}.jobs2 .jd{font-size:1.9cqw;line-height:1.3}
 .jobs2 .never{font-size:1.55cqw}
+
+/* ── 15: four real inputs as 3:2 photos, captions underneath ── */
+.s-users .ups{top:18.5cqw}
+.s-users .up{height:auto!important;overflow:visible;border:0;background:none;border-radius:0}
+.s-users .up img{display:block;width:100%;height:14cqw;object-fit:cover;object-position:center;border-radius:1.2cqw;
+  outline:1px solid rgba(255,255,255,.14);outline-offset:-1px;box-shadow:0 1.2cqw 3cqw rgba(0,0,0,.4)}
+.s-users .up:nth-child(3) img{object-position:left top}
+.s-users .up .cap{position:static;padding:1cqw 0 0;background:none!important;font-size:1.5cqw;line-height:1.3}
+.s-users .up .ok{position:absolute;right:1cqw;top:1cqw;z-index:2}
+.ood{top:37.6cqw!important}
 </style>
 </head>
 <body data-aura="none">
@@ -1658,9 +1668,9 @@ html.vtx .s,html.vtx .s.on{transition:none}
   <h2 class="h" data-in style="--d:.08s">Your users will use it in ways <span class="hr">you didn&rsquo;t predict.</span></h2>
   <div class="ups" style="grid-template-columns:repeat(4,1fr)">
     <div class="up" data-in style="--d:.2s"><img src="media/shoot-flatlay.jpg" alt=""><span class="ok pill on">Expected</span><div class="cap">A product photo</div></div>
-    <div class="up" data-step="1" style="--d:.0s"><svg class="ic" viewBox="0 0 60 60"><path d="M8 24h44M10 24l4-12h32l4 12"/><rect x="12" y="24" width="36" height="26"/><rect class="o" x="26" y="34" width="8" height="16"/><path d="M16 30h7M37 30h7"/></svg><img class="ph" src="media/users-storefront.jpg" alt="" onerror="this.remove()"><div class="cap">Their storefront</div></div>
+    <div class="up" data-step="1" style="--d:.0s"><img src="media/users-storefront.jpg" alt=""><div class="cap">Their storefront</div></div>
     <div class="up" data-step="1" style="transition-delay:.12s"><img src="media/users-website.jpg" alt="The Opulize homepage"><div class="cap">A screenshot of their website</div></div>
-    <div class="up" data-step="1" style="transition-delay:.24s"><svg class="ic" viewBox="0 0 60 60"><g><circle cx="12" cy="18" r="5"/><circle cx="30" cy="18" r="5"/><circle cx="48" cy="18" r="5"/><circle class="o" cx="12" cy="40" r="5"/><circle class="o" cx="30" cy="40" r="5"/><circle class="o" cx="48" cy="40" r="5"/></g></svg><img class="ph" src="media/users-sixup.jpg" alt="" onerror="this.remove()"><div class="cap">Six products, one photo</div></div>
+    <div class="up" data-step="1" style="transition-delay:.24s"><img src="media/users-sixup.jpg" alt=""><div class="cap">Six products, one photo</div></div>
     
   </div>
   <div class="ood" data-step="2">Out of distribution</div>
