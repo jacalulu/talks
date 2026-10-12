@@ -16,3 +16,5 @@ Static site of Jaclyn Konzelmann's talk decks. Plain HTML, no build. Hosted on V
   shim is broken.
 - Style: single dashes with spaces, never em dashes.
 - `CLAUDE-CODE-HANDOFF.md` is the original publishing brief and is not tracked.
+- `robots.txt` and `sitemap.xml` live at the root. The sitemap lists only public talks, never a
+  gated one. When a talk is published, add its folder to `sitemap.xml` in the same push.

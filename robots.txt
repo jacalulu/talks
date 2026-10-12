@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://talks.jaclynkonzelmann.com/sitemap.xml
